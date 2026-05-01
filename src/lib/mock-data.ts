@@ -709,3 +709,153 @@ export const aiEngineData = {
     { metric: "WhatsApp conversion potential", prediction: "$520K (if optimized)", confidence: 84, trend: "up" },
   ],
 };
+
+// ============================================================
+// RYZE AI — Marketing Command (Paid Media Enhancements)
+// ============================================================
+
+// 1. Wasted Spend Detection
+export const wastedSpendData = [
+  { category: "Irrelevant Search Terms", amount: 2800, percentage: 32, color: "#ef4444" },
+  { category: "Low QS Keywords", amount: 1900, percentage: 22, color: "#f97316" },
+  { category: "Audience Overlap", amount: 1600, percentage: 18, color: "#eab308" },
+  { category: "Budget-Capped Campaigns", amount: 1200, percentage: 14, color: "#a855f7" },
+  { category: "Poor Placement Sites", amount: 750, percentage: 9, color: "#64748b" },
+  { category: "Other", amount: 450, percentage: 5, color: "#94a3b8" },
+];
+
+// 2. Monthly Budget Pacing
+export const budgetPacingData = [
+  { channel: "Google Search", spent: 8400, budget: 12000, color: "#22c55e" },
+  { channel: "Meta Prospecting", spent: 5100, budget: 6000, color: "#22c55e" },
+  { channel: "Pinterest Ads", spent: 3800, budget: 5000, color: "#eab308" },
+  { channel: "TikTok Test", spent: 2900, budget: 3000, color: "#ef4444" },
+];
+export const budgetPacingTotal = { spent: 20200, budget: 26000 };
+
+// 3. Conversion Funnel
+export const conversionFunnelData = [
+  { stage: "Impressions", count: 842000, rate: 100 },
+  { stage: "Clicks", count: 14000, rate: 1.66 },
+  { stage: "Leads", count: 1800, rate: 12.86 },
+  { stage: "Conversions", count: 508, rate: 28.22 },
+];
+
+// 4. Ad Account Audit Scores
+export const adAuditScores = [
+  { dimension: "Ad Quality", score: 85, suggestion: "Improve headline variety across ad groups" },
+  { dimension: "Budget Utilization", score: 70, suggestion: "3 campaigns under-pacing; redistribute budget" },
+  { dimension: "Account Structure", score: 88, suggestion: "Well-organized — consider adding negative keyword lists" },
+  { dimension: "Targeting", score: 92, suggestion: "Strong audience signals; test affinity expansion" },
+  { dimension: "Bidding Strategy", score: 78, suggestion: "Switch 2 campaigns to tROAS with 3.5x target" },
+  { dimension: "Keyword Coverage", score: 90, suggestion: "Add 12 long-tail variants from search terms report" },
+  { dimension: "Landing Page", score: 82, suggestion: "Speed score needs improvement on 2 landing pages" },
+  { dimension: "Ad Schedule", score: 63, suggestion: "Reduce bids during 12–4 AM; increase 6–9 PM" },
+];
+
+// 5. Top Regions by ROAS
+export const topRegionsData = [
+  { region: "California", roas: 5.2, spend: 3800, color: "#22c55e" },
+  { region: "Texas", roas: 4.8, spend: 2100, color: "#22c55e" },
+  { region: "New York", roas: 4.5, spend: 2900, color: "#eab308" },
+  { region: "Florida", roas: 4.1, spend: 1600, color: "#eab308" },
+  { region: "Illinois", roas: 3.8, spend: 980, color: "#f97316" },
+  { region: "New Jersey", roas: 3.6, spend: 840, color: "#f97316" },
+];
+export const topRegionsAvg = { roas: 4.6, states: 23 };
+
+// 6. AI Ad Suggestions
+export const aiAdSuggestions = [
+  { id: "AS-001", issue: "Budget pacing issue", action: "Increase bids by 15% on Google Search branded campaigns", impact: "Est. +$2.4K revenue/week" },
+  { id: "AS-002", issue: "Ad fatigue detected", action: "Rotate in 3 new creative variations for Meta prospecting", impact: "Est. +18% CTR recovery" },
+  { id: "AS-003", issue: "Keywords QS dropped", action: "Rewrite headlines for 8 keywords below QS 5", impact: "Est. -22% CPC reduction" },
+  { id: "AS-004", issue: "38% audience overlap", action: "Merge 2 overlapping Lookalike audiences into 1", impact: "Est. -$1.6K wasted spend/mo" },
+  { id: "AS-005", issue: "tROAS underperforming", action: "Lower tROAS target to 2.5x for 7-day test window", impact: "Est. +140 conversions" },
+];
+
+// ============================================================
+// RYZE AI — Competitive Intel Enhancement
+// ============================================================
+
+// 7. Auction Insights
+export const auctionInsightsData = [
+  { brand: "Varni Jewels", isYou: true, impressionShare: 68, overlapRate: null, avgPosition: 1.2 },
+  { brand: "Aurelia Diamonds", isYou: false, impressionShare: 54, overlapRate: 42, avgPosition: 1.5 },
+  { brand: "Solstice Studio", isYou: false, impressionShare: 41, overlapRate: 38, avgPosition: 2.1 },
+  { brand: "PureGems Co.", isYou: false, impressionShare: 33, overlapRate: 29, avgPosition: 2.8 },
+  { brand: "Nova Jewels", isYou: false, impressionShare: 22, overlapRate: 18, avgPosition: 3.4 },
+];
+
+// ============================================================
+// RYZE AI — Creative & Brand Enhancement
+// ============================================================
+
+// 8. AI Creative Scoring
+export const creativeScoresData: Record<string, { ctaScore: number; ctaNote: string; visualScore: number; visualNote: string; copyScore: number; copyNote: string }> = {
+  "CR-001": { ctaScore: 78, ctaNote: "Strong urgency CTA", visualScore: 91, visualNote: "Exceptional lighting", copyScore: 82, copyNote: "Benefit-led headline" },
+  "CR-002": { ctaScore: 43, ctaNote: "Too generic", visualScore: 77, visualNote: "Eye-catching, on-brand", copyScore: 53, copyNote: "Lacks benefit-first phrasing" },
+  "CR-003": { ctaScore: 88, ctaNote: "Clear value proposition", visualScore: 85, visualNote: "Clean minimal grid", copyScore: 79, copyNote: "Good social proof" },
+  "CR-004": { ctaScore: 65, ctaNote: "Could be more specific", visualScore: 92, visualNote: "Authentic BTS feel", copyScore: 71, copyNote: "Strong narrative, weak CTA" },
+  "CR-005": { ctaScore: 52, ctaNote: "Missing CTA overlay", visualScore: 84, visualNote: "Editorial quality", copyScore: 68, copyNote: "Brand voice match 90%" },
+  "CR-006": { ctaScore: 71, ctaNote: "Good but not urgent", visualScore: 88, visualNote: "Premium flat lay", copyScore: 74, copyNote: "Descriptive but long" },
+};
+
+// 9. AI-Suggested Creatives
+export const suggestedCreativesData = [
+  { id: "SC-001", concept: "UGC Before & After", type: "Video", description: "Real customers showing their transformation wearing Varni pieces for date nights, proposals, and milestones.", estEngagement: "8.2% CTR · 4.1x ROAS", status: "pending" as const },
+  { id: "SC-002", concept: "Video: New Treatments", type: "Video", description: "Close-up macro shots of gemstone sparkle and light play across our new Eternal collection, paired with trending audio.", estEngagement: "6.8% CTR · 3.6x ROAS", status: "pending" as const },
+  { id: "SC-003", concept: "Carousel: Package Unboxing", type: "Carousel", description: "Step-by-step luxury unboxing experience showcasing our signature velvet box, certificate, and care guide.", estEngagement: "5.4% CTR · 4.8x ROAS", status: "pending" as const },
+  { id: "SC-004", concept: "Static: Glow Package", type: "Image", description: "Product shot on dark background with dramatic studio lighting emphasizing gold reflections and diamond brilliance.", estEngagement: "4.9% CTR · 5.2x ROAS", status: "pending" as const },
+];
+
+// ============================================================
+// CLICKFLOW — Content Strategy Enhancements
+// ============================================================
+
+// 10. AI Content Pipeline
+export const contentPipelineData = {
+  strategy: { keywordsMapped: 12, gapOpportunities: 8 },
+  writing: { draftsReady: 18, pendingReview: 6, publishedThisWeek: 4 },
+  reporting: { articlesTracked: 22, rankingGains: 8, decayAlerts: 3 },
+  continuous: { keywordsMonitored: 87, strategyAdjustments: 4 },
+};
+
+// 11. Content Decay Detection
+export const contentDecayData = [
+  { title: "Gold Necklace Buying Guide", previousPosition: 3, currentPosition: 8, trafficChange: -62, action: "Update & add 2026 trends section" },
+  { title: "Engagement Ring Settings", previousPosition: 2, currentPosition: 6, trafficChange: -45, action: "Add lab-grown diamond section" },
+  { title: "Jewelry Care Tips", previousPosition: 1, currentPosition: 4, trafficChange: -28, action: "Expand with gemstone-specific care" },
+];
+
+// 12. AI Content Quality Scores
+export const contentQualityScores: Record<string, { seoScore: number; readabilityScore: number; brandVoiceMatch: number }> = {
+  "Behind the Craft: How Our Artisans Shape Each Piece": { seoScore: 88, readabilityScore: 92, brandVoiceMatch: 95 },
+  "The Ultimate Guide to Choosing Your Engagement Ring": { seoScore: 94, readabilityScore: 78, brandVoiceMatch: 88 },
+  "Sustainable Luxury: Our Commitment to Ethical Sourcing": { seoScore: 82, readabilityScore: 85, brandVoiceMatch: 91 },
+  "Bridal Collection 2026 — First Look": { seoScore: 76, readabilityScore: 68, brandVoiceMatch: 84 },
+  "Gemstone Care 101: Expert Tips": { seoScore: 91, readabilityScore: 88, brandVoiceMatch: 79 },
+};
+
+// ============================================================
+// CLICKFLOW — SEO & Digital Enhancements
+// ============================================================
+
+// 13. SEO Content Decay Monitoring
+export const seoContentDecayData = [
+  { page: "/blog/gold-necklace-guide", currentPosition: 8, previousPosition: 3, trafficChange: -62, fix: "Add 2026 gold price trends & new designer spotlights" },
+  { page: "/blog/engagement-ring-settings", currentPosition: 6, previousPosition: 2, trafficChange: -45, fix: "Expand with lab-grown diamond settings comparison" },
+  { page: "/blog/jewelry-care", currentPosition: 4, previousPosition: 1, trafficChange: -28, fix: "Add gemstone-specific care guides (sapphire, emerald, opal)" },
+  { page: "/blog/diamond-buying-guide", currentPosition: 7, previousPosition: 4, trafficChange: -34, fix: "Update with 2026 GIA certification changes" },
+  { page: "/blog/wedding-band-guide", currentPosition: 9, previousPosition: 5, trafficChange: -41, fix: "Add custom wedding band design trends section" },
+  { page: "/blog/sustainable-jewelry", currentPosition: 6, previousPosition: 3, trafficChange: -38, fix: "Refresh with 2026 sustainability certifications & data" },
+];
+
+// 14. Keyword Gap Opportunities
+export const keywordGapData = [
+  { keyword: "rose gold engagement ring", competitorAvgPosition: 4.2, volume: 22000, difficulty: "Medium" as const },
+  { keyword: "custom wedding bands", competitorAvgPosition: 5.8, volume: 18000, difficulty: "Hard" as const },
+  { keyword: "affordable diamond earrings", competitorAvgPosition: 3.4, volume: 14000, difficulty: "Low" as const },
+  { keyword: "sustainable engagement rings", competitorAvgPosition: 6.1, volume: 8000, difficulty: "Medium" as const },
+  { keyword: "vintage style diamond ring", competitorAvgPosition: 4.8, volume: 12000, difficulty: "Medium" as const },
+  { keyword: "gold chain necklace layered", competitorAvgPosition: 3.9, volume: 9500, difficulty: "Low" as const },
+];

@@ -1,12 +1,13 @@
 "use client";
 
-import { contentData } from "@/lib/mock-data";
+import { contentData, contentPipelineData, contentDecayData, contentQualityScores } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Cell,
 } from "recharts";
+import { AlertTriangle, Sparkles, ArrowRight, TrendingDown, FileSearch, PenLine, BarChart3, RefreshCw } from "lucide-react";
 
 const contentTypeConfig = {
   engagement: { label: "Engagement %", color: "oklch(0.65 0.18 65)" },
@@ -81,6 +82,18 @@ const pillarRadarData = contentPillars.map((p) => ({
   conversionAssist: p.conversionAssist,
 }));
 
+function getQualityColor(score: number) {
+  if (score >= 85) return "text-emerald-500";
+  if (score >= 70) return "bg-amber-500";
+  return "text-red-500";
+}
+
+function getQualityBarColor(score: number) {
+  if (score >= 85) return "bg-emerald-500";
+  if (score >= 70) return "bg-amber-500";
+  return "bg-red-500";
+}
+
 export function ContentStrategy() {
   return (
     <div className="space-y-6">
@@ -100,6 +113,167 @@ export function ContentStrategy() {
           </Card>
         ))}
       </div>
+
+      {/* ========== CLICKFLOW: AI Content Pipeline ========== */}
+      <Card className="border-border/50 border-primary/20">
+        <CardHeader className="pb-2">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-primary" />
+            <CardTitle className="text-base font-semibold">AI Content Pipeline</CardTitle>
+            <Badge variant="outline" className="text-[10px]">ClickFlow</Badge>
+          </div>
+          <p className="text-xs text-muted-foreground">4-step automated content strategy → writing → reporting → optimization loop</p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {/* Strategy Step */}
+            <div className="p-4 rounded-lg bg-emerald-500/5 border border-emerald-500/20 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                  <FileSearch className="h-4 w-4 text-emerald-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold">Strategy</p>
+                  <p className="text-[10px] text-muted-foreground">Keyword mapping</p>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Keywords mapped</span>
+                  <span className="font-semibold">{contentPipelineData.strategy.keywordsMapped}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Gap opportunities</span>
+                  <span className="font-semibold text-emerald-600">{contentPipelineData.strategy.gapOpportunities}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Writing Step */}
+            <div className="p-4 rounded-lg bg-primary/5 border border-primary/20 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <PenLine className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold">Writing</p>
+                  <p className="text-[10px] text-muted-foreground">Content production</p>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Drafts ready</span>
+                  <span className="font-semibold">{contentPipelineData.writing.draftsReady}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Pending review</span>
+                  <span className="font-semibold text-amber-500">{contentPipelineData.writing.pendingReview}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Published this week</span>
+                  <span className="font-semibold text-emerald-600">{contentPipelineData.writing.publishedThisWeek}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Reporting Step */}
+            <div className="p-4 rounded-lg bg-amber-500/5 border border-amber-500/20 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                  <BarChart3 className="h-4 w-4 text-amber-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold">Reporting</p>
+                  <p className="text-[10px] text-muted-foreground">Performance tracking</p>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Articles tracked</span>
+                  <span className="font-semibold">{contentPipelineData.reporting.articlesTracked}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Ranking gains</span>
+                  <span className="font-semibold text-emerald-600">{contentPipelineData.reporting.rankingGains}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Decay alerts</span>
+                  <span className="font-semibold text-red-500">{contentPipelineData.reporting.decayAlerts}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Continuous Step */}
+            <div className="p-4 rounded-lg bg-purple-500/5 border border-purple-500/20 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                  <RefreshCw className="h-4 w-4 text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold">Continuous</p>
+                  <p className="text-[10px] text-muted-foreground">Auto-optimization</p>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Keywords monitored</span>
+                  <span className="font-semibold">{contentPipelineData.continuous.keywordsMonitored}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Strategy adjustments</span>
+                  <span className="font-semibold text-purple-600">{contentPipelineData.continuous.strategyAdjustments}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Pipeline flow arrows */}
+          <div className="flex items-center justify-center gap-2 mt-4 text-xs text-muted-foreground">
+            <span className="px-2 py-1 rounded bg-emerald-500/10 text-emerald-600 font-medium">STRATEGY</span>
+            <ArrowRight className="h-3 w-3" />
+            <span className="px-2 py-1 rounded bg-primary/10 text-primary font-medium">WRITING</span>
+            <ArrowRight className="h-3 w-3" />
+            <span className="px-2 py-1 rounded bg-amber-500/10 text-amber-600 font-medium">REPORTING</span>
+            <ArrowRight className="h-3 w-3" />
+            <span className="px-2 py-1 rounded bg-purple-500/10 text-purple-600 font-medium">REPEAT</span>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ========== CLICKFLOW: Content Decay Detection ========== */}
+      <Card className="border-border/50 border-red-500/20">
+        <CardHeader className="pb-2">
+          <div className="flex items-center gap-2">
+            <TrendingDown className="h-4 w-4 text-red-500" />
+            <CardTitle className="text-base font-semibold">Content Decay Detection</CardTitle>
+            <Badge variant="outline" className="text-[10px] border-red-500/30 text-red-500">3 alerts</Badge>
+          </div>
+          <p className="text-xs text-muted-foreground">Articles losing rankings — take action before traffic drops further</p>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {contentDecayData.map((item) => (
+            <div key={item.title} className="p-4 rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors border border-border/30">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                <div className="flex-1 min-w-0 space-y-1.5">
+                  <p className="text-sm font-semibold">{item.title}</p>
+                  <div className="flex items-center gap-3 text-xs">
+                    <span className="text-muted-foreground">
+                      Position: <span className="font-semibold text-foreground">{item.previousPosition} → {item.currentPosition}</span>
+                    </span>
+                    <span className="text-red-500 font-medium">{item.trafficChange}% traffic</span>
+                  </div>
+                </div>
+                <div className="p-2 rounded-lg bg-emerald-500/5 border border-emerald-500/20 shrink-0">
+                  <p className="text-[10px] text-emerald-600 font-medium">
+                    <Sparkles className="h-3 w-3 inline mr-1" />
+                    {item.action}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
 
       {/* Content Pillars — Mapped to Purchase Psyche */}
       <Card className="border-border/50">
@@ -210,29 +384,42 @@ export function ContentStrategy() {
         </Card>
       </div>
 
-      {/* Top Performing Content */}
+      {/* Top Performing Content — WITH AI Quality Scores */}
       <Card className="border-border/50">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base font-semibold">Top Performing Content</CardTitle>
+          <div className="flex items-center gap-2">
+            <CardTitle className="text-base font-semibold">Top Performing Content</CardTitle>
+            <Badge variant="outline" className="text-[10px]">AI Scored</Badge>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {contentData.topPerforming.map((c, i) => (
-              <div key={c.title} className="flex items-start gap-3 p-3 rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors">
-                <span className="text-lg font-bold text-primary/40 w-6 shrink-0 text-center">{i + 1}</span>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="text-sm font-medium leading-snug">{c.title}</p>
-                    <Badge variant="outline" className="text-[10px] shrink-0">{c.type}</Badge>
-                  </div>
-                  <div className="flex items-center gap-4 mt-1.5 text-xs text-muted-foreground">
-                    <span>{(c.views / 1000).toFixed(0)}K views</span>
-                    <span>{c.engagement}% engagement</span>
-                    <span>{(c.shares / 1000).toFixed(1)}K shares</span>
+            {contentData.topPerforming.map((c, i) => {
+              const qualityScores = contentQualityScores[c.title];
+              return (
+                <div key={c.title} className="flex items-start gap-3 p-3 rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors">
+                  <span className="text-lg font-bold text-primary/40 w-6 shrink-0 text-center">{i + 1}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="text-sm font-medium leading-snug">{c.title}</p>
+                      <Badge variant="outline" className="text-[10px] shrink-0">{c.type}</Badge>
+                    </div>
+                    <div className="flex items-center gap-4 mt-1.5 text-xs text-muted-foreground">
+                      <span>{(c.views / 1000).toFixed(0)}K views</span>
+                      <span>{c.engagement}% engagement</span>
+                      <span>{(c.shares / 1000).toFixed(1)}K shares</span>
+                    </div>
+                    {qualityScores && (
+                      <div className="flex items-center gap-4 mt-2 pt-2 border-t border-border/20">
+                        <QualityMiniScore label="SEO" score={qualityScores.seoScore} />
+                        <QualityMiniScore label="Readability" score={qualityScores.readabilityScore} />
+                        <QualityMiniScore label="Brand Voice" score={qualityScores.brandVoiceMatch} />
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </CardContent>
       </Card>
@@ -271,6 +458,24 @@ export function ContentStrategy() {
           </div>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+// Sub-component for quality score mini display
+function QualityMiniScore({ label, score }: { label: string; score: number }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <div className="w-12 h-1.5 rounded-full bg-muted overflow-hidden">
+        <div
+          className={`h-full rounded-full ${getQualityBarColor(score)} transition-all duration-700`}
+          style={{ width: `${score}%` }}
+        />
+      </div>
+      <span className="text-[10px] text-muted-foreground">{label}</span>
+      <span className={`text-[10px] font-semibold tabular-nums ${score >= 85 ? "text-emerald-500" : score >= 70 ? "text-amber-500" : "text-red-500"}`}>
+        {score}
+      </span>
     </div>
   );
 }

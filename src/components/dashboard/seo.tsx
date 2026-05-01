@@ -1,17 +1,27 @@
 "use client";
 
-import { seoData } from "@/lib/mock-data";
+import { seoData, seoContentDecayData, keywordGapData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, PieChart, Pie,
 } from "recharts";
+import { TrendingDown, Sparkles, Search, Target } from "lucide-react";
 
 const trafficConfig = seoData.trafficSources.reduce((acc, s, i) => {
   acc[s.source] = { label: s.source, color: s.color };
   return acc;
 }, {} as Record<string, { label: string; color: string }>);
+
+function getDifficultyColor(d: string) {
+  switch (d) {
+    case "Low": return "bg-emerald-500/10 text-emerald-600 border-emerald-500/30";
+    case "Medium": return "bg-amber-500/10 text-amber-600 border-amber-500/30";
+    case "Hard": return "bg-red-500/10 text-red-500 border-red-500/30";
+    default: return "";
+  }
+}
 
 export function SeoDigital() {
   return (
@@ -138,6 +148,113 @@ export function SeoDigital() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ========== CLICKFLOW: Content Decay Monitoring ========== */}
+      <Card className="border-border/50 border-red-500/20">
+        <CardHeader className="pb-2">
+          <div className="flex items-center gap-2">
+            <TrendingDown className="h-4 w-4 text-red-500" />
+            <CardTitle className="text-base font-semibold">Content Decay Monitoring</CardTitle>
+            <Badge variant="outline" className="text-[10px] border-red-500/30 text-red-500">{seoContentDecayData.length} pages declining</Badge>
+          </div>
+          <p className="text-xs text-muted-foreground">Pages losing organic traffic — AI-suggested fixes to recover rankings</p>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border/50">
+                  <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground">Page</th>
+                  <th className="text-center py-2 px-3 text-xs font-medium text-muted-foreground">Previous</th>
+                  <th className="text-center py-2 px-3 text-xs font-medium text-muted-foreground">Current</th>
+                  <th className="text-center py-2 px-3 text-xs font-medium text-muted-foreground">Traffic</th>
+                  <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground">AI Fix Suggestion</th>
+                </tr>
+              </thead>
+              <tbody>
+                {seoContentDecayData.map((item) => (
+                  <tr key={item.page} className="border-b border-border/30 hover:bg-muted/20 transition-colors">
+                    <td className="py-2.5 px-3">
+                      <p className="text-xs font-medium text-primary max-w-[180px] truncate">{item.page}</p>
+                    </td>
+                    <td className="py-2.5 px-3 text-center">
+                      <span className="inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600">
+                        #{item.previousPosition}
+                      </span>
+                    </td>
+                    <td className="py-2.5 px-3 text-center">
+                      <span className="inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold bg-red-500/10 text-red-500">
+                        #{item.currentPosition}
+                      </span>
+                    </td>
+                    <td className="py-2.5 px-3 text-center">
+                      <span className="text-xs font-medium text-red-500">{item.trafficChange}%</span>
+                    </td>
+                    <td className="py-2.5 px-3">
+                      <div className="flex items-start gap-1.5">
+                        <Sparkles className="h-3 w-3 text-primary shrink-0 mt-0.5" />
+                        <span className="text-[10px] text-muted-foreground leading-relaxed">{item.fix}</span>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ========== CLICKFLOW: Keyword Gap Opportunities ========== */}
+      <Card className="border-border/50 border-primary/20">
+        <CardHeader className="pb-2">
+          <div className="flex items-center gap-2">
+            <Target className="h-4 w-4 text-primary" />
+            <CardTitle className="text-base font-semibold">Keyword Gap Opportunities</CardTitle>
+            <Badge variant="outline" className="text-[10px]">ClickFlow</Badge>
+          </div>
+          <p className="text-xs text-muted-foreground">Keywords competitors rank for that Varni doesn't — prioritized by volume and difficulty</p>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border/50">
+                  <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground">Keyword</th>
+                  <th className="text-center py-2 px-3 text-xs font-medium text-muted-foreground">Competitor Avg Pos</th>
+                  <th className="text-center py-2 px-3 text-xs font-medium text-muted-foreground">Search Volume</th>
+                  <th className="text-center py-2 px-3 text-xs font-medium text-muted-foreground">Difficulty</th>
+                </tr>
+              </thead>
+              <tbody>
+                {keywordGapData.map((item) => (
+                  <tr key={item.keyword} className="border-b border-border/30 hover:bg-muted/20 transition-colors">
+                    <td className="py-2.5 px-3 font-medium">{item.keyword}</td>
+                    <td className="py-2.5 px-3 text-center">
+                      <Badge variant="secondary" className="text-[10px]">
+                        #{item.competitorAvgPosition.toFixed(1)}
+                      </Badge>
+                    </td>
+                    <td className="py-2.5 px-3 text-center tabular-nums text-muted-foreground">
+                      {item.volume >= 1000 ? `${(item.volume / 1000).toFixed(0)}K` : item.volume}
+                    </td>
+                    <td className="py-2.5 px-3 text-center">
+                      <Badge variant="outline" className={`text-[10px] ${getDifficultyColor(item.difficulty)}`}>
+                        {item.difficulty}
+                      </Badge>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="mt-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
+            <p className="text-xs text-primary font-medium">
+              <Search className="h-3 w-3 inline mr-1" />
+              Total addressable search volume: {keywordGapData.reduce((s, k) => s + k.volume, 0).toLocaleString()}/mo — {keywordGapData.filter(k => k.difficulty === "Low").length} keywords rated Low difficulty
+            </p>
           </div>
         </CardContent>
       </Card>

@@ -1,36 +1,30 @@
 "use client";
 
-import { creativeData } from "@/lib/mock-data";
+import { creativeData, creativeScoresData, suggestedCreativesData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { KpiCard } from "./kpi-components";
 import {
   ChartContainer, ChartTooltip, ChartTooltipContent,
 } from "@/components/ui/chart";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell,
 } from "recharts";
-import { Palette, Eye, Lightbulb, AlertTriangle, Image, Video, LayoutGrid, Film } from "lucide-react";
+import { Palette, Eye, Lightbulb, AlertTriangle, Image, Video, LayoutGrid, Film, Sparkles, Check, X } from "lucide-react";
 
 const typeIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   Image, Video, Carousel: LayoutGrid, Reel: Film,
 };
 
+function getMiniBarColor(score: number) {
+  if (score >= 80) return "bg-emerald-500";
+  if (score >= 60) return "bg-amber-500";
+  return "bg-red-500";
+}
+
 export function CreativeBrandLayer() {
   const COLORS = ["oklch(0.65 0.18 65)", "oklch(0.6 0.15 340)", "oklch(0.55 0.12 200)", "oklch(0.7 0.1 140)", "oklch(0.6 0.2 30)", "oklch(0.5 0.15 260)"];
-
-  const styleRadarData = creativeData.visualStyleAnalysis.map((s) => ({
-    style: s.style.split(" ")[0],
-    ctr: s.avgCTR,
-    roas: s.avgROAS,
-    usage: s.usage,
-  }));
-
-  const themeRadarData = creativeData.contentThemes.map((t) => ({
-    theme: t.theme.split(" ")[0],
-    engagement: t.avgEngagement,
-    conversion: t.conversionAssist,
-  }));
 
   const fatigueData = creativeData.audienceFatigue.map((a) => ({
     audience: a.audience.length > 25 ? a.audience.slice(0, 25) + "..." : a.audience,
@@ -67,11 +61,14 @@ export function CreativeBrandLayer() {
         <KpiCard label="Best CTR" value={6.4} unit="%" change={1.2} icon="TrendingUp" />
       </div>
 
-      {/* Top Performing Creatives */}
+      {/* Top Performing Creatives — WITH AI Creative Scoring */}
       <Card className="border-border/50">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base font-semibold">Top Performing Creatives</CardTitle>
-          <p className="text-xs text-muted-foreground">Ranked by ROAS — what designs are driving the most revenue</p>
+          <div className="flex items-center gap-2">
+            <CardTitle className="text-base font-semibold">Top Performing Creatives</CardTitle>
+            <Badge variant="outline" className="text-[10px]">AI Scored</Badge>
+          </div>
+          <p className="text-xs text-muted-foreground">Ranked by ROAS — with AI component scores for CTA, Visual, and Copy</p>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto custom-scrollbar">
@@ -81,7 +78,7 @@ export function CreativeBrandLayer() {
                   <th className="text-left py-2 px-2 text-xs font-medium text-muted-foreground">#</th>
                   <th className="text-left py-2 px-2 text-xs font-medium text-muted-foreground">Creative</th>
                   <th className="text-left py-2 px-2 text-xs font-medium text-muted-foreground">Type</th>
-                  <th className="text-left py-2 px-2 text-xs font-medium text-muted-foreground">Style</th>
+                  <th className="text-left py-2 px-2 text-xs font-medium text-muted-foreground hidden lg:table-cell">AI Scores</th>
                   <th className="text-right py-2 px-2 text-xs font-medium text-muted-foreground">CTR</th>
                   <th className="text-right py-2 px-2 text-xs font-medium text-muted-foreground">Conv</th>
                   <th className="text-right py-2 px-2 text-xs font-medium text-muted-foreground">ROAS</th>
@@ -92,6 +89,7 @@ export function CreativeBrandLayer() {
                   .sort((a, b) => b.roas - a.roas)
                   .map((c, i) => {
                     const TypeIcon = typeIcons[c.type] || Image;
+                    const scores = creativeScoresData[c.id];
                     return (
                       <tr key={c.id} className="border-b border-border/30 hover:bg-muted/20 transition-colors">
                         <td className="py-2.5 px-2">
@@ -107,8 +105,14 @@ export function CreativeBrandLayer() {
                             <span className="text-xs">{c.type}</span>
                           </div>
                         </td>
-                        <td className="py-2.5 px-2">
-                          <Badge variant="outline" className="text-[10px]">{c.style}</Badge>
+                        <td className="py-2.5 px-2 hidden lg:table-cell">
+                          {scores && (
+                            <div className="space-y-1.5 min-w-[160px]">
+                              <ScoreBar label="CTA" score={scores.ctaScore} note={scores.ctaNote} />
+                              <ScoreBar label="Visual" score={scores.visualScore} note={scores.visualNote} />
+                              <ScoreBar label="Copy" score={scores.copyScore} note={scores.copyNote} />
+                            </div>
+                          )}
                         </td>
                         <td className="py-2.5 px-2 text-right tabular-nums">{c.ctr}%</td>
                         <td className="py-2.5 px-2 text-right tabular-nums">{c.conversions}</td>
@@ -242,6 +246,67 @@ export function CreativeBrandLayer() {
           </div>
         </CardContent>
       </Card>
+
+      {/* ========== RYZE AI: AI-Suggested Creatives ========== */}
+      <Card className="border-border/50 border-primary/20">
+        <CardHeader className="pb-2">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-primary" />
+            <CardTitle className="text-base font-semibold">AI-Suggested Creative Concepts</CardTitle>
+            <Badge variant="outline" className="text-[10px]">4 concepts pending</Badge>
+          </div>
+          <p className="text-xs text-muted-foreground">AI-generated creative ideas based on top-performing patterns and audience signals</p>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {suggestedCreativesData.map((concept) => {
+            const TypeIcon = typeIcons[concept.type] || Image;
+            return (
+              <div key={concept.id} className="p-4 rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors border border-border/30">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0 space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      <TypeIcon className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="text-sm font-semibold">{concept.concept}</span>
+                      <Badge variant="outline" className="text-[10px]">{concept.type}</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{concept.description}</p>
+                    <p className="text-xs text-emerald-600 font-medium">Est. {concept.estEngagement}</p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Button variant="outline" size="sm" className="h-8 text-xs gap-1 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30">
+                      <X className="h-3 w-3" />
+                      Deny
+                    </Button>
+                    <Button size="sm" className="h-8 text-xs gap-1">
+                      <Check className="h-3 w-3" />
+                      Approve
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// Sub-component for AI creative score mini bars
+function ScoreBar({ label, score, note }: { label: string; score: number; note: string }) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-[10px] text-muted-foreground w-10 shrink-0">{label}</span>
+      <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+        <div
+          className={`h-full rounded-full ${getMiniBarColor(score)} transition-all duration-700`}
+          style={{ width: `${score}%` }}
+        />
+      </div>
+      <span className={`text-[10px] font-semibold tabular-nums w-6 text-right ${score >= 80 ? "text-emerald-500" : score >= 60 ? "text-amber-500" : "text-red-500"}`}>
+        {score}
+      </span>
+      <span className="text-[10px] text-muted-foreground truncate hidden xl:inline max-w-[80px]">{note}</span>
     </div>
   );
 }

@@ -1,12 +1,13 @@
 "use client";
 
-import { competitiveData } from "@/lib/mock-data";
+import { competitiveData, auctionInsightsData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, ScatterChart, Scatter, ZAxis, ResponsiveContainer,
 } from "recharts";
+import { Gavel } from "lucide-react";
 
 // Positioning map data: price tier (x) vs digital brand strength (y)
 const positioningData = [
@@ -214,6 +215,68 @@ export function CompetitiveIntel() {
                     <td className="py-2.5 px-2 text-center text-xs text-muted-foreground">{c.pricing}</td>
                     <td className="py-2.5 px-2 text-xs text-emerald-600">{c.strength}</td>
                     <td className="py-2.5 px-2 text-xs text-red-400">{c.weakness}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ========== RYZE AI: Auction Insights ========== */}
+      <Card className="border-border/50">
+        <CardHeader className="pb-2">
+          <div className="flex items-center gap-2">
+            <Gavel className="h-4 w-4 text-primary" />
+            <CardTitle className="text-base font-semibold">Auction Insights</CardTitle>
+            <Badge variant="outline" className="text-[10px]">AI Powered</Badge>
+          </div>
+          <p className="text-xs text-muted-foreground">How often your ads appear alongside competitors in search auctions</p>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border/50">
+                  <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground">Brand</th>
+                  <th className="text-center py-2 px-3 text-xs font-medium text-muted-foreground">Impr. Share</th>
+                  <th className="text-center py-2 px-3 text-xs font-medium text-muted-foreground">Overlap Rate</th>
+                  <th className="text-center py-2 px-3 text-xs font-medium text-muted-foreground">Avg. Position</th>
+                  <th className="text-left py-2 px-3 text-xs font-medium text-muted-foreground">Share Bar</th>
+                </tr>
+              </thead>
+              <tbody>
+                {auctionInsightsData.map((item) => (
+                  <tr key={item.brand} className={`border-b border-border/30 hover:bg-muted/20 transition-colors ${item.isYou ? "bg-primary/5" : ""}`}>
+                    <td className="py-2.5 px-3 font-medium">
+                      {item.brand}
+                      {item.isYou && <Badge className="ml-1 text-[10px]">You</Badge>}
+                    </td>
+                    <td className="py-2.5 px-3 text-center">
+                      <span className={`inline-flex items-center justify-center w-12 h-6 rounded text-xs font-bold ${
+                        item.impressionShare >= 50 ? "bg-emerald-500/10 text-emerald-600" :
+                        item.impressionShare >= 30 ? "bg-amber-500/10 text-amber-600" :
+                        "bg-red-500/10 text-red-500"
+                      }`}>
+                        {item.impressionShare}%
+                      </span>
+                    </td>
+                    <td className="py-2.5 px-3 text-center tabular-nums text-muted-foreground">
+                      {item.overlapRate !== null ? `${item.overlapRate}%` : "—"}
+                    </td>
+                    <td className="py-2.5 px-3 text-center">
+                      <Badge variant={item.avgPosition <= 1.5 ? "default" : item.avgPosition <= 2.5 ? "secondary" : "outline"} className="text-[10px]">
+                        {item.avgPosition.toFixed(1)}
+                      </Badge>
+                    </td>
+                    <td className="py-2.5 px-3 min-w-[120px]">
+                      <div className="h-3 rounded-full bg-muted overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all duration-700 ${item.isYou ? "bg-primary" : "bg-primary/40"}`}
+                          style={{ width: `${item.impressionShare}%` }}
+                        />
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
