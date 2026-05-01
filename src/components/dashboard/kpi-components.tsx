@@ -98,9 +98,9 @@ export function Gauge({ value, max = 100, size = 120, label, showValue = true, c
   };
 
   return (
-    <div className={cn("flex flex-col items-center gap-2", className)}>
-      <div className="relative" style={{ width: size, height: size / 2 + 16 }}>
-        <svg width={size} height={size / 2 + 16} className="overflow-visible">
+    <div className={cn("flex flex-col items-center gap-2 max-w-full", className)}>
+      <div className="relative" style={{ width: size, height: size / 2 + 16, maxWidth: '100%' }}>
+        <svg width={size} height={size / 2 + 16} className="overflow-visible" style={{ maxWidth: '100%' }}>
           <path
             d={`M 8 ${size / 2 + 8} A ${radius} ${radius} 0 0 1 ${size - 8} ${size / 2 + 8}`}
             fill="none"

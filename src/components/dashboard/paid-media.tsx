@@ -17,7 +17,7 @@ export function PaidMedia() {
   return (
     <div className="space-y-6">
       {/* Key Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           { label: "Total Ad Spend", value: `$${(adsData.totalSpend / 1000).toFixed(0)}K` },
           { label: "Total Ad Revenue", value: `$${(adsData.totalRevenue / 1000).toFixed(0)}K` },

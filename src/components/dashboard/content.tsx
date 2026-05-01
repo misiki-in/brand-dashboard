@@ -85,7 +85,7 @@ export function ContentStrategy() {
   return (
     <div className="space-y-6">
       {/* Content Summary */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {[
           { label: "Total Content Pieces", value: contentData.totalContent, sub: "This quarter" },
           { label: "Avg Engagement Rate", value: `${contentData.avgEngagement}%`, sub: "Across all platforms" },

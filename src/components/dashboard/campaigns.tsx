@@ -20,7 +20,7 @@ export function CampaignCalendar() {
   return (
     <div className="space-y-6">
       {/* Summary */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           { label: "Active Campaigns", value: campaignData.activeCampaigns },
           { label: "Upcoming Campaigns", value: campaignData.upcomingCampaigns },

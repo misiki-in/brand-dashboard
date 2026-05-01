@@ -30,7 +30,7 @@ export function SentimentListening() {
   return (
     <div className="space-y-6">
       {/* Top Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
         {[
           { label: "Net Sentiment Score", value: sentimentData.netSentimentScore, suffix: "/100" },
           { label: "Positive Mentions", value: sentimentData.positiveMentions.toLocaleString(), suffix: "" },

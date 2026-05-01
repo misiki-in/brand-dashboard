@@ -74,7 +74,7 @@ export function CustomerExperience() {
                 "from-red-500 to-red-400";
               return (
                 <div key={t.touchpoint} className="flex items-center gap-3">
-                  <span className="text-sm w-36 shrink-0 truncate">{t.touchpoint}</span>
+                  <span className="text-sm w-24 sm:w-36 shrink-0 truncate">{t.touchpoint}</span>
                   <div className="flex-1 h-7 rounded-lg bg-muted/50 overflow-hidden relative">
                     <div
                       className={`h-full rounded-lg bg-gradient-to-r ${colorClass} transition-all duration-700 flex items-center justify-end pr-3`}

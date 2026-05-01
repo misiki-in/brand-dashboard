@@ -23,7 +23,7 @@ export function BrandAwareness() {
   return (
     <div className="space-y-6">
       {/* Key Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           { label: "Top of Mind Awareness", value: awarenessData.topOfMind, unit: "%" },
           { label: "Aided Brand Recall", value: awarenessData.aidedRecall, unit: "%" },

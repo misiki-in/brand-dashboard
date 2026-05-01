@@ -19,7 +19,7 @@ export function SocialMedia() {
   return (
     <div className="space-y-6">
       {/* Summary Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           { label: "Total Followers", value: (socialData.totalFollowers / 1000).toFixed(0) + "K", change: socialData.followerGrowth },
           { label: "Monthly Impressions", value: (socialData.impressions / 1000000).toFixed(1) + "M" },

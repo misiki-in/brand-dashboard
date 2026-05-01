@@ -39,7 +39,7 @@ export function InventoryIntelligence() {
     <div className="space-y-6">
       {/* Hero — Inventory Pulse */}
       <Card className="border-border/50 bg-gradient-to-br from-card via-card to-red-500/5">
-        <CardContent className="p-6 lg:p-8">
+        <CardContent className="p-4 lg:p-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
             <div className="flex items-center gap-4">
               <div className="h-14 w-14 rounded-xl bg-red-500/10 flex items-center justify-center">

@@ -28,7 +28,7 @@ export function ProductPerformance() {
   return (
     <div className="space-y-6">
       {/* Sales Intelligence KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <KpiCard label="Total Revenue" value={2840000} unit="$" change={12.3} icon="DollarSign" />
         <KpiCard label="Contribution Margin" value={62} unit="%" change={2} icon="TrendingUp" />
         <KpiCard label="Discount Dependency" value={18} unit="%" change={-3} icon="TrendingDown" />

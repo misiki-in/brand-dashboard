@@ -26,7 +26,7 @@ export function LoyaltyRetention() {
   return (
     <div className="space-y-6">
       {/* Summary */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           { label: "Loyalty Members", value: (loyaltyData.loyaltyMembers / 1000).toFixed(0) + "K", change: loyaltyData.loyaltyGrowth },
           { label: "Repeat Purchase Rate", value: `${loyaltyData.repeatPurchaseRate}%` },

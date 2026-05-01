@@ -18,7 +18,7 @@ export function EmailSms() {
   return (
     <div className="space-y-6">
       {/* Summary */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           { label: "List Size", value: (emailData.listSize / 1000).toFixed(0) + "K", change: emailData.listGrowth },
           { label: "Avg Open Rate", value: `${emailData.avgOpenRate}%` },

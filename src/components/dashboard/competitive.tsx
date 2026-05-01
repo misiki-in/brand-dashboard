@@ -86,7 +86,7 @@ export function CompetitiveIntel() {
   return (
     <div className="space-y-6">
       {/* Market Position */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           { label: "Market Share", value: `${competitiveData.marketShare}%` },
           { label: "Share of Voice", value: `${competitiveData.shareOfVoice}%` },
@@ -109,7 +109,7 @@ export function CompetitiveIntel() {
           <p className="text-xs text-muted-foreground">Price Tier (x-axis) vs Digital Brand Strength (y-axis). Bubble size = estimated market presence.</p>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={{}} className="h-[380px] w-full">
+          <ChartContainer config={{}} className="h-[280px] sm:h-[380px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-20" />
@@ -270,7 +270,7 @@ export function CompetitiveIntel() {
               const isBelow = p.us < p.market;
               return (
                 <div key={p.category} className="flex items-center gap-4 p-3 rounded-lg bg-muted/20">
-                  <span className="text-sm font-medium w-36 shrink-0">{p.category}</span>
+                  <span className="text-sm font-medium w-28 sm:w-36 shrink-0">{p.category}</span>
                   <div className="flex-1 space-y-1">
                     <div className="flex gap-2 items-center">
                       <div className="flex-1 h-6 rounded bg-muted overflow-hidden relative">

@@ -40,9 +40,9 @@ export function AIGrowthEngine() {
     <div className="space-y-6">
       {/* Hero — AI Engine Status */}
       <Card className="border-border/50 bg-gradient-to-br from-card via-card to-violet-500/5">
-        <CardContent className="p-6 lg:p-8">
+        <CardContent className="p-4 lg:p-8">
           <div className="flex flex-col lg:flex-row items-center gap-8">
-            <Gauge value={aiEngineData.momentumScore} size={160} label="Brand Momentum Score" />
+            <Gauge value={aiEngineData.momentumScore} size={130} label="Brand Momentum Score" />
             <div className="flex-1 space-y-4 w-full">
               <div className="flex items-center gap-3">
                 <Brain className="h-6 w-6 text-violet-500" />

@@ -50,7 +50,7 @@ export function InfluencerPartnerships() {
   return (
     <div className="space-y-6">
       {/* Summary */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
         {[
           { label: "Active Partnerships", value: influencerData.activePartnerships },
           { label: "Total Reach", value: (influencerData.totalReach / 1000000).toFixed(1) + "M" },

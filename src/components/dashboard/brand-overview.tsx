@@ -27,9 +27,9 @@ export function BrandOverview() {
     <div className="space-y-6">
       {/* Hero Brand Health Score */}
       <Card className="border-border/50 bg-gradient-to-br from-card via-card to-primary/5">
-        <CardContent className="p-6 lg:p-8">
+        <CardContent className="p-4 lg:p-8">
           <div className="flex flex-col lg:flex-row items-center gap-8">
-            <Gauge value={brandHealth.score} size={180} label="Brand Health Score" />
+            <Gauge value={brandHealth.score} size={140} label="Brand Health Score" />
             <div className="flex-1 space-y-4 w-full">
               <div>
                 <h2 className="text-xl font-bold">Varni Jewels — Brand Pulse</h2>
@@ -37,7 +37,7 @@ export function BrandOverview() {
                   Overall brand health has improved by <span className="text-emerald-500 font-semibold">+{brandHealth.trend} points</span> compared to the previous quarter, driven by strong awareness gains and loyalty improvements.
                 </p>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                 {Object.entries(brandHealth.components).map(([key, value]) => (
                   <div key={key} className="text-center p-2 rounded-lg bg-muted/50">
                     <p className="text-lg font-bold tabular-nums">{value}</p>

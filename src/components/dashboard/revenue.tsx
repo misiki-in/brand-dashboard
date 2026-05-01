@@ -24,7 +24,7 @@ export function RevenueConversions() {
   return (
     <div className="space-y-6">
       {/* Key Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           { label: "Total Revenue", value: `$${(revenueData.totalRevenue / 1000000).toFixed(1)}M`, change: revenueData.revenueGrowth },
           { label: "Total Orders", value: revenueData.totalOrders.toLocaleString() },
