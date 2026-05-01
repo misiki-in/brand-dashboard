@@ -214,7 +214,7 @@ function SidebarNav({
   );
 }
 
-export default function DashboardClient() {
+function DashboardContent() {
   const [activeTab, setActiveTab] = useState('overview');
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -227,8 +227,6 @@ export default function DashboardClient() {
   const { currentProject } = useWorkspace();
 
   return (
-    <WorkspaceProvider>
-    <ActionProvider>
     <div className="flex h-screen overflow-hidden">
       {/* Desktop Sidebar */}
       <aside
@@ -293,6 +291,14 @@ export default function DashboardClient() {
         </ScrollArea>
       </main>
     </div>
+    );
+}
+
+export default function DashboardClient() {
+  return (
+    <WorkspaceProvider>
+    <ActionProvider>
+      <DashboardContent />
     </ActionProvider>
     </WorkspaceProvider>
   );
