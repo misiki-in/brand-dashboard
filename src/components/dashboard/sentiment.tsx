@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { sentimentData } from "@/lib/mock-data";
+import { exportToCSV } from "@/lib/real-actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Gauge } from "./kpi-components";
@@ -26,12 +28,24 @@ const sourceConfig = {
 
 export function SentimentListening() {
   const { executeAction, automations } = useAction();
+  const [trackedTopics, setTrackedTopics] = useState<Set<string>>(new Set());
   const relevantAutomations = automations.filter(a => a.module === "sentiment");
   const pieData = [
     { name: "Positive", value: sentimentData.positiveMentions, fill: "oklch(0.6 0.18 145)" },
     { name: "Neutral", value: sentimentData.neutralMentions, fill: "oklch(0.7 0.05 80)" },
     { name: "Negative", value: sentimentData.negativeMentions, fill: "oklch(0.6 0.2 25)" },
   ];
+
+  const handleTrackTopic = (topic: string) => {
+    if (trackedTopics.has(topic)) return;
+    setTrackedTopics(prev => new Set(prev).add(topic));
+    executeAction({
+      action: `Track: ${topic}`,
+      module: "sentiment",
+      detail: `Adding "${topic}" to active sentiment tracking`,
+      successMsg: `Now tracking "${topic}"`,
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -62,18 +76,26 @@ export function SentimentListening() {
             action: "Create Topic Tracker",
             module: "sentiment",
             detail: "Creating new sentiment topic tracker with keyword monitoring",
+            successMsg: "Topic tracker created",
           }),
         }}
         actions={[
           {
             label: "Export Report",
             icon: Download,
-            onClick: () => executeAction({
-              action: "Export Report",
-              module: "sentiment",
-              detail: "Generating sentiment analysis report",
-              successMsg: "Sentiment report exported",
-            }),
+            onClick: () => {
+              exportToCSV(sentimentData.topTopics.map(t => ({
+                Topic: t.topic,
+                Mentions: t.mentions,
+                Sentiment: t.sentiment + '%',
+              })), "sentiment-report.csv");
+              executeAction({
+                action: "Export Report",
+                module: "sentiment",
+                detail: "Generating sentiment analysis report",
+                successMsg: "Sentiment report exported to CSV",
+              });
+            },
           },
           {
             label: "Set Alert Threshold",
@@ -82,7 +104,7 @@ export function SentimentListening() {
               action: "Set Alert Threshold",
               module: "sentiment",
               detail: "Configuring negative sentiment spike alerts",
-              successMsg: "Alert threshold configured",
+              successMsg: "Sentiment alert threshold set at 20% spike",
             }),
           },
         ]}
@@ -174,16 +196,12 @@ export function SentimentListening() {
                   </Badge>
                   <Button
                     size="sm"
-                    variant="ghost"
+                    variant={trackedTopics.has(t.topic) ? "secondary" : "ghost"}
                     className="h-6 text-[10px] px-2"
-                    onClick={() => executeAction({
-                      action: `Track: ${t.topic}`,
-                      module: "sentiment",
-                      detail: `Adding "${t.topic}" to active sentiment tracking`,
-                      successMsg: `Now tracking "${t.topic}"`,
-                    })}
+                    disabled={trackedTopics.has(t.topic)}
+                    onClick={() => handleTrackTopic(t.topic)}
                   >
-                    Track
+                    {trackedTopics.has(t.topic) ? "Tracking ✓" : "Track"}
                   </Button>
                 </div>
               </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { creativeData, creativeScoresData, suggestedCreativesData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +15,8 @@ import {
 import { Palette, Eye, Lightbulb, AlertTriangle, Image, Video, LayoutGrid, Film, Sparkles, Check, X, Plus, Download, TestTube } from "lucide-react";
 import { useAction } from "@/lib/action-context";
 import { ActionBar } from "./action-bar";
+import { CreativeBriefModal, ABTestModal, ExportModal } from "./action-modals";
+import { exportToCSV } from "@/lib/real-actions";
 
 const typeIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   Image, Video, Carousel: LayoutGrid, Reel: Film,
@@ -28,6 +31,10 @@ function getMiniBarColor(score: number) {
 export function CreativeBrandLayer() {
   const { executeAction, automations } = useAction();
   const creativeAutomations = automations.filter(a => a.module === "creative");
+  const [creativeBriefOpen, setCreativeBriefOpen] = useState(false);
+  const [abTestOpen, setABTestOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
+  const [conceptStatuses, setConceptStatuses] = useState<Record<string, 'pending' | 'approved' | 'dismissed'>>({});
   const COLORS = ["oklch(0.65 0.18 65)", "oklch(0.6 0.15 340)", "oklch(0.55 0.12 200)", "oklch(0.7 0.1 140)", "oklch(0.6 0.2 30)", "oklch(0.5 0.15 260)"];
 
   const fatigueData = creativeData.audienceFatigue.map((a) => ({
@@ -70,36 +77,37 @@ export function CreativeBrandLayer() {
         primary={{
           label: "Create Creative",
           icon: Plus,
-          onClick: () => executeAction({
-            action: "Create Creative",
-            module: "creative",
-            detail: "Opening creative studio with AI-powered design suggestions",
-            successMsg: "Creative brief created",
-            simulateDelay: 1000,
-          }),
+          onClick: () => setCreativeBriefOpen(true),
         }}
         actions={[
           {
             label: "Run A/B Test",
             icon: TestTube,
-            onClick: () => executeAction({
-              action: "Run A/B Test",
-              module: "creative",
-              detail: "Setting up new A/B test with top creative variations",
-              successMsg: "A/B test launched",
-              simulateDelay: 1500,
-            }),
+            onClick: () => setABTestOpen(true),
           },
           {
             label: "Export Report",
             icon: Download,
-            onClick: () => executeAction({
-              action: "Export Creative Report",
-              module: "creative",
-              detail: "Generating creative performance report with AI scores",
-              successMsg: "Creative report exported",
-              simulateDelay: 1000,
-            }),
+            onClick: () => {
+              exportToCSV(
+                creativeData.topPerformingCreatives.map((c) => ({
+                  Name: c.name,
+                  Type: c.type,
+                  Campaign: c.campaign,
+                  CTR: c.ctr + '%',
+                  Conversions: c.conversions,
+                  ROAS: c.roas + 'x',
+                  Style: c.style,
+                })),
+                "creative-report.csv"
+              );
+              executeAction({
+                action: "Export Creative Report",
+                module: "creative",
+                detail: `Exporting ${creativeData.topPerformingCreatives.length} top creatives`,
+                successMsg: "Creative report exported to CSV",
+              });
+            },
           },
         ]}
         relevantAutomations={creativeAutomations}
@@ -304,53 +312,114 @@ export function CreativeBrandLayer() {
         <CardContent className="space-y-3">
           {suggestedCreativesData.map((concept) => {
             const TypeIcon = typeIcons[concept.type] || Image;
+            const status = conceptStatuses[concept.id] || 'pending';
             return (
-              <div key={concept.id} className="p-4 rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors border border-border/30">
+              <div key={concept.id} className={`p-4 rounded-lg transition-colors border border-border/30 ${
+                status === 'dismissed'
+                  ? 'bg-muted/10 opacity-50'
+                  : status === 'approved'
+                  ? 'bg-emerald-500/5 border-emerald-500/20'
+                  : 'bg-muted/20 hover:bg-muted/40'
+              }`}>
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                   <div className="flex-1 min-w-0 space-y-1.5">
                     <div className="flex items-center gap-2">
                       <TypeIcon className="h-3.5 w-3.5 text-muted-foreground" />
                       <span className="text-sm font-semibold">{concept.concept}</span>
                       <Badge variant="outline" className="text-[10px]">{concept.type}</Badge>
+                      {status === 'approved' && <Badge className="bg-emerald-500/10 text-emerald-600 text-[10px]">Approved ✓</Badge>}
+                      {status === 'dismissed' && <Badge variant="secondary" className="text-[10px]">Dismissed</Badge>}
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">{concept.description}</p>
                     <p className="text-xs text-emerald-600 font-medium">Est. {concept.estEngagement}</p>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-8 text-xs gap-1 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30"
-                      onClick={() => executeAction({
-                        action: `Deny: ${concept.concept.slice(0, 50)}`,
-                        module: "creative",
-                        detail: `Rejected concept: ${concept.concept}`,
-                        successMsg: "Concept dismissed",
-                      })}
-                    >
-                      <X className="h-3 w-3" />
-                      Deny
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="h-8 text-xs gap-1"
-                      onClick={() => executeAction({
-                        action: `Approve: ${concept.concept.slice(0, 50)}`,
-                        module: "creative",
-                        detail: `Approved concept: ${concept.concept} — sending to creative team`,
-                        successMsg: "Concept approved and assigned",
-                      })}
-                    >
-                      <Check className="h-3 w-3" />
-                      Approve
-                    </Button>
-                  </div>
+                  {status === 'pending' && (
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 text-xs gap-1 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30"
+                        onClick={() => {
+                          setConceptStatuses(prev => ({ ...prev, [concept.id]: 'dismissed' }));
+                          executeAction({
+                            action: `Deny: ${concept.concept.slice(0, 50)}`,
+                            module: "creative",
+                            detail: `Rejected concept: ${concept.concept}`,
+                            successMsg: `Concept dismissed: ${concept.concept}`,
+                          });
+                        }}
+                      >
+                        <X className="h-3 w-3" />
+                        Deny
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="h-8 text-xs gap-1"
+                        onClick={() => {
+                          setConceptStatuses(prev => ({ ...prev, [concept.id]: 'approved' }));
+                          executeAction({
+                            action: `Approve: ${concept.concept.slice(0, 50)}`,
+                            module: "creative",
+                            detail: `Approved concept: ${concept.concept} — sending to creative team`,
+                            successMsg: `Concept approved: ${concept.concept}`,
+                          });
+                        }}
+                      >
+                        <Check className="h-3 w-3" />
+                        Approve
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             );
           })}
         </CardContent>
       </Card>
+
+      <CreativeBriefModal
+        open={creativeBriefOpen}
+        onOpenChange={setCreativeBriefOpen}
+        onCreated={() => {
+          executeAction({
+            action: "Create Creative",
+            module: "creative",
+            detail: "Creative brief submitted to design team",
+            successMsg: "Creative brief created",
+            simulateDelay: 800,
+          });
+        }}
+      />
+
+      <ABTestModal
+        open={abTestOpen}
+        onOpenChange={setABTestOpen}
+        onCreated={() => {
+          executeAction({
+            action: "Run A/B Test",
+            module: "creative",
+            detail: "A/B test launched with creative variations",
+            successMsg: "A/B test is now live",
+            simulateDelay: 1000,
+          });
+        }}
+      />
+
+      <ExportModal
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        moduleName="Creative Performance"
+        data={creativeData.topPerformingCreatives.map((c) => ({
+          Name: c.name,
+          Type: c.type,
+          Campaign: c.campaign,
+          CTR: c.ctr + '%',
+          Conversions: c.conversions,
+          ROAS: c.roas + 'x',
+          Style: c.style,
+        }))}
+        filename="creative-performance"
+      />
     </div>
   );
 }

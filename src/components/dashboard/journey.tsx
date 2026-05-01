@@ -9,6 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Plus, Download, BarChart3 } from "lucide-react";
 import { useAction } from "@/lib/action-context";
 import { ActionBar } from "./action-bar";
+import { CreateWorkflowModal } from "./action-modals";
+import { exportToCSV } from "@/lib/real-actions";
+import { toast } from "sonner";
 
 /* -------------------------------------------------------------------------- */
 /*  Data                                                                      */
@@ -263,6 +266,13 @@ function FunnelChart() {
 function WorkflowCard({ wf }: { wf: Workflow }) {
   const [enabled, setEnabled] = useState(wf.defaultOn);
 
+  const handleToggle = (checked: boolean) => {
+    setEnabled(checked);
+    toast.success(`${wf.name} workflow ${checked ? 'enabled' : 'disabled'}`, {
+      description: `${wf.subscribers.toLocaleString()} subscribers affected`,
+    });
+  };
+
   return (
     <Card className="border-border/50 hover:border-border transition-colors">
       <CardHeader className="pb-3">
@@ -277,7 +287,7 @@ function WorkflowCard({ wf }: { wf: Workflow }) {
           </div>
           <Switch
             checked={enabled}
-            onCheckedChange={setEnabled}
+            onCheckedChange={handleToggle}
             aria-label={`Toggle ${wf.name} workflow`}
           />
         </div>
@@ -547,6 +557,7 @@ function InsightCard({
 
 export function CustomerJourney() {
   const { executeAction, automations } = useAction();
+  const [workflowOpen, setWorkflowOpen] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -568,23 +579,57 @@ export function CustomerJourney() {
         ))}
       </div>
 
+      <CreateWorkflowModal
+        open={workflowOpen}
+        onOpenChange={setWorkflowOpen}
+        onCreated={() => {
+          setWorkflowOpen(false);
+          executeAction({
+            action: "Create Workflow",
+            module: "journey",
+            detail: "New CRM automation workflow created",
+            successMsg: "Workflow created successfully",
+            simulateDelay: 400,
+          });
+        }}
+      />
+
       <ActionBar
         module="journey"
         primary={{
           label: "Create Workflow",
           icon: Plus,
-          onClick: () => executeAction({ action: "Create Workflow", module: "journey", detail: "Creating new CRM automation workflow" }),
+          onClick: () => setWorkflowOpen(true),
         }}
         actions={[
           {
             label: "Export Journey Data",
             icon: Download,
-            onClick: () => executeAction({ action: "Export Journey Data", module: "journey", detail: "Exporting customer journey funnel data" }),
+            onClick: () => {
+              exportToCSV(funnelStages.map(s => ({
+                Stage: s.stage,
+                Count: s.count,
+                PercentageOfReach: ((s.count / funnelStages[0].count) * 100).toFixed(1) + '%',
+              })), "journey-funnel.csv");
+              executeAction({
+                action: "Export Journey Data",
+                module: "journey",
+                detail: "Exporting customer journey funnel data",
+                successMsg: "Journey data exported as CSV",
+                simulateDelay: 300,
+              });
+            },
           },
           {
             label: "Run Analysis",
             icon: BarChart3,
-            onClick: () => executeAction({ action: "Run Analysis", module: "journey", detail: "Running journey drop-off analysis" }),
+            onClick: () => executeAction({
+              action: "Run Analysis",
+              module: "journey",
+              detail: "Running journey drop-off analysis",
+              successMsg: "Journey analysis complete — Biggest drop-off: Add to Cart → Checkout (57% loss)",
+              simulateDelay: 2000,
+            }),
           },
         ]}
         relevantAutomations={automations.filter(a => a.module === "journey")}

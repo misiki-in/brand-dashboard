@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { aiEngineData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { KpiCard } from "./kpi-components";
 import { Gauge } from "./kpi-components";
 import { Switch } from "@/components/ui/switch";
+import { toast } from "sonner";
 import {
   Brain, Zap, Target, TrendingUp, AlertTriangle, ArrowRight,
   CheckCircle2, Clock, Calendar, Rocket, Sparkles, ChevronRight,
@@ -14,6 +16,7 @@ import {
 } from "lucide-react";
 import { useAction } from "@/lib/action-context";
 import { ActionBar, InlineAction } from "./action-bar";
+import { exportToCSV } from "@/lib/real-actions";
 
 const priorityConfig: Record<string, { bg: string; border: string; icon: React.ComponentType<{ className?: string }> }> = {
   Critical: { bg: "bg-red-500/5", border: "border-red-500/20", icon: AlertTriangle },
@@ -43,6 +46,7 @@ const dayEmojis: Record<string, string> = {
 export function AIGrowthEngine() {
   const { executeAction, automations, toggleAutomation } = useAction();
   const allAutomations = automations;
+  const [suggestionStatuses, setSuggestionStatuses] = useState<Record<string, 'pending' | 'completed'>>({});
 
   return (
     <div className="space-y-6">
@@ -55,21 +59,29 @@ export function AIGrowthEngine() {
             action: "Generate Insights",
             module: "ai-engine",
             detail: "AI is analyzing all modules to generate new strategic insights",
-            successMsg: "3 new insights generated",
-            simulateDelay: 3000,
+            successMsg: "3 new AI insights generated",
+            simulateDelay: 2000,
           }),
         }}
         actions={[
           {
             label: "Export Playbook",
             icon: Download,
-            onClick: () => executeAction({
-              action: "Export Playbook",
-              module: "ai-engine",
-              detail: "Exporting weekly growth playbook as PDF",
-              successMsg: "Playbook exported",
-              simulateDelay: 1500,
-            }),
+            onClick: () => {
+              exportToCSV(aiEngineData.weeklyPlaybook.map(d => ({
+                Day: d.day,
+                Focus: d.focus,
+                Actions: d.actions.join('; '),
+                KPI: d.kpi,
+              })), "weekly-playbook.csv");
+              executeAction({
+                action: "Export Playbook",
+                module: "ai-engine",
+                detail: "Exporting weekly growth playbook as CSV",
+                successMsg: "Weekly playbook exported as CSV",
+                simulateDelay: 300,
+              });
+            },
           },
           {
             label: "Schedule Report",
@@ -77,9 +89,10 @@ export function AIGrowthEngine() {
             onClick: () => executeAction({
               action: "Schedule Report",
               module: "ai-engine",
-              detail: "Scheduling weekly AI insights report for every Monday 9 AM",
-              successMsg: "Report scheduled for Mondays at 9 AM",
+              detail: "Scheduling weekly AI insights report for every Monday 9 AM IST",
+              successMsg: "Report scheduled for Mondays at 9:00 AM IST",
               simulateDelay: 800,
+              undoLabel: "Edit Schedule",
             }),
           },
         ]}
@@ -126,6 +139,13 @@ export function AIGrowthEngine() {
           {aiEngineData.dailySuggestions.map((suggestion) => {
             const config = priorityConfig[suggestion.priority] || priorityConfig.Medium;
             const PriorityIcon = config.icon;
+            const isCompleted = suggestionStatuses[suggestion.id] === 'completed';
+            const handleActNow = () => {
+              setSuggestionStatuses(prev => ({ ...prev, [suggestion.id]: 'completed' }));
+              toast.success(`Action executed: ${suggestion.category}`, {
+                description: suggestion.action,
+              });
+            };
             return (
               <div key={suggestion.id} className={`p-4 rounded-xl ${config.bg} border ${config.border} hover:shadow-sm transition-all`}>
                 <div className="flex items-start gap-3">
@@ -153,18 +173,19 @@ export function AIGrowthEngine() {
                       <span className="text-emerald-600 font-medium">{suggestion.impact}</span>
                     </div>
                   </div>
-                  <button
-                    className="shrink-0 px-3 py-1.5 text-[10px] font-medium rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors cursor-pointer"
-                    onClick={() => executeAction({
-                      action: `Act: ${suggestion.action.slice(0, 60)}`,
-                      module: "ai-engine",
-                      detail: suggestion.action,
-                      successMsg: `Action executed: ${suggestion.category}`,
-                      simulateDelay: 1200,
-                    })}
-                  >
-                    Act Now
-                  </button>
+                  {isCompleted ? (
+                    <Badge className="shrink-0 bg-emerald-500/10 text-emerald-600 text-[10px] border border-emerald-500/20">
+                      <CheckCircle2 className="h-3 w-3 mr-1" />
+                      Completed
+                    </Badge>
+                  ) : (
+                    <button
+                      className="shrink-0 px-3 py-1.5 text-[10px] font-medium rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors cursor-pointer"
+                      onClick={handleActNow}
+                    >
+                      Act Now
+                    </button>
+                  )}
                 </div>
               </div>
             );
@@ -332,7 +353,9 @@ export function AIGrowthEngine() {
                 <Switch
                   checked={rule.enabled}
                   onCheckedChange={() => {
+                    const newStatus = !rule.enabled;
                     toggleAutomation(rule.id);
+                    toast.success(`${rule.name} ${newStatus ? 'enabled' : 'disabled'}`);
                   }}
                   aria-label={`Toggle ${rule.name}`}
                 />
@@ -382,6 +405,7 @@ export function AIGrowthEngine() {
               className="h-8 text-xs gap-1.5"
               onClick={() => {
                 automations.filter(a => !a.enabled).forEach(a => toggleAutomation(a.id));
+                toast.success("All automations enabled");
               }}
             >
               <Play className="h-3.5 w-3.5 text-emerald-500" />
@@ -393,6 +417,7 @@ export function AIGrowthEngine() {
               className="h-8 text-xs gap-1.5"
               onClick={() => {
                 automations.filter(a => a.enabled).forEach(a => toggleAutomation(a.id));
+                toast.success("All automations disabled");
               }}
             >
               <Pause className="h-3.5 w-3.5" />

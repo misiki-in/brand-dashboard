@@ -8,6 +8,9 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Cell,
 } from "recharts";
 import { AlertTriangle, Sparkles, ArrowRight, TrendingDown, FileSearch, PenLine, BarChart3, RefreshCw, Plus, CalendarDays, Download } from "lucide-react";
+import { useState } from "react";
+import { exportToCSV } from "@/lib/real-actions";
+import { toast } from "sonner";
 import { useAction } from "@/lib/action-context";
 import { ActionBar } from "./action-bar";
 import { Button } from "@/components/ui/button";
@@ -99,6 +102,7 @@ function getQualityBarColor(score: number) {
 
 export function ContentStrategy() {
   const { executeAction, automations } = useAction();
+  const [fixedDecay, setFixedDecay] = useState<Set<string>>(new Set());
 
   return (
     <div className="space-y-6">
@@ -124,33 +128,37 @@ export function ContentStrategy() {
         primary={{
           label: "Create Content",
           icon: Plus,
-          onClick: () => executeAction({
-            action: "Create Content",
-            module: "content",
-            detail: "Opening AI content studio with pillar-aligned topic suggestions",
-            successMsg: "Content studio opened",
-          }),
+          onClick: () => {
+            toast.success("Content studio opened", {
+              description: "AI content studio with pillar-aligned topic suggestions",
+              action: { label: "Open Studio", onClick: () => toast.info("Opening content studio...") },
+            });
+          },
         }}
         actions={[
           {
             label: "Schedule Post",
             icon: CalendarDays,
-            onClick: () => executeAction({
-              action: "Schedule Post",
-              module: "content",
-              detail: "Scheduling content publication for optimal engagement times",
-              successMsg: "Post scheduled",
-            }),
+            onClick: () => {
+              toast.success("Content scheduler opened", {
+                description: "Schedule content publication for optimal engagement times",
+                action: { label: "Open Scheduler", onClick: () => toast.info("Opening scheduler...") },
+              });
+            },
           },
           {
             label: "Export Report",
             icon: Download,
-            onClick: () => executeAction({
-              action: "Export Report",
-              module: "content",
-              detail: "Exporting content performance report with quality scores",
-              successMsg: "Report exported",
-            }),
+            onClick: () => {
+              exportToCSV(contentData.topPerforming.map(c => ({
+                Title: c.title,
+                Type: c.type,
+                Views: c.views,
+                Engagement: c.engagement + '%',
+                Shares: c.shares,
+              })), "content-report.csv");
+              toast.success("Report exported", { description: "content-report.csv downloaded" });
+            },
           },
         ]}
       />
@@ -311,19 +319,21 @@ export function ContentStrategy() {
                       {item.action}
                     </p>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-6 text-[10px] gap-1"
-                    onClick={() => executeAction({
-                      action: `Fix Content: ${item.title}`,
-                      module: "content",
-                      detail: `Creating fix task for "${item.title}"`,
-                      successMsg: `Fix task created for ${item.title}`,
-                    })}
-                  >
-                    Fix Now
-                  </Button>
+                  {fixedDecay.has(item.title) ? (
+                    <Badge className="bg-emerald-500/15 text-emerald-600 border-emerald-500/30 hover:bg-emerald-500/15 text-[10px]">Fixed ✓</Badge>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-6 text-[10px] gap-1"
+                      onClick={() => {
+                        setFixedDecay(prev => new Set(prev).add(item.title));
+                        toast.success(`Fix task created for "${item.title}"`, { description: "Content fix has been queued for review" });
+                      }}
+                    >
+                      Fix Now
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>

@@ -534,7 +534,7 @@ export const inventoryData = {
   turnoverRate: 4.2,
   deadStockValue: 420000,
   deadStockSKUs: 186,
-  reorderAlerts: 24,
+  reorderAlertCount: 24,
   fastMovingSKUs: 342,
   slowMovingSKUs: 186,
   avgDaysToSell: 42,

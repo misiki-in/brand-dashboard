@@ -43,6 +43,22 @@ export interface ActionContextType {
     undoAction?: () => void;
   }) => void;
 
+  /** Execute a real action that performs state changes */
+  executeRealAction: (params: {
+    action: string;
+    module: string;
+    detail: string;
+    successMsg?: string;
+    loadingMsg?: string;
+    /** The actual work function - return true for success, false for failure */
+    work: () => Promise<boolean> | boolean;
+    undoLabel?: string;
+    undoAction?: () => void;
+  }) => void;
+
+  /** Check if a specific action is currently loading */
+  isLoading: (module: string, action: string) => boolean;
+
   /** Get current loading state for an action */
   loadingActions: Set<string>;
 
@@ -260,6 +276,87 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
     [loadingActions]
   );
 
+  const isLoading = useCallback(
+    (module: string, action: string) => loadingActions.has(`${module}:${action}`),
+    [loadingActions]
+  );
+
+  const executeRealAction = useCallback(
+    async ({
+      action,
+      module,
+      detail,
+      successMsg,
+      loadingMsg = "Processing...",
+      work,
+      undoLabel,
+      undoAction,
+    }: {
+      action: string;
+      module: string;
+      detail: string;
+      successMsg?: string;
+      loadingMsg?: string;
+      work: () => Promise<boolean> | boolean;
+      undoLabel?: string;
+      undoAction?: () => void;
+    }) => {
+      const key = `${module}:${action}`;
+      if (loadingActions.has(key)) return;
+
+      setLoadingActions((prev) => new Set(prev).add(key));
+
+      const toastId = toast.loading(loadingMsg, {
+        description: detail,
+      });
+
+      let success = false;
+
+      try {
+        success = Boolean(await work());
+      } catch (err) {
+        console.error(`[executeRealAction] ${key} threw:`, err);
+        success = false;
+      }
+
+      setLoadingActions((prev) => {
+        const next = new Set(prev);
+        next.delete(key);
+        return next;
+      });
+
+      const logEntry: ActionLog = {
+        id: `log-${++logIdRef.current}`,
+        action,
+        module,
+        detail,
+        status: success ? "success" : "error",
+        timestamp: new Date(),
+      };
+
+      setActionLogs((prev) => [logEntry, ...prev].slice(0, 50));
+
+      if (success) {
+        toast.success(successMsg || action, {
+          id: toastId,
+          description: detail,
+          action: undoLabel
+            ? {
+                label: undoLabel,
+                onClick: undoAction || (() => toast.info("Undo simulated")),
+              }
+            : undefined,
+        });
+      } else {
+        toast.error("Action failed", {
+          id: toastId,
+          description: "Something went wrong. Please try again.",
+        });
+      }
+    },
+    [loadingActions]
+  );
+
   const clearLogs = useCallback(() => setActionLogs([]), []);
 
   const toggleAutomation = useCallback((id: string) => {
@@ -290,6 +387,8 @@ export function ActionProvider({ children }: { children: React.ReactNode }) {
     <ActionContext.Provider
       value={{
         executeAction,
+        executeRealAction,
+        isLoading,
         loadingActions,
         actionLogs,
         clearLogs,

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { socialData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
@@ -11,6 +12,8 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
 } from "recharts";
 import { CalendarDays, Megaphone, Download } from "lucide-react";
+import { SchedulePostModal, CreateCampaignModal, ExportModal } from "./action-modals";
+import { exportToCSV } from "@/lib/real-actions";
 
 const followerConfig = {
   instagram: { label: "Instagram", color: "oklch(0.6 0.18 340)" },
@@ -22,6 +25,9 @@ const followerConfig = {
 export function SocialMedia() {
   const { executeAction, automations } = useAction();
   const relevantAutomations = automations.filter(a => a.module === "social");
+  const [scheduleOpen, setScheduleOpen] = useState(false);
+  const [campaignOpen, setCampaignOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
   return (
     <div className="space-y-6">
       {/* Summary Stats */}
@@ -47,33 +53,37 @@ export function SocialMedia() {
         primary={{
           label: "Schedule Post",
           icon: CalendarDays,
-          onClick: () => executeAction({
-            action: "Schedule Post",
-            module: "social",
-            detail: "Opening social media scheduler with AI caption suggestions",
-            successMsg: "Scheduler opened",
-          }),
+          onClick: () => setScheduleOpen(true),
         }}
         actions={[
           {
             label: "Create Campaign",
             icon: Megaphone,
-            onClick: () => executeAction({
-              action: "Create Campaign",
-              module: "social",
-              detail: "Creating new social media campaign",
-              successMsg: "Campaign created",
-            }),
+            onClick: () => setCampaignOpen(true),
           },
           {
             label: "Export Analytics",
             icon: Download,
-            onClick: () => executeAction({
-              action: "Export Analytics",
-              module: "social",
-              detail: "Exporting social media analytics report",
-              successMsg: "Analytics exported",
-            }),
+            onClick: () => {
+              exportToCSV(
+                socialData.platforms.map((p) => ({
+                  Platform: p.name,
+                  Followers: p.followers,
+                  Growth: p.growth + '%',
+                  Engagement: p.engagement + '%',
+                  Posts: p.posts,
+                  Stories: p.stories,
+                  Reels: p.reels,
+                })),
+                "social-analytics.csv"
+              );
+              executeAction({
+                action: "Export Analytics",
+                module: "social",
+                detail: `Exporting analytics for ${socialData.platforms.length} platforms`,
+                successMsg: "Social analytics exported to CSV",
+              });
+            },
           },
         ]}
         relevantAutomations={relevantAutomations}
@@ -177,6 +187,50 @@ export function SocialMedia() {
           </p>
         </CardContent>
       </Card>
+
+      <SchedulePostModal
+        open={scheduleOpen}
+        onOpenChange={setScheduleOpen}
+        onScheduled={() => {
+          executeAction({
+            action: "Schedule Post",
+            module: "social",
+            detail: "Post scheduled successfully",
+            successMsg: "Post scheduled",
+            simulateDelay: 500,
+          });
+        }}
+      />
+
+      <CreateCampaignModal
+        open={campaignOpen}
+        onOpenChange={setCampaignOpen}
+        onCreated={() => {
+          executeAction({
+            action: "Create Campaign",
+            module: "social",
+            detail: "Social media campaign created",
+            successMsg: "Campaign created successfully",
+            simulateDelay: 800,
+          });
+        }}
+      />
+
+      <ExportModal
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        moduleName="Social Analytics"
+        data={socialData.platforms.map((p) => ({
+          Platform: p.name,
+          Followers: p.followers,
+          Growth: p.growth + '%',
+          Engagement: p.engagement + '%',
+          Posts: p.posts,
+          Stories: p.stories,
+          Reels: p.reels,
+        }))}
+        filename="social-analytics"
+      />
     </div>
   );
 }

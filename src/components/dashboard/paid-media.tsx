@@ -9,6 +9,10 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, ScatterChart, Scatter, ZAxis, Cell,
 } from "recharts";
 import { AlertTriangle, Sparkles, MapPin, Zap, Target, ArrowRight, Check, X, Download, Play, RefreshCw } from "lucide-react";
+import { useState } from "react";
+import { CreateCampaignModal, ExportModal } from "./action-modals";
+import { exportToCSV } from "@/lib/real-actions";
+import { toast } from "sonner";
 import { useAction } from "@/lib/action-context";
 import { ActionBar } from "./action-bar";
 
@@ -39,6 +43,9 @@ function formatCount(n: number): string {
 export function PaidMedia() {
   const { executeAction, automations } = useAction();
   const paidMediaAutomations = automations.filter(a => a.module === "ads");
+  const [campaignOpen, setCampaignOpen] = useState(false);
+  const [approvedSuggestions, setApprovedSuggestions] = useState<Set<string>>(new Set());
+  const [deniedSuggestions, setDeniedSuggestions] = useState<Set<string>>(new Set());
 
   return (
     <div className="space-y-6">
@@ -64,25 +71,19 @@ export function PaidMedia() {
         primary={{
           label: "Create Campaign",
           icon: Play,
-          onClick: () => executeAction({
-            action: "Create Campaign",
-            module: "ads",
-            detail: "Setting up new ad campaign with AI-optimized targeting and budget allocation",
-            successMsg: "Campaign draft created",
-            simulateDelay: 1500,
-          }),
+          onClick: () => setCampaignOpen(true),
         }}
         actions={[
           {
             label: "Export Report",
             icon: Download,
-            onClick: () => executeAction({
-              action: "Export Report",
-              module: "ads",
-              detail: "Generating paid media performance PDF report",
-              successMsg: "Report exported successfully",
-              simulateDelay: 1200,
-            }),
+            onClick: () => {
+              exportToCSV([
+                ...adsData.channels.map(c => ({ Channel: c.channel, Spend: '$' + c.spend, Revenue: '$' + c.revenue, ROAS: c.roas + 'x', CAC: '$' + c.cac, Conversions: c.conversions })),
+                ...adsData.campaignPerformance.map(c => ({ Campaign: c.campaign, Spend: '$' + c.spend, ROAS: c.roas + 'x', Conversions: c.conversions })),
+              ], "paid-media-report.csv");
+              toast.success("Report exported", { description: "paid-media-report.csv downloaded" });
+            },
           },
           {
             label: "Optimize Budget",
@@ -91,7 +92,7 @@ export function PaidMedia() {
               action: "Optimize Budget",
               module: "ads",
               detail: "AI is reallocating budget from underperforming to top-performing channels",
-              successMsg: "Budget optimized — shifted $12K to Google Ads",
+              successMsg: "Budget optimized — shifted $12K to Google Shopping, $4K to Meta",
               simulateDelay: 2000,
             }),
           },
@@ -405,39 +406,52 @@ export function PaidMedia() {
                   <p className="text-xs text-emerald-600">{suggestion.impact}</p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-8 text-xs gap-1 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30"
-                    onClick={() => executeAction({
-                      action: `Deny: ${suggestion.action.slice(0, 50)}`,
-                      module: "ads",
-                      detail: suggestion.action,
-                      successMsg: "Suggestion dismissed",
-                    })}
-                  >
-                    <X className="h-3 w-3" />
-                    Deny
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="h-8 text-xs gap-1"
-                    onClick={() => executeAction({
-                      action: `Approve: ${suggestion.action.slice(0, 50)}`,
-                      module: "ads",
-                      detail: suggestion.action,
-                      successMsg: "Optimization applied successfully",
-                    })}
-                  >
-                    <Check className="h-3 w-3" />
-                    OK
-                  </Button>
+                  {approvedSuggestions.has(suggestion.id) ? (
+                    <Badge className="bg-emerald-500/15 text-emerald-600 border-emerald-500/30 hover:bg-emerald-500/15">Applied ✓</Badge>
+                  ) : deniedSuggestions.has(suggestion.id) ? (
+                    <Badge variant="secondary" className="text-muted-foreground">Dismissed</Badge>
+                  ) : (
+                    <>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 text-xs gap-1 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30"
+                        onClick={() => {
+                          setDeniedSuggestions(prev => new Set(prev).add(suggestion.id));
+                          toast.info("Suggestion dismissed", { description: suggestion.action });
+                        }}
+                      >
+                        <X className="h-3 w-3" />
+                        Deny
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="h-8 text-xs gap-1"
+                        onClick={() => {
+                          setApprovedSuggestions(prev => new Set(prev).add(suggestion.id));
+                          toast.success("Optimization applied", { description: suggestion.action });
+                        }}
+                      >
+                        <Check className="h-3 w-3" />
+                        OK
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
           ))}
         </CardContent>
       </Card>
+
+      <CreateCampaignModal
+        open={campaignOpen}
+        onOpenChange={setCampaignOpen}
+        onCreated={() => {
+          setCampaignOpen(false);
+          toast.success("Campaign created successfully", { description: "New campaign added to your dashboard" });
+        }}
+      />
     </div>
   );
 }

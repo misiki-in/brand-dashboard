@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { revenueData } from "@/lib/mock-data";
+import { exportToCSV } from "@/lib/real-actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Button } from "@/components/ui/button";
@@ -20,11 +22,26 @@ const COLORS = ["oklch(0.65 0.18 65)", "oklch(0.55 0.12 200)", "oklch(0.6 0.15 3
 
 export function RevenueConversions() {
   const { executeAction, automations } = useAction();
+  const [analysisRunning, setAnalysisRunning] = useState(false);
   const channelPieData = revenueData.revenueByChannel.map((c, i) => ({
     name: c.channel,
     value: c.share,
     fill: COLORS[i % COLORS.length],
   }));
+
+  const handleRunAnalysis = () => {
+    if (analysisRunning) return;
+    setAnalysisRunning(true);
+    executeAction({
+      action: "Run Analysis",
+      module: "revenue",
+      detail: "Running deep-dive revenue analysis by channel",
+      loadingMsg: "Running revenue analysis...",
+      simulateDelay: 2000,
+      successMsg: "Revenue analysis complete — Top opportunity: Email channel (+$42K potential)",
+    });
+    setTimeout(() => setAnalysisRunning(false), 2000);
+  };
 
   return (
     <div className="space-y-6">
@@ -57,30 +74,39 @@ export function RevenueConversions() {
             detail: "Creating new conversion funnel analysis",
             successMsg: "Conversion funnel created",
             simulateDelay: 800,
+            undoLabel: "Open Builder",
+            undoAction: () => {},
           }),
         }}
         actions={[
           {
             label: "Export Report",
             icon: Download,
-            onClick: () => executeAction({
-              action: "Export Report",
-              module: "revenue",
-              detail: "Generating revenue & conversion report",
-              successMsg: "Revenue & conversion report exported",
-              simulateDelay: 800,
-            }),
+            onClick: () => {
+              exportToCSV([
+                ...revenueData.monthlyRevenue.map(m => ({
+                  Period: m.month,
+                  Revenue: '$' + m.revenue,
+                  Orders: m.orders,
+                })),
+                ...revenueData.revenueByChannel.map(c => ({
+                  Channel: c.channel,
+                  Revenue: '$' + c.revenue,
+                  Share: c.share + '%',
+                })),
+              ], "revenue-report.csv");
+              executeAction({
+                action: "Export Report",
+                module: "revenue",
+                detail: "Generating revenue & conversion report",
+                successMsg: "Revenue & conversion report exported to CSV",
+              });
+            },
           },
           {
             label: "Run Analysis",
             icon: BarChart3,
-            onClick: () => executeAction({
-              action: "Run Analysis",
-              module: "revenue",
-              detail: "Running deep-dive revenue analysis by channel",
-              successMsg: "Revenue analysis complete",
-              simulateDelay: 800,
-            }),
+            onClick: handleRunAnalysis,
           },
         ]}
         relevantAutomations={automations.filter(a => a.module === "revenue")}

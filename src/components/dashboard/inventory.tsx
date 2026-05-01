@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { inventoryData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +15,8 @@ import {
 import { Package, AlertTriangle, TrendingUp, TrendingDown, RefreshCw, Zap, Tag, Download } from "lucide-react";
 import { useAction } from "@/lib/action-context";
 import { ActionBar } from "./action-bar";
+import { exportToCSV } from "@/lib/real-actions";
+import { ConfirmDialog } from "./confirm-dialog";
 
 const statusColors: Record<string, string> = {
   Fast: "bg-emerald-500/10 text-emerald-600",
@@ -30,6 +33,10 @@ const priorityColors: Record<string, string> = {
 
 export function InventoryIntelligence() {
   const { executeAction, automations } = useAction();
+  const [confirmReorder, setConfirmReorder] = useState(false);
+  const [confirmLiquidate, setConfirmLiquidate] = useState(false);
+
+  const reorderItems = inventoryData.reorderAlerts as Array<{sku: string; name: string; stock: number; reorderPoint: number; leadTime: string; demand: string}>;
   const COLORS = ["oklch(0.65 0.18 65)", "oklch(0.6 0.15 340)", "oklch(0.55 0.12 200)", "oklch(0.7 0.1 140)", "oklch(0.6 0.2 30)", "oklch(0.5 0.15 260)"];
 
   const inventoryTrendData = inventoryData.monthlyInventoryTrend.map((m) => ({
@@ -61,7 +68,7 @@ export function InventoryIntelligence() {
                 { label: "Capital Locked", value: `$${(inventoryData.capitalLocked / 1000000).toFixed(1)}M`, icon: <TrendingUp className="h-4 w-4 text-amber-500" /> },
                 { label: "Dead Stock Value", value: `$${(inventoryData.deadStockValue / 1000).toFixed(0)}K`, icon: <AlertTriangle className="h-4 w-4 text-red-500" /> },
                 { label: "Turnover Rate", value: `${inventoryData.turnoverRate}x`, icon: <RefreshCw className="h-4 w-4 text-blue-500" /> },
-                { label: "Reorder Alerts", value: `${inventoryData.reorderAlerts}`, icon: <Zap className="h-4 w-4 text-amber-500" /> },
+                { label: "Reorder Alerts", value: `${(inventoryData.reorderAlerts as unknown[]).length}`, icon: <Zap className="h-4 w-4 text-amber-500" /> },
               ].map((m) => (
                 <div key={m.label} className="p-3 rounded-lg bg-muted/30">
                   <div className="flex items-center gap-2 mb-1">
@@ -81,36 +88,36 @@ export function InventoryIntelligence() {
         primary={{
           label: "Reorder All",
           icon: RefreshCw,
-          onClick: () => executeAction({
-            action: "Reorder All",
-            module: "inventory",
-            detail: "Creating purchase orders for 4 items below reorder point",
-            successMsg: "Purchase orders created for 4 items",
-            simulateDelay: 800,
-          }),
+          onClick: () => setConfirmReorder(true),
         }}
         actions={[
           {
             label: "Liquidate Stock",
             icon: Tag,
-            onClick: () => executeAction({
-              action: "Liquidate Stock",
-              module: "inventory",
-              detail: "Applying AI-suggested markdowns to 5 dead stock SKUs",
-              successMsg: "Markdowns applied to 5 dead stock SKUs",
-              simulateDelay: 800,
-            }),
+            onClick: () => setConfirmLiquidate(true),
           },
           {
             label: "Export Alerts",
             icon: Download,
-            onClick: () => executeAction({
-              action: "Export Alerts",
-              module: "inventory",
-              detail: "Exporting inventory alerts report",
-              successMsg: "Inventory alerts report exported",
-              simulateDelay: 800,
-            }),
+            onClick: () => {
+              exportToCSV(
+                reorderItems.map((item) => ({
+                  SKU: item.sku,
+                  Name: item.name,
+                  Stock: item.stock,
+                  "Reorder Point": item.reorderPoint,
+                  "Lead Time": item.leadTime,
+                  Demand: item.demand,
+                })),
+                "inventory-alerts.csv"
+              );
+              executeAction({
+                action: "Export Alerts",
+                module: "inventory",
+                detail: `Exporting ${reorderItems.length} reorder alerts to CSV`,
+                successMsg: `Exported ${reorderItems.length} reorder alerts`,
+              });
+            },
           },
         ]}
         relevantAutomations={automations.filter(a => a.module === "inventory")}
@@ -256,7 +263,7 @@ export function InventoryIntelligence() {
                       action: `Reorder: ${item.name}`,
                       module: "inventory",
                       detail: `Creating PO for ${item.name} (${item.sku}) — Lead time: ${item.leadTime}`,
-                      successMsg: `PO created for ${item.name}`,
+                      successMsg: `PO created for ${item.name} (SKU: ${item.sku})`,
                     })}
                   >
                     <RefreshCw className="h-3 w-3" />
@@ -292,8 +299,8 @@ export function InventoryIntelligence() {
                     onClick={() => executeAction({
                       action: `Apply Markdown: ${item.name}`,
                       module: "inventory",
-                      detail: `Applying ${item.discount}% markdown to ${item.name}: ${item.currentPrice} → ${item.suggestedPrice}`,
-                      successMsg: `Markdown applied to ${item.name}`,
+                      detail: `Applying ${item.discount}% markdown to ${item.name}: $${item.currentPrice} → $${item.suggestedPrice}`,
+                      successMsg: `${item.discount}% markdown applied — ${item.name} now $${item.suggestedPrice}`,
                     })}
                   >
                     Apply
@@ -359,6 +366,43 @@ export function InventoryIntelligence() {
           </div>
         </CardContent>
       </Card>
+
+      <ConfirmDialog
+        open={confirmReorder}
+        onOpenChange={setConfirmReorder}
+        title="Reorder All Low-Stock Items"
+        description={`Create purchase orders for ${reorderItems.length} items that have fallen below their reorder point. This will generate POs with estimated delivery based on each item's lead time.`}
+        confirmLabel="Create All POs"
+        onConfirm={() => {
+          executeAction({
+            action: "Reorder All",
+            module: "inventory",
+            detail: `Creating purchase orders for ${reorderItems.length} items below reorder point`,
+            successMsg: `Purchase orders created for ${reorderItems.length} items`,
+            simulateDelay: 800,
+          });
+          setConfirmReorder(false);
+        }}
+      />
+
+      <ConfirmDialog
+        open={confirmLiquidate}
+        onOpenChange={setConfirmLiquidate}
+        title="Liquidate Dead Stock"
+        description="Apply AI-suggested markdowns to all dead stock SKUs. This will update prices on your storefront immediately."
+        confirmLabel="Apply All Markdowns"
+        variant="destructive"
+        onConfirm={() => {
+          executeAction({
+            action: "Liquidate Stock",
+            module: "inventory",
+            detail: "Applying AI-suggested markdowns to 5 dead stock SKUs",
+            successMsg: "Markdowns applied to 5 dead stock SKUs",
+            simulateDelay: 800,
+          });
+          setConfirmLiquidate(false);
+        }}
+      />
     </div>
   );
 }

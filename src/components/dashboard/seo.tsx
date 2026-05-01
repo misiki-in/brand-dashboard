@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { seoData, seoContentDecayData, keywordGapData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart";
@@ -10,7 +11,9 @@ import { ActionBar } from "./action-bar";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, PieChart, Pie,
 } from "recharts";
-import { TrendingDown, Sparkles, Search, Target, RefreshCw, Download } from "lucide-react";
+import { TrendingDown, Sparkles, Search, Target, RefreshCw, Download, Check } from "lucide-react";
+import { exportToCSV } from "@/lib/real-actions";
+import { ConfirmDialog } from "./confirm-dialog";
 
 const trafficConfig = seoData.trafficSources.reduce((acc, s, i) => {
   acc[s.source] = { label: s.source, color: s.color };
@@ -29,6 +32,9 @@ function getDifficultyColor(d: string) {
 export function SeoDigital() {
   const { executeAction, automations } = useAction();
   const relevantAutomations = automations.filter(a => a.module === "seo");
+  const [confirmFixAll, setConfirmFixAll] = useState(false);
+  const [auditRunning, setAuditRunning] = useState(false);
+  const [fixedDecayItems, setFixedDecayItems] = useState<Set<string>>(new Set());
   return (
     <div className="space-y-6">
       {/* Key Metrics */}
@@ -55,35 +61,49 @@ export function SeoDigital() {
       <ActionBar
         module="seo"
         primary={{
-          label: "Run SEO Audit",
+          label: auditRunning ? "Auditing..." : "Run SEO Audit",
           icon: Search,
-          onClick: () => executeAction({
-            action: "Run SEO Audit",
-            module: "seo",
-            detail: "Running full SEO audit across 156 content pages",
-            successMsg: "SEO audit initiated",
-          }),
+          onClick: () => {
+            if (auditRunning) return;
+            setAuditRunning(true);
+            setTimeout(() => {
+              setAuditRunning(false);
+              executeAction({
+                action: "Run SEO Audit",
+                module: "seo",
+                detail: "SEO audit complete — scanning 156 content pages",
+                successMsg: "SEO audit complete — 3 issues found, 12 keywords improved",
+                simulateDelay: 100,
+              });
+            }, 2000);
+          },
         }}
         actions={[
           {
             label: "Fix All Decay",
             icon: RefreshCw,
-            onClick: () => executeAction({
-              action: "Fix All Decay",
-              module: "seo",
-              detail: "Creating fix tasks for 6 decaying content pages",
-              successMsg: "Fix tasks created for all decaying pages",
-            }),
+            onClick: () => setConfirmFixAll(true),
           },
           {
             label: "Export Keywords",
             icon: Download,
-            onClick: () => executeAction({
-              action: "Export Keywords",
-              module: "seo",
-              detail: "Exporting keyword positions and gap opportunities",
-              successMsg: "Keywords exported",
-            }),
+            onClick: () => {
+              exportToCSV(
+                seoData.keywordPositions.map((k) => ({
+                  Keyword: k.keyword,
+                  Position: k.position,
+                  Volume: k.volume,
+                  Change: (k.change > 0 ? '+' : '') + k.change,
+                })),
+                "seo-keywords.csv"
+              );
+              executeAction({
+                action: "Export Keywords",
+                module: "seo",
+                detail: `Exporting ${seoData.keywordPositions.length} keyword positions`,
+                successMsg: "Keywords exported to CSV",
+              });
+            },
           },
         ]}
         relevantAutomations={relevantAutomations}
@@ -239,19 +259,29 @@ export function SeoDigital() {
                       <div className="flex items-start gap-1.5">
                         <Sparkles className="h-3 w-3 text-primary shrink-0 mt-0.5" />
                         <span className="text-[10px] text-muted-foreground leading-relaxed">{item.fix}</span>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-6 text-[10px] gap-1 ml-2"
-                          onClick={() => executeAction({
-                            action: `Fix Decay: ${item.page}`,
-                            module: "seo",
-                            detail: `Applying fix to "${item.page}": ${item.fix}`,
-                            successMsg: `Fix task created for ${item.page}`,
-                          })}
-                        >
-                          Fix
-                        </Button>
+                        {fixedDecayItems.has(item.page) ? (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                            <Check className="h-3 w-3" />
+                            Fixed ✓
+                          </span>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-6 text-[10px] gap-1 ml-2"
+                            onClick={() => {
+                              setFixedDecayItems(prev => new Set(prev).add(item.page));
+                              executeAction({
+                                action: `Fix Decay: ${item.page}`,
+                                module: "seo",
+                                detail: `Applying fix to "${item.page}": ${item.fix}`,
+                                successMsg: `Fix applied to ${item.page}`,
+                              });
+                            }}
+                          >
+                            Fix
+                          </Button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -313,6 +343,26 @@ export function SeoDigital() {
           </div>
         </CardContent>
       </Card>
+
+      <ConfirmDialog
+        open={confirmFixAll}
+        onOpenChange={setConfirmFixAll}
+        title="Fix All Content Decay"
+        description={`Create fix tasks for ${seoContentDecayData.length} decaying content pages. AI-suggested fixes will be applied to each page to recover lost rankings.`}
+        confirmLabel={`Fix ${seoContentDecayData.length} Pages`}
+        onConfirm={() => {
+          const allPages = seoContentDecayData.map(d => d.page);
+          setFixedDecayItems(new Set(allPages));
+          executeAction({
+            action: "Fix All Decay",
+            module: "seo",
+            detail: `Creating fix tasks for ${seoContentDecayData.length} decaying content pages`,
+            successMsg: `Fix tasks created for all ${seoContentDecayData.length} decaying pages`,
+            simulateDelay: 800,
+          });
+          setConfirmFixAll(false);
+        }}
+      />
     </div>
   );
 }

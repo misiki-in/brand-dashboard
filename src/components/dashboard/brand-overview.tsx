@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { brandHealth, kpiSummary, inventoryData, aiEngineData } from "@/lib/mock-data";
+import { exportToCSV } from "@/lib/real-actions";
 import { KpiCard, Gauge } from "./kpi-components";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +21,7 @@ const radarConfig = {
 
 export function BrandOverview() {
   const { executeAction, automations } = useAction();
+  const [reportGenerating, setReportGenerating] = useState(false);
   const radarData = [
     { metric: "Awareness", score: brandHealth.components.awareness },
     { metric: "Consideration", score: brandHealth.components.consideration },
@@ -26,6 +29,22 @@ export function BrandOverview() {
     { metric: "Loyalty", score: brandHealth.components.loyalty },
     { metric: "Advocacy", score: brandHealth.components.advocacy },
   ];
+
+  const handleGenerateReport = () => {
+    if (reportGenerating) return;
+    setReportGenerating(true);
+    executeAction({
+      action: "Generate Report",
+      module: "overview",
+      detail: "Generating comprehensive brand health report with all KPIs",
+      loadingMsg: "Generating brand health report...",
+      simulateDelay: 2000,
+      successMsg: "Brand health report generated",
+      undoLabel: "Regenerate",
+      undoAction: () => {},
+    });
+    setTimeout(() => setReportGenerating(false), 2000);
+  };
 
   return (
     <div className="space-y-6">
@@ -59,13 +78,7 @@ export function BrandOverview() {
         primary={{
           label: "Generate Report",
           icon: FileText,
-          onClick: () => executeAction({
-            action: "Generate Report",
-            module: "overview",
-            detail: "Generating comprehensive brand health report with all KPIs",
-            successMsg: "Brand health report generated",
-            simulateDelay: 800,
-          }),
+          onClick: handleGenerateReport,
         }}
         actions={[
           {
@@ -75,20 +88,28 @@ export function BrandOverview() {
               action: "Set Alerts",
               module: "overview",
               detail: "Configuring threshold alerts for brand health metrics",
-              successMsg: "Brand health alerts configured",
-              simulateDelay: 800,
+              successMsg: "Alert configuration opened",
+              undoLabel: "Configure",
+              undoAction: () => {},
             }),
           },
           {
             label: "Export Data",
             icon: Download,
-            onClick: () => executeAction({
-              action: "Export Data",
-              module: "overview",
-              detail: "Exporting brand overview data as CSV",
-              successMsg: "Brand data exported as CSV",
-              simulateDelay: 800,
-            }),
+            onClick: () => {
+              exportToCSV(kpiSummary.map(k => ({
+                Metric: k.label,
+                Value: String(k.value),
+                Unit: k.unit,
+                Change: (k.change > 0 ? '+' : '') + k.change + '%',
+              })), "brand-overview.csv");
+              executeAction({
+                action: "Export Data",
+                module: "overview",
+                detail: "Exporting brand overview data as CSV",
+                successMsg: "Brand data exported to CSV",
+              });
+            },
           },
         ]}
         relevantAutomations={automations.filter(a => a.module === "overview")}

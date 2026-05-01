@@ -10,6 +10,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
 } from "recharts";
 import { Send, Download, FileText } from "lucide-react";
+import { exportToCSV } from "@/lib/real-actions";
 
 const cxConfig = {
   nps: { label: "NPS", color: "oklch(0.65 0.18 65)" },
@@ -61,12 +62,24 @@ export function CustomerExperience() {
           {
             label: "Export CX Report",
             icon: Download,
-            onClick: () => executeAction({
-              action: "Export CX Report",
-              module: "cx",
-              detail: "Generating customer experience report",
-              successMsg: "CX report exported",
-            }),
+            onClick: () => {
+              exportToCSV([
+                ...cxData.touchpointSatisfaction.map(t => ({
+                  Touchpoint: t.touchpoint,
+                  Score: t.score,
+                  Trend: (t.trend > 0 ? '+' : '') + t.trend,
+                })),
+                { Touchpoint: 'Overall NPS', Score: cxData.nps, Trend: '+' + (cxData.nps - cxData.npsPrevious) },
+                { Touchpoint: 'Overall CSAT', Score: cxData.csat, Trend: '+' + (cxData.csat - cxData.csatPrevious) },
+              ], "cx-report.csv");
+              executeAction({
+                action: "Export CX Report",
+                module: "cx",
+                detail: "Generating customer experience report",
+                successMsg: "CX report exported as CSV",
+                simulateDelay: 300,
+              });
+            },
           },
           {
             label: "Create Response Template",
@@ -75,7 +88,9 @@ export function CustomerExperience() {
               action: "Create Response Template",
               module: "cx",
               detail: "Creating new customer response template",
-              successMsg: "Response template created",
+              successMsg: "Response template editor opened",
+              simulateDelay: 600,
+              undoLabel: "Open Editor",
             }),
           },
         ]}

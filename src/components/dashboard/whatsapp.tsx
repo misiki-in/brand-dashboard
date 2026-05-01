@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { whatsappData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,9 +15,13 @@ import { MessageCircle, Zap, Bot, TrendingUp, Phone, ArrowRight, Send, Plus, Dow
 import { useAction } from "@/lib/action-context";
 import { ActionBar } from "./action-bar";
 import { Button } from "@/components/ui/button";
+import { SendBroadcastModal, ExportModal } from "./action-modals";
+import { exportToCSV } from "@/lib/real-actions";
 
 export function WhatsAppCommerceHub() {
   const { executeAction, automations } = useAction();
+  const [broadcastOpen, setBroadcastOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
 
   const COLORS = ["oklch(0.55 0.18 145)", "oklch(0.65 0.18 65)", "oklch(0.6 0.15 340)", "oklch(0.55 0.12 200)", "oklch(0.7 0.1 140)", "oklch(0.6 0.2 30)"];
 
@@ -79,33 +84,45 @@ export function WhatsAppCommerceHub() {
         primary={{
           label: "Send Broadcast",
           icon: Send,
-          onClick: () => executeAction({
-            action: "Send Broadcast",
-            module: "whatsapp",
-            detail: "Creating new WhatsApp broadcast to 142K contacts",
-            successMsg: "Broadcast created",
-          }),
+          onClick: () => setBroadcastOpen(true),
         }}
         actions={[
           {
             label: "Create Flow",
             icon: Plus,
-            onClick: () => executeAction({
-              action: "Create Flow",
-              module: "whatsapp",
-              detail: "Creating new automated WhatsApp flow",
-              successMsg: "Flow created",
-            }),
+            onClick: () => {
+              executeAction({
+                action: "Create Flow",
+                module: "whatsapp",
+                detail: "Opening WhatsApp flow builder",
+                successMsg: "Flow builder opened",
+                simulateDelay: 300,
+              });
+            },
           },
           {
             label: "Export Data",
             icon: Download,
-            onClick: () => executeAction({
-              action: "Export Data",
-              module: "whatsapp",
-              detail: "Exporting WhatsApp commerce analytics",
-              successMsg: "Data exported",
-            }),
+            onClick: () => {
+              exportToCSV(
+                whatsappData.broadcastCampaigns.map((c) => ({
+                  Name: c.name,
+                  Sent: c.sent,
+                  Delivered: c.delivered + '%',
+                  Read: c.read + '%',
+                  Replied: c.replied + '%',
+                  Conversions: c.conversions,
+                  Revenue: '$' + c.revenue,
+                })),
+                "whatsapp-data.csv"
+              );
+              executeAction({
+                action: "Export Data",
+                module: "whatsapp",
+                detail: `Exporting ${whatsappData.broadcastCampaigns.length} broadcast campaigns`,
+                successMsg: "WhatsApp data exported to CSV",
+              });
+            },
           },
         ]}
         relevantAutomations={automations.filter(a => a.module === "whatsapp")}
@@ -240,8 +257,8 @@ export function WhatsAppCommerceHub() {
                       onClick={() => executeAction({
                         action: `Use AI Reply`,
                         module: "whatsapp",
-                        detail: `Sending AI-suggested reply to customer`,
-                        successMsg: "Reply sent to customer",
+                        detail: `Sending AI reply: "${item.aiSuggestion.slice(0, 60)}..."`,
+                        successMsg: `Reply sent to customer — "${item.aiSuggestion.slice(0, 50)}..."`,
                         simulateDelay: 500,
                       })}
                     >
@@ -254,6 +271,35 @@ export function WhatsAppCommerceHub() {
           </div>
         </CardContent>
       </Card>
+
+      <SendBroadcastModal
+        open={broadcastOpen}
+        onOpenChange={setBroadcastOpen}
+        onSent={() => {
+          executeAction({
+            action: "Send Broadcast",
+            module: "whatsapp",
+            detail: "Broadcast sent successfully",
+            successMsg: "Broadcast sent to all contacts",
+          });
+        }}
+      />
+
+      <ExportModal
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        moduleName="WhatsApp Commerce"
+        data={whatsappData.broadcastCampaigns.map((c) => ({
+          Name: c.name,
+          Sent: c.sent,
+          Delivered: c.delivered + '%',
+          Read: c.read + '%',
+          Replied: c.replied + '%',
+          Conversions: c.conversions,
+          Revenue: '$' + c.revenue,
+        }))}
+        filename="whatsapp-commerce"
+      />
     </div>
   );
 }

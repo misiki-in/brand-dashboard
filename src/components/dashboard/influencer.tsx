@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { influencerData } from "@/lib/mock-data";
+import { exportToCSV } from "@/lib/real-actions";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
@@ -51,6 +53,8 @@ const prStrategy = {
 
 export function InfluencerPartnerships() {
   const { executeAction, automations } = useAction();
+  const [outreachOpen, setOutreachOpen] = useState(false);
+  const [partnershipOpen, setPartnershipOpen] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -77,43 +81,71 @@ export function InfluencerPartnerships() {
         primary={{
           label: "Send Outreach",
           icon: Send,
-          onClick: () => executeAction({
-            action: "Send Outreach",
-            module: "influencer",
-            detail: "Opening influencer outreach with AI-personalized message templates",
-            successMsg: "Outreach campaign initiated",
-          }),
+          onClick: () => {
+            executeAction({
+              action: "Send Outreach",
+              module: "influencer",
+              detail: "Opening influencer outreach with AI-personalized message templates",
+              successMsg: "Outreach initiated to 6 partners",
+              undoLabel: "View Drafts",
+              undoAction: () => setOutreachOpen(true),
+            });
+          },
         }}
         actions={[
           {
             label: "Track Codes",
             icon: Tag,
-            onClick: () => executeAction({
-              action: "Track Codes",
-              module: "influencer",
-              detail: "Generating influencer coupon code performance report",
-              successMsg: "Coupon report generated",
-            }),
+            onClick: () => {
+              exportToCSV(influencerData.partnerships.map(p => ({
+                Name: p.name,
+                Platform: p.platform,
+                Followers: p.followers,
+                Type: p.type,
+                Posts: p.posts,
+                Reach: p.reach,
+                Engagement: p.engagement + '%',
+                Revenue: '$' + p.revenue,
+              })), "influencer-tracking.csv");
+              executeAction({
+                action: "Track Codes",
+                module: "influencer",
+                detail: "Generating influencer coupon code performance report",
+                successMsg: "Tracking codes exported to CSV",
+              });
+            },
           },
           {
             label: "Export Report",
             icon: Download,
-            onClick: () => executeAction({
-              action: "Export Report",
-              module: "influencer",
-              detail: "Exporting influencer & PR performance report",
-              successMsg: "Report exported",
-            }),
+            onClick: () => {
+              exportToCSV(influencerData.upcomingCollaborations.map(c => ({
+                Campaign: c.name,
+                Partners: c.partners,
+                Budget: '$' + c.budget,
+                Status: c.status,
+              })), "influencer-collaborations.csv");
+              executeAction({
+                action: "Export Report",
+                module: "influencer",
+                detail: "Exporting influencer & PR performance report",
+                successMsg: "Collaborations report exported to CSV",
+              });
+            },
           },
           {
             label: "Create Partnership",
             icon: Plus,
-            onClick: () => executeAction({
-              action: "Create Partnership",
-              module: "influencer",
-              detail: "Creating new influencer partnership brief",
-              successMsg: "Partnership brief created",
-            }),
+            onClick: () => {
+              executeAction({
+                action: "Create Partnership",
+                module: "influencer",
+                detail: "Creating new influencer partnership brief",
+                successMsg: "Partnership brief created",
+                undoLabel: "Open Builder",
+                undoAction: () => setPartnershipOpen(true),
+              });
+            },
           },
         ]}
       />

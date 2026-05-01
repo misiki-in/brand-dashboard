@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { loyaltyData } from "@/lib/mock-data";
+import { exportToCSV } from "@/lib/real-actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +30,21 @@ const tierColors: Record<string, string> = {
 
 export function LoyaltyRetention() {
   const { executeAction, automations } = useAction();
+  const [tiersUpdating, setTiersUpdating] = useState(false);
+
+  const handleUpdateTiers = () => {
+    if (tiersUpdating) return;
+    setTiersUpdating(true);
+    executeAction({
+      action: "Update Tiers",
+      module: "loyalty",
+      detail: "Running tier qualification update for all members",
+      loadingMsg: "Updating tier qualifications...",
+      simulateDelay: 1500,
+      successMsg: "Tier qualification updated — 342 members promoted, 89 demoted",
+    });
+    setTimeout(() => setTiersUpdating(false), 1500);
+  };
 
   return (
     <div className="space-y-6">
@@ -54,18 +71,37 @@ export function LoyaltyRetention() {
         primary={{
           label: "Create Reward",
           icon: Star,
-          onClick: () => executeAction({ action: "Create Reward", module: "loyalty", detail: "Creating new loyalty reward tier benefit" }),
+          onClick: () => executeAction({
+            action: "Create Reward",
+            module: "loyalty",
+            detail: "Creating new loyalty reward tier benefit",
+            successMsg: "Reward tier configured",
+          }),
         }}
         actions={[
           {
             label: "Export Members",
             icon: Download,
-            onClick: () => executeAction({ action: "Export Members", module: "loyalty", detail: "Exporting 68K loyalty member data" }),
+            onClick: () => {
+              exportToCSV(loyaltyData.clvByTier.map(t => ({
+                Tier: t.tier,
+                Customers: t.customers,
+                'Avg CLV': '$' + t.avgCLV,
+                'Avg Orders': t.avgOrders,
+                Retention: t.retention + '%',
+              })), "loyalty-members.csv");
+              executeAction({
+                action: "Export Members",
+                module: "loyalty",
+                detail: "Exporting 68K loyalty member data",
+                successMsg: "Loyalty members exported to CSV",
+              });
+            },
           },
           {
             label: "Update Tiers",
             icon: RefreshCw,
-            onClick: () => executeAction({ action: "Update Tiers", module: "loyalty", detail: "Running tier qualification update for all members" }),
+            onClick: handleUpdateTiers,
           },
         ]}
         relevantAutomations={automations.filter(a => a.module === "loyalty")}

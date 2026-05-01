@@ -1,11 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Plus, Download, Send } from "lucide-react";
 import { useAction } from "@/lib/action-context";
 import { ActionBar } from "./action-bar";
+import { CreateSegmentModal } from "./action-modals";
+import { exportToCSV } from "@/lib/real-actions";
 import {
   ChartContainer,
   ChartTooltip,
@@ -181,6 +184,7 @@ function personaGradient(share: number) {
 
 export function Audience() {
   const { executeAction, automations } = useAction();
+  const [segmentOpen, setSegmentOpen] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -193,23 +197,59 @@ export function Audience() {
         </p>
       </div>
 
+      <CreateSegmentModal
+        open={segmentOpen}
+        onOpenChange={setSegmentOpen}
+        onCreated={() => {
+          setSegmentOpen(false);
+          executeAction({
+            action: "Create Segment",
+            module: "audience",
+            detail: "New audience segment created from buyer persona data",
+            successMsg: "Segment created successfully",
+            simulateDelay: 400,
+          });
+        }}
+      />
+
       <ActionBar
         module="audience"
         primary={{
           label: "Create Segment",
           icon: Plus,
-          onClick: () => executeAction({ action: "Create Segment", module: "audience", detail: "Creating new audience segment from buyer persona data" }),
+          onClick: () => setSegmentOpen(true),
         }}
         actions={[
           {
             label: "Export Personas",
             icon: Download,
-            onClick: () => executeAction({ action: "Export Personas", module: "audience", detail: "Exporting buyer persona cards" }),
+            onClick: () => {
+              exportToCSV(personas.map(p => ({
+                Name: p.name,
+                Age: p.ageRange,
+                AvgSpend: p.avgSpend,
+                TopCategories: p.topCategories.join('; '),
+                Channels: p.channels.join('; '),
+                Share: p.share + '%',
+              })), "audience-personas.csv");
+              executeAction({
+                action: "Export Personas",
+                module: "audience",
+                detail: "Exporting buyer persona cards",
+                successMsg: "Personas exported as CSV",
+                simulateDelay: 300,
+              });
+            },
           },
           {
             label: "Run Survey",
             icon: Send,
-            onClick: () => executeAction({ action: "Run Survey", module: "audience", detail: "Launching audience preference survey" }),
+            onClick: () => executeAction({
+              action: "Run Survey",
+              module: "audience",
+              detail: "Launching audience preference survey",
+              successMsg: "Audience preference survey created and distributed",
+            }),
           },
         ]}
         relevantAutomations={automations.filter(a => a.module === "audience")}

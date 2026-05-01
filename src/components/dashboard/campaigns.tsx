@@ -6,11 +6,16 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Plus, CalendarDays, Copy } from "lucide-react";
+import { useState } from "react";
+import { CreateCampaignModal, ExportModal } from "./action-modals";
+import { exportToCSV } from "@/lib/real-actions";
+import { toast } from "sonner";
 import { useAction } from "@/lib/action-context";
 import { ActionBar } from "./action-bar";
 
 export function CampaignCalendar() {
   const { executeAction, automations } = useAction();
+  const [createOpen, setCreateOpen] = useState(false);
 
   const statusColor: Record<string, string> = {
     Active: "bg-emerald-500",
@@ -47,18 +52,40 @@ export function CampaignCalendar() {
         primary={{
           label: "Create Campaign",
           icon: Plus,
-          onClick: () => executeAction({ action: "Create Campaign", module: "campaigns", detail: "Creating new marketing campaign with AI-powered targeting" }),
+          onClick: () => setCreateOpen(true),
         }}
         actions={[
           {
             label: "Export Calendar",
             icon: CalendarDays,
-            onClick: () => executeAction({ action: "Export Calendar", module: "campaigns", detail: "Exporting campaign calendar as PDF" }),
+            onClick: () => {
+              exportToCSV(campaignData.campaigns.map(c => ({
+                Campaign: c.name,
+                Status: c.status,
+                'Start Date': c.startDate,
+                'End Date': c.endDate,
+                Budget: '$' + c.budget,
+                Spent: '$' + c.spent,
+                Channels: c.channels.join(', '),
+                Audience: c.targetAudience,
+                'Revenue Target': '$' + c.kpis.revenue,
+                'Order Target': c.kpis.orders,
+                Progress: c.progress + '%',
+              })), "campaign-calendar-2026.csv");
+              toast.success("Calendar exported", { description: "campaign-calendar-2026.csv downloaded" });
+            },
           },
           {
             label: "Duplicate",
             icon: Copy,
-            onClick: () => executeAction({ action: "Duplicate", module: "campaigns", detail: "Duplicating top-performing campaign template" }),
+            onClick: () => {
+              executeAction({
+                action: "Duplicate",
+                module: "campaigns",
+                detail: "Duplicating top-performing campaign template",
+                successMsg: "Top campaign template duplicated — Valentine's Day campaign cloned",
+              });
+            },
           },
         ]}
         relevantAutomations={automations.filter(a => a.module === "campaigns")}
@@ -154,6 +181,15 @@ export function CampaignCalendar() {
           </CardContent>
         </Card>
       </div>
+
+      <CreateCampaignModal
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        onCreated={() => {
+          setCreateOpen(false);
+          toast.success("Campaign created successfully", { description: "New campaign added to the calendar" });
+        }}
+      />
     </div>
   );
 }

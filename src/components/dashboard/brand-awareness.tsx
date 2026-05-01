@@ -1,6 +1,7 @@
 "use client";
 
 import { awarenessData } from "@/lib/mock-data";
+import { exportToCSV } from "@/lib/real-actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
@@ -53,7 +54,7 @@ export function BrandAwareness() {
             action: "Launch Survey",
             module: "awareness",
             detail: "Launching brand awareness survey to 10K panel respondents",
-            successMsg: "Survey launched to 10K respondents",
+            successMsg: "Survey launched to 10,000 respondents",
             simulateDelay: 800,
           }),
         }}
@@ -61,13 +62,19 @@ export function BrandAwareness() {
           {
             label: "Export Report",
             icon: Download,
-            onClick: () => executeAction({
-              action: "Export Report",
-              module: "awareness",
-              detail: "Generating awareness tracking report",
-              successMsg: "Awareness report exported",
-              simulateDelay: 800,
-            }),
+            onClick: () => {
+              exportToCSV(awarenessData.brandAssociations.map(a => ({
+                Word: a.word,
+                Mentions: a.mentions,
+                Sentiment: a.sentiment + '%',
+              })), "brand-awareness.csv");
+              executeAction({
+                action: "Export Report",
+                module: "awareness",
+                detail: "Generating awareness tracking report",
+                successMsg: "Awareness report exported to CSV",
+              });
+            },
           },
           {
             label: "Set Threshold",
@@ -76,8 +83,7 @@ export function BrandAwareness() {
               action: "Set Threshold",
               module: "awareness",
               detail: "Setting alert thresholds for awareness metrics",
-              successMsg: "Awareness thresholds configured",
-              simulateDelay: 800,
+              successMsg: "Alert thresholds configured",
             }),
           },
         ]}

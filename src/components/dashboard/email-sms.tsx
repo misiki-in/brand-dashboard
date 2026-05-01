@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { emailData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
@@ -8,6 +9,8 @@ import { Switch } from "@/components/ui/switch";
 import { useAction } from "@/lib/action-context";
 import { ActionBar } from "./action-bar";
 import { Plus, Download, Send } from "lucide-react";
+import { SendBroadcastModal, CreateCampaignModal, ExportModal } from "./action-modals";
+import { exportToCSV } from "@/lib/real-actions";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
 } from "recharts";
@@ -19,6 +22,10 @@ const campaignConfig = {
 
 export function EmailSms() {
   const { executeAction } = useAction();
+  const [campaignOpen, setCampaignOpen] = useState(false);
+  const [broadcastOpen, setBroadcastOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
+  const [flows, setFlows] = useState(emailData.automationFlows.map((f) => ({ ...f })));
 
   return (
     <div className="space-y-6">
@@ -45,36 +52,37 @@ export function EmailSms() {
         primary={{
           label: "Create Campaign",
           icon: Plus,
-          onClick: () => executeAction({
-            action: "Create Campaign",
-            module: "email",
-            detail: "Opening email campaign builder with AI-powered subject line suggestions",
-            successMsg: "Campaign draft created",
-            simulateDelay: 1000,
-          }),
+          onClick: () => setCampaignOpen(true),
         }}
         actions={[
           {
             label: "Send Broadcast",
             icon: Send,
-            onClick: () => executeAction({
-              action: "Send Broadcast",
-              module: "email",
-              detail: "Sending SMS broadcast to 245K subscribers",
-              successMsg: "Broadcast sent to 245K contacts",
-              simulateDelay: 2000,
-            }),
+            onClick: () => setBroadcastOpen(true),
           },
           {
             label: "Export Report",
             icon: Download,
-            onClick: () => executeAction({
-              action: "Export Email Report",
-              module: "email",
-              detail: "Generating email & SMS performance report",
-              successMsg: "Report exported",
-              simulateDelay: 1000,
-            }),
+            onClick: () => {
+              exportToCSV(
+                emailData.campaigns.map((c) => ({
+                  Name: c.name,
+                  Type: c.type,
+                  Sent: c.sent,
+                  Opens: c.opens + '%',
+                  Clicks: c.clicks + '%',
+                  Conversions: c.conversions + '%',
+                  Revenue: '$' + c.revenue,
+                })),
+                "email-report.csv"
+              );
+              executeAction({
+                action: "Export Email Report",
+                module: "email",
+                detail: `Exporting ${emailData.campaigns.length} campaign reports`,
+                successMsg: "Email report exported to CSV",
+              });
+            },
           },
         ]}
       />
@@ -139,17 +147,21 @@ export function EmailSms() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {emailData.automationFlows.map((f) => (
+              {flows.map((f) => (
                 <div key={f.name} className="flex items-center gap-3 p-3 rounded-lg bg-muted/20">
                   <Switch
                     checked={f.active}
-                    onCheckedChange={() => executeAction({
-                      action: `${f.active ? "Disable" : "Enable"} ${f.name}`,
-                      module: "email",
-                      detail: `${f.active ? "Disabling" : "Enabling"} automation flow: ${f.name}`,
-                      successMsg: `${f.name} ${f.active ? "disabled" : "enabled"}`,
-                      simulateDelay: 500,
-                    })}
+                    onCheckedChange={() => {
+                      const newActive = !f.active;
+                      setFlows((prev) => prev.map((flow) => flow.name === f.name ? { ...flow, active: newActive } : flow));
+                      executeAction({
+                        action: `${newActive ? "Enable" : "Disable"} ${f.name}`,
+                        module: "email",
+                        detail: `${newActive ? "Enabling" : "Disabling"} automation flow: ${f.name}`,
+                        successMsg: `${f.name} ${newActive ? "enabled" : "disabled"}`,
+                        simulateDelay: 300,
+                      });
+                    }}
                   />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium">{f.name}</p>
@@ -168,6 +180,49 @@ export function EmailSms() {
           </CardContent>
         </Card>
       </div>
+
+      <CreateCampaignModal
+        open={campaignOpen}
+        onOpenChange={setCampaignOpen}
+        onCreated={() => {
+          executeAction({
+            action: "Create Campaign",
+            module: "email",
+            detail: "Email campaign created successfully",
+            successMsg: "Campaign draft created",
+            simulateDelay: 800,
+          });
+        }}
+      />
+
+      <SendBroadcastModal
+        open={broadcastOpen}
+        onOpenChange={setBroadcastOpen}
+        onSent={() => {
+          executeAction({
+            action: "Send Broadcast",
+            module: "email",
+            detail: "Broadcast sent to all subscribers",
+            successMsg: "Broadcast sent successfully",
+          });
+        }}
+      />
+
+      <ExportModal
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        moduleName="Email & SMS"
+        data={emailData.campaigns.map((c) => ({
+          Name: c.name,
+          Type: c.type,
+          Sent: c.sent,
+          Opens: c.opens + '%',
+          Clicks: c.clicks + '%',
+          Conversions: c.conversions + '%',
+          Revenue: '$' + c.revenue,
+        }))}
+        filename="email-sms-report"
+      />
     </div>
   );
 }
