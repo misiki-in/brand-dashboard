@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { ActionProvider } from '@/lib/action-context';
 import { WorkspaceProvider, useWorkspace } from '@/lib/workspace-context';
+import { useAuth } from '@/lib/auth-context';
 import { NotificationCenter } from '@/components/dashboard/notification-center';
 import { ProjectSwitcher } from '@/components/dashboard/project-switcher';
 import { TeamAvatars } from '@/components/dashboard/team-panel';
@@ -15,7 +16,7 @@ import {
   Heart, BarChart3, MessageSquare, Star, Search, FileText,
   Share2, Mail, DollarSign, Users, Crown, Gem, TrendingUp,
   Swords, Calendar, ChevronLeft, ChevronRight, Sparkles, Menu, Settings, LayoutDashboard,
-  Eye, UserCircle, Route, Package, MessageCircle, Palette, Brain,
+  Eye, UserCircle, Route, Package, MessageCircle, Palette, Brain, LogOut,
 } from 'lucide-react';
 
 import { BrandOverview } from '@/components/dashboard/brand-overview';
@@ -128,6 +129,7 @@ function SidebarNav({
   collapsed: boolean;
 }) {
   const { currentProject, currentUser } = useWorkspace();
+  const { logout } = useAuth();
   return (
     <div className="flex flex-col h-full">
       {/* Brand */}
@@ -206,7 +208,13 @@ function SidebarNav({
               <p className="text-xs font-medium text-sidebar-foreground truncate">{currentUser.name}</p>
               <p className="text-[10px] text-sidebar-foreground/50 capitalize">{currentUser.role} · Enterprise</p>
             </div>
-            <Settings className="h-3.5 w-3.5 text-sidebar-foreground/40 cursor-pointer hover:text-sidebar-foreground transition-colors" />
+            <button
+              onClick={logout}
+              className="ml-auto p-1 rounded-md hover:bg-sidebar-accent/60 transition-colors group"
+              title="Sign out"
+            >
+              <LogOut className="h-3.5 w-3.5 text-sidebar-foreground/40 group-hover:text-red-400 transition-colors" />
+            </button>
           </div>
         </div>
       )}

@@ -439,3 +439,37 @@ Stage Summary:
 - Role-based permission gating on team management actions
 - All components use "use client", shadcn/ui primitives, and match gold/dark dashboard theme
 - TypeScript clean, dev server compiles without errors
+
+---
+Task ID: 12
+Agent: Main
+Task: Add Login Page with Prefilled Credentials
+
+Work Log:
+- Created `/src/lib/auth-context.tsx` — AuthProvider with login/logout state management
+  - Valid credentials: info@varnijewels.com / litekart
+  - AuthUser type with email, name, avatar, role
+  - login() method with simulated 800ms network delay
+  - logout() method to clear session
+  - isAuthenticated and isLoading state
+- Created `/src/components/login-page.tsx` — Full login page component
+  - Beautiful branded design with gradient orbs, dot grid background
+  - Varni Jewels logo (Gem icon + gradient card)
+  - Email input prefilled with "info@varnijewels.com"
+  - Password input prefilled with "litekart" (show/hide toggle)
+  - "Remember me" checkbox + "Forgot password?" link
+  - Gold gradient "Sign In" button with loading state
+  - Decorative Google + Microsoft SSO buttons (show error in demo mode)
+  - Error message display with Shield icon
+  - Form validation for empty fields
+- Updated `/src/app/page.tsx` — Wrapped with AuthProvider, routes to LoginPage or DashboardClient based on auth state
+- Updated `/src/app/dashboard-client.tsx` — Added LogOut icon + logout button in sidebar bottom user section
+- Ran `npx next build` — compiled successfully with zero errors
+
+Stage Summary:
+- 2 new files: auth-context.tsx (auth state), login-page.tsx (login UI)
+- Login credentials prefilled: info@varnijewels.com / litekart
+- Beautiful branded login page with Varni Jewels gold theme
+- Logout button in dashboard sidebar
+- Auth state gates entire dashboard behind login
+- Production build: Clean
