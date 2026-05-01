@@ -113,7 +113,6 @@ const navSections = [
     items: [
       { id: 'competitive', label: 'Competitive Intel', icon: Swords },
       { id: 'campaigns', label: 'Campaign Calendar', icon: Calendar },
-      { id: 'ai-engine', label: 'AI Growth Engine', icon: Brain },
     ],
   },
   {
