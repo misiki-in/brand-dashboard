@@ -4,9 +4,13 @@ import { socialData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
 } from "recharts";
+import { CalendarDays, Megaphone, Download } from "lucide-react";
 
 const followerConfig = {
   instagram: { label: "Instagram", color: "oklch(0.6 0.18 340)" },
@@ -16,6 +20,8 @@ const followerConfig = {
 };
 
 export function SocialMedia() {
+  const { executeAction, automations } = useAction();
+  const relevantAutomations = automations.filter(a => a.module === "social");
   return (
     <div className="space-y-6">
       {/* Summary Stats */}
@@ -35,6 +41,43 @@ export function SocialMedia() {
           </Card>
         ))}
       </div>
+
+      <ActionBar
+        module="social"
+        primary={{
+          label: "Schedule Post",
+          icon: CalendarDays,
+          onClick: () => executeAction({
+            action: "Schedule Post",
+            module: "social",
+            detail: "Opening social media scheduler with AI caption suggestions",
+            successMsg: "Scheduler opened",
+          }),
+        }}
+        actions={[
+          {
+            label: "Create Campaign",
+            icon: Megaphone,
+            onClick: () => executeAction({
+              action: "Create Campaign",
+              module: "social",
+              detail: "Creating new social media campaign",
+              successMsg: "Campaign created",
+            }),
+          },
+          {
+            label: "Export Analytics",
+            icon: Download,
+            onClick: () => executeAction({
+              action: "Export Analytics",
+              module: "social",
+              detail: "Exporting social media analytics report",
+              successMsg: "Analytics exported",
+            }),
+          },
+        ]}
+        relevantAutomations={relevantAutomations}
+      />
 
       {/* Follower Growth Trend */}
       <Card className="border-border/50">

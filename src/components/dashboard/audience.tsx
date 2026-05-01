@@ -2,6 +2,10 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Plus, Download, Send } from "lucide-react";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
 import {
   ChartContainer,
   ChartTooltip,
@@ -176,6 +180,8 @@ function personaGradient(share: number) {
 /* ─── Component ─────────────────────────────────────────────── */
 
 export function Audience() {
+  const { executeAction, automations } = useAction();
+
   return (
     <div className="space-y-6">
       {/* ── Section Heading ──────────────────────────────── */}
@@ -186,6 +192,28 @@ export function Audience() {
           for the luxury jewelry customer base.
         </p>
       </div>
+
+      <ActionBar
+        module="audience"
+        primary={{
+          label: "Create Segment",
+          icon: Plus,
+          onClick: () => executeAction({ action: "Create Segment", module: "audience", detail: "Creating new audience segment from buyer persona data" }),
+        }}
+        actions={[
+          {
+            label: "Export Personas",
+            icon: Download,
+            onClick: () => executeAction({ action: "Export Personas", module: "audience", detail: "Exporting buyer persona cards" }),
+          },
+          {
+            label: "Run Survey",
+            icon: Send,
+            onClick: () => executeAction({ action: "Run Survey", module: "audience", detail: "Launching audience preference survey" }),
+          },
+        ]}
+        relevantAutomations={automations.filter(a => a.module === "audience")}
+      />
 
       {/* ── Buyer Personas ───────────────────────────────── */}
       <Card className="border-border/50">

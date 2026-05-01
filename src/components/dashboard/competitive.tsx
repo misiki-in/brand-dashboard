@@ -7,7 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, ScatterChart, Scatter, ZAxis, ResponsiveContainer,
 } from "recharts";
-import { Gavel } from "lucide-react";
+import { Gavel, FileText, Bell, Plus, Download } from "lucide-react";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
+import { Button } from "@/components/ui/button";
 
 // Positioning map data: price tier (x) vs digital brand strength (y)
 const positioningData = [
@@ -78,6 +81,8 @@ const quadrantLabels = [
 ];
 
 export function CompetitiveIntel() {
+  const { executeAction, automations } = useAction();
+
   const sovData = competitiveData.competitors.map((c, i) => ({
     name: c.name,
     sov: c.sov,
@@ -102,6 +107,52 @@ export function CompetitiveIntel() {
           </Card>
         ))}
       </div>
+
+      <ActionBar
+        module="competitive"
+        primary={{
+          label: "Generate Intel Report",
+          icon: FileText,
+          onClick: () => executeAction({
+            action: "Generate Intel Report",
+            module: "competitive",
+            detail: "Generating competitive intelligence report with market positioning analysis",
+            successMsg: "Intel report generated",
+          }),
+        }}
+        actions={[
+          {
+            label: "Set Price Alert",
+            icon: Bell,
+            onClick: () => executeAction({
+              action: "Set Price Alert",
+              module: "competitive",
+              detail: "Configuring competitor price change alerts",
+              successMsg: "Price alerts configured",
+            }),
+          },
+          {
+            label: "Add Competitor",
+            icon: Plus,
+            onClick: () => executeAction({
+              action: "Add Competitor",
+              module: "competitive",
+              detail: "Adding new competitor to tracking set",
+              successMsg: "Competitor added",
+            }),
+          },
+          {
+            label: "Export Data",
+            icon: Download,
+            onClick: () => executeAction({
+              action: "Export Data",
+              module: "competitive",
+              detail: "Exporting competitive landscape data",
+              successMsg: "Data exported",
+            }),
+          },
+        ]}
+      />
 
       {/* Positioning Map: Price Tier vs Digital Brand Strength */}
       <Card className="border-border/50">

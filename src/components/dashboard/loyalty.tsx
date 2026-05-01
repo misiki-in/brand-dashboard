@@ -4,6 +4,10 @@ import { loyaltyData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Star, Download, RefreshCw } from "lucide-react";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, BarChart, Bar,
 } from "recharts";
@@ -23,6 +27,8 @@ const tierColors: Record<string, string> = {
 };
 
 export function LoyaltyRetention() {
+  const { executeAction, automations } = useAction();
+
   return (
     <div className="space-y-6">
       {/* Summary */}
@@ -42,6 +48,28 @@ export function LoyaltyRetention() {
           </Card>
         ))}
       </div>
+
+      <ActionBar
+        module="loyalty"
+        primary={{
+          label: "Create Reward",
+          icon: Star,
+          onClick: () => executeAction({ action: "Create Reward", module: "loyalty", detail: "Creating new loyalty reward tier benefit" }),
+        }}
+        actions={[
+          {
+            label: "Export Members",
+            icon: Download,
+            onClick: () => executeAction({ action: "Export Members", module: "loyalty", detail: "Exporting 68K loyalty member data" }),
+          },
+          {
+            label: "Update Tiers",
+            icon: RefreshCw,
+            onClick: () => executeAction({ action: "Update Tiers", module: "loyalty", detail: "Running tier qualification update for all members" }),
+          },
+        ]}
+        relevantAutomations={automations.filter(a => a.module === "loyalty")}
+      />
 
       {/* Retention Trend */}
       <Card className="border-border/50">

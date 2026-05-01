@@ -2,10 +2,14 @@
 
 import { cxData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
 } from "recharts";
+import { Send, Download, FileText } from "lucide-react";
 
 const cxConfig = {
   nps: { label: "NPS", color: "oklch(0.65 0.18 65)" },
@@ -14,6 +18,8 @@ const cxConfig = {
 };
 
 export function CustomerExperience() {
+  const { executeAction, automations } = useAction();
+  const relevantAutomations = automations.filter(a => a.module === "cx");
   return (
     <div className="space-y-6">
       {/* Hero NPS + CSAT */}
@@ -38,6 +44,43 @@ export function CustomerExperience() {
           </Card>
         ))}
       </div>
+
+      <ActionBar
+        module="cx"
+        primary={{
+          label: "Launch NPS Survey",
+          icon: Send,
+          onClick: () => executeAction({
+            action: "Launch NPS Survey",
+            module: "cx",
+            detail: "Launching NPS survey to 5,855 recent purchasers",
+            successMsg: "NPS survey launched to 5,855 customers",
+          }),
+        }}
+        actions={[
+          {
+            label: "Export CX Report",
+            icon: Download,
+            onClick: () => executeAction({
+              action: "Export CX Report",
+              module: "cx",
+              detail: "Generating customer experience report",
+              successMsg: "CX report exported",
+            }),
+          },
+          {
+            label: "Create Response Template",
+            icon: FileText,
+            onClick: () => executeAction({
+              action: "Create Response Template",
+              module: "cx",
+              detail: "Creating new customer response template",
+              successMsg: "Response template created",
+            }),
+          },
+        ]}
+        relevantAutomations={relevantAutomations}
+      />
 
       {/* CX Trend */}
       <Card className="border-border/50">

@@ -5,9 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Gauge } from "./kpi-components";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, BarChart, Bar, Cell, PieChart, Pie,
 } from "recharts";
+import { Plus, Download, Bell } from "lucide-react";
 
 const sentimentConfig = {
   positive: { label: "Positive", color: "oklch(0.6 0.18 145)" },
@@ -21,6 +25,8 @@ const sourceConfig = {
 };
 
 export function SentimentListening() {
+  const { executeAction, automations } = useAction();
+  const relevantAutomations = automations.filter(a => a.module === "sentiment");
   const pieData = [
     { name: "Positive", value: sentimentData.positiveMentions, fill: "oklch(0.6 0.18 145)" },
     { name: "Neutral", value: sentimentData.neutralMentions, fill: "oklch(0.7 0.05 80)" },
@@ -46,6 +52,42 @@ export function SentimentListening() {
           </Card>
         ))}
       </div>
+
+      <ActionBar
+        module="sentiment"
+        primary={{
+          label: "Create Topic Tracker",
+          icon: Plus,
+          onClick: () => executeAction({
+            action: "Create Topic Tracker",
+            module: "sentiment",
+            detail: "Creating new sentiment topic tracker with keyword monitoring",
+          }),
+        }}
+        actions={[
+          {
+            label: "Export Report",
+            icon: Download,
+            onClick: () => executeAction({
+              action: "Export Report",
+              module: "sentiment",
+              detail: "Generating sentiment analysis report",
+              successMsg: "Sentiment report exported",
+            }),
+          },
+          {
+            label: "Set Alert Threshold",
+            icon: Bell,
+            onClick: () => executeAction({
+              action: "Set Alert Threshold",
+              module: "sentiment",
+              detail: "Configuring negative sentiment spike alerts",
+              successMsg: "Alert threshold configured",
+            }),
+          },
+        ]}
+        relevantAutomations={relevantAutomations}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
         {/* Sentiment Trend */}
@@ -126,9 +168,24 @@ export function SentimentListening() {
                   <p className="text-sm font-medium">{t.topic}</p>
                   <p className="text-[10px] text-muted-foreground">{t.mentions.toLocaleString()} mentions</p>
                 </div>
-                <Badge variant={t.sentiment >= 90 ? "default" : t.sentiment >= 80 ? "secondary" : "outline"} className="text-xs">
-                  {t.sentiment}% positive
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant={t.sentiment >= 90 ? "default" : t.sentiment >= 80 ? "secondary" : "outline"} className="text-xs">
+                    {t.sentiment}% positive
+                  </Badge>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 text-[10px] px-2"
+                    onClick={() => executeAction({
+                      action: `Track: ${t.topic}`,
+                      module: "sentiment",
+                      detail: `Adding "${t.topic}" to active sentiment tracking`,
+                      successMsg: `Now tracking "${t.topic}"`,
+                    })}
+                  >
+                    Track
+                  </Button>
+                </div>
               </div>
             ))}
           </CardContent>

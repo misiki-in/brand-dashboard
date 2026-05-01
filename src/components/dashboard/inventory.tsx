@@ -3,6 +3,7 @@
 import { inventoryData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { KpiCard } from "./kpi-components";
 import {
   ChartContainer, ChartTooltip, ChartTooltipContent,
@@ -10,7 +11,9 @@ import {
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, Cell, AreaChart, Area,
 } from "recharts";
-import { Package, AlertTriangle, TrendingUp, TrendingDown, RefreshCw, Zap } from "lucide-react";
+import { Package, AlertTriangle, TrendingUp, TrendingDown, RefreshCw, Zap, Tag, Download } from "lucide-react";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
 
 const statusColors: Record<string, string> = {
   Fast: "bg-emerald-500/10 text-emerald-600",
@@ -26,6 +29,7 @@ const priorityColors: Record<string, string> = {
 };
 
 export function InventoryIntelligence() {
+  const { executeAction, automations } = useAction();
   const COLORS = ["oklch(0.65 0.18 65)", "oklch(0.6 0.15 340)", "oklch(0.55 0.12 200)", "oklch(0.7 0.1 140)", "oklch(0.6 0.2 30)", "oklch(0.5 0.15 260)"];
 
   const inventoryTrendData = inventoryData.monthlyInventoryTrend.map((m) => ({
@@ -71,6 +75,46 @@ export function InventoryIntelligence() {
           </div>
         </CardContent>
       </Card>
+
+      <ActionBar
+        module="inventory"
+        primary={{
+          label: "Reorder All",
+          icon: RefreshCw,
+          onClick: () => executeAction({
+            action: "Reorder All",
+            module: "inventory",
+            detail: "Creating purchase orders for 4 items below reorder point",
+            successMsg: "Purchase orders created for 4 items",
+            simulateDelay: 800,
+          }),
+        }}
+        actions={[
+          {
+            label: "Liquidate Stock",
+            icon: Tag,
+            onClick: () => executeAction({
+              action: "Liquidate Stock",
+              module: "inventory",
+              detail: "Applying AI-suggested markdowns to 5 dead stock SKUs",
+              successMsg: "Markdowns applied to 5 dead stock SKUs",
+              simulateDelay: 800,
+            }),
+          },
+          {
+            label: "Export Alerts",
+            icon: Download,
+            onClick: () => executeAction({
+              action: "Export Alerts",
+              module: "inventory",
+              detail: "Exporting inventory alerts report",
+              successMsg: "Inventory alerts report exported",
+              simulateDelay: 800,
+            }),
+          },
+        ]}
+        relevantAutomations={automations.filter(a => a.module === "inventory")}
+      />
 
       {/* KPI Row */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -205,6 +249,19 @@ export function InventoryIntelligence() {
                 <div className="text-right shrink-0">
                   <p className="text-lg font-bold text-red-500 tabular-nums">{item.stock}</p>
                   <p className="text-[10px] text-muted-foreground">units left</p>
+                  <Button
+                    size="sm"
+                    className="h-7 text-[10px] gap-1"
+                    onClick={() => executeAction({
+                      action: `Reorder: ${item.name}`,
+                      module: "inventory",
+                      detail: `Creating PO for ${item.name} (${item.sku}) — Lead time: ${item.leadTime}`,
+                      successMsg: `PO created for ${item.name}`,
+                    })}
+                  >
+                    <RefreshCw className="h-3 w-3" />
+                    Reorder
+                  </Button>
                 </div>
               </div>
             ))}
@@ -228,6 +285,19 @@ export function InventoryIntelligence() {
                   <span className="line-through">${item.currentPrice}</span>
                   <span className="font-semibold text-emerald-600">${item.suggestedPrice}</span>
                   <span className="ml-auto">{item.estimatedDaysToClear} days to clear</span>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-6 text-[10px] gap-1"
+                    onClick={() => executeAction({
+                      action: `Apply Markdown: ${item.name}`,
+                      module: "inventory",
+                      detail: `Applying ${item.discount}% markdown to ${item.name}: ${item.currentPrice} → ${item.suggestedPrice}`,
+                      successMsg: `Markdown applied to ${item.name}`,
+                    })}
+                  >
+                    Apply
+                  </Button>
                 </div>
               </div>
             ))}
@@ -271,6 +341,19 @@ export function InventoryIntelligence() {
                     Save {Math.round(((bundle.individualPrice - bundle.bundlePrice) / bundle.individualPrice) * 100)}%
                   </Badge>
                 </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-7 text-[10px] w-full mt-3"
+                  onClick={() => executeAction({
+                    action: `Create Bundle: ${bundle.slowSKU.split(' ').slice(-2).join(' ')} Bundle`,
+                    module: "inventory",
+                    detail: `Creating smart bundle: ${bundle.slowSKU} + ${bundle.fastSKU} at $${bundle.bundlePrice}`,
+                    successMsg: "Bundle created and listed",
+                  })}
+                >
+                  Create Bundle
+                </Button>
               </div>
             ))}
           </div>

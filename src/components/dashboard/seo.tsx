@@ -4,10 +4,13 @@ import { seoData, seoContentDecayData, keywordGapData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, PieChart, Pie,
 } from "recharts";
-import { TrendingDown, Sparkles, Search, Target } from "lucide-react";
+import { TrendingDown, Sparkles, Search, Target, RefreshCw, Download } from "lucide-react";
 
 const trafficConfig = seoData.trafficSources.reduce((acc, s, i) => {
   acc[s.source] = { label: s.source, color: s.color };
@@ -24,6 +27,8 @@ function getDifficultyColor(d: string) {
 }
 
 export function SeoDigital() {
+  const { executeAction, automations } = useAction();
+  const relevantAutomations = automations.filter(a => a.module === "seo");
   return (
     <div className="space-y-6">
       {/* Key Metrics */}
@@ -46,6 +51,43 @@ export function SeoDigital() {
           </Card>
         ))}
       </div>
+
+      <ActionBar
+        module="seo"
+        primary={{
+          label: "Run SEO Audit",
+          icon: Search,
+          onClick: () => executeAction({
+            action: "Run SEO Audit",
+            module: "seo",
+            detail: "Running full SEO audit across 156 content pages",
+            successMsg: "SEO audit initiated",
+          }),
+        }}
+        actions={[
+          {
+            label: "Fix All Decay",
+            icon: RefreshCw,
+            onClick: () => executeAction({
+              action: "Fix All Decay",
+              module: "seo",
+              detail: "Creating fix tasks for 6 decaying content pages",
+              successMsg: "Fix tasks created for all decaying pages",
+            }),
+          },
+          {
+            label: "Export Keywords",
+            icon: Download,
+            onClick: () => executeAction({
+              action: "Export Keywords",
+              module: "seo",
+              detail: "Exporting keyword positions and gap opportunities",
+              successMsg: "Keywords exported",
+            }),
+          },
+        ]}
+        relevantAutomations={relevantAutomations}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
         {/* Traffic Sources Pie */}
@@ -197,6 +239,19 @@ export function SeoDigital() {
                       <div className="flex items-start gap-1.5">
                         <Sparkles className="h-3 w-3 text-primary shrink-0 mt-0.5" />
                         <span className="text-[10px] text-muted-foreground leading-relaxed">{item.fix}</span>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-6 text-[10px] gap-1 ml-2"
+                          onClick={() => executeAction({
+                            action: `Fix Decay: ${item.page}`,
+                            module: "seo",
+                            detail: `Applying fix to "${item.page}": ${item.fix}`,
+                            successMsg: `Fix task created for ${item.page}`,
+                          })}
+                        >
+                          Fix
+                        </Button>
                       </div>
                     </td>
                   </tr>

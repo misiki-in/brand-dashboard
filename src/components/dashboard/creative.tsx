@@ -11,7 +11,9 @@ import {
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell,
 } from "recharts";
-import { Palette, Eye, Lightbulb, AlertTriangle, Image, Video, LayoutGrid, Film, Sparkles, Check, X } from "lucide-react";
+import { Palette, Eye, Lightbulb, AlertTriangle, Image, Video, LayoutGrid, Film, Sparkles, Check, X, Plus, Download, TestTube } from "lucide-react";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
 
 const typeIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   Image, Video, Carousel: LayoutGrid, Reel: Film,
@@ -24,6 +26,8 @@ function getMiniBarColor(score: number) {
 }
 
 export function CreativeBrandLayer() {
+  const { executeAction, automations } = useAction();
+  const creativeAutomations = automations.filter(a => a.module === "creative");
   const COLORS = ["oklch(0.65 0.18 65)", "oklch(0.6 0.15 340)", "oklch(0.55 0.12 200)", "oklch(0.7 0.1 140)", "oklch(0.6 0.2 30)", "oklch(0.5 0.15 260)"];
 
   const fatigueData = creativeData.audienceFatigue.map((a) => ({
@@ -60,6 +64,46 @@ export function CreativeBrandLayer() {
         <KpiCard label="Avg CTR" value={creativeData.avgCTR} unit="%" change={0.6} icon="Eye" />
         <KpiCard label="Best CTR" value={6.4} unit="%" change={1.2} icon="TrendingUp" />
       </div>
+
+      <ActionBar
+        module="creative"
+        primary={{
+          label: "Create Creative",
+          icon: Plus,
+          onClick: () => executeAction({
+            action: "Create Creative",
+            module: "creative",
+            detail: "Opening creative studio with AI-powered design suggestions",
+            successMsg: "Creative brief created",
+            simulateDelay: 1000,
+          }),
+        }}
+        actions={[
+          {
+            label: "Run A/B Test",
+            icon: TestTube,
+            onClick: () => executeAction({
+              action: "Run A/B Test",
+              module: "creative",
+              detail: "Setting up new A/B test with top creative variations",
+              successMsg: "A/B test launched",
+              simulateDelay: 1500,
+            }),
+          },
+          {
+            label: "Export Report",
+            icon: Download,
+            onClick: () => executeAction({
+              action: "Export Creative Report",
+              module: "creative",
+              detail: "Generating creative performance report with AI scores",
+              successMsg: "Creative report exported",
+              simulateDelay: 1000,
+            }),
+          },
+        ]}
+        relevantAutomations={creativeAutomations}
+      />
 
       {/* Top Performing Creatives — WITH AI Creative Scoring */}
       <Card className="border-border/50">
@@ -273,11 +317,30 @@ export function CreativeBrandLayer() {
                     <p className="text-xs text-emerald-600 font-medium">Est. {concept.estEngagement}</p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
-                    <Button variant="outline" size="sm" className="h-8 text-xs gap-1 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 text-xs gap-1 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30"
+                      onClick={() => executeAction({
+                        action: `Deny: ${concept.concept.slice(0, 50)}`,
+                        module: "creative",
+                        detail: `Rejected concept: ${concept.concept}`,
+                        successMsg: "Concept dismissed",
+                      })}
+                    >
                       <X className="h-3 w-3" />
                       Deny
                     </Button>
-                    <Button size="sm" className="h-8 text-xs gap-1">
+                    <Button
+                      size="sm"
+                      className="h-8 text-xs gap-1"
+                      onClick={() => executeAction({
+                        action: `Approve: ${concept.concept.slice(0, 50)}`,
+                        module: "creative",
+                        detail: `Approved concept: ${concept.concept} — sending to creative team`,
+                        successMsg: "Concept approved and assigned",
+                      })}
+                    >
                       <Check className="h-3 w-3" />
                       Approve
                     </Button>

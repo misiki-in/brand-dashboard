@@ -2,11 +2,15 @@
 
 import { awarenessData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { ProgressMetric } from "./kpi-components";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, BarChart, Bar, ResponsiveContainer, Cell,
 } from "recharts";
+import { Send, Download, Bell } from "lucide-react";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
 
 const trendConfig = {
   tom: { label: "Top of Mind", color: "oklch(0.65 0.18 65)" },
@@ -20,6 +24,7 @@ const sovConfig = {
 };
 
 export function BrandAwareness() {
+  const { executeAction, automations } = useAction();
   return (
     <div className="space-y-6">
       {/* Key Metrics */}
@@ -38,6 +43,46 @@ export function BrandAwareness() {
           </Card>
         ))}
       </div>
+
+      <ActionBar
+        module="awareness"
+        primary={{
+          label: "Launch Survey",
+          icon: Send,
+          onClick: () => executeAction({
+            action: "Launch Survey",
+            module: "awareness",
+            detail: "Launching brand awareness survey to 10K panel respondents",
+            successMsg: "Survey launched to 10K respondents",
+            simulateDelay: 800,
+          }),
+        }}
+        actions={[
+          {
+            label: "Export Report",
+            icon: Download,
+            onClick: () => executeAction({
+              action: "Export Report",
+              module: "awareness",
+              detail: "Generating awareness tracking report",
+              successMsg: "Awareness report exported",
+              simulateDelay: 800,
+            }),
+          },
+          {
+            label: "Set Threshold",
+            icon: Bell,
+            onClick: () => executeAction({
+              action: "Set Threshold",
+              module: "awareness",
+              detail: "Setting alert thresholds for awareness metrics",
+              successMsg: "Awareness thresholds configured",
+              simulateDelay: 800,
+            }),
+          },
+        ]}
+        relevantAutomations={automations.filter(a => a.module === "awareness")}
+      />
 
       {/* Trend Chart */}
       <Card className="border-border/50">

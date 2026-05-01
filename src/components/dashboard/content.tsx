@@ -7,7 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Cell,
 } from "recharts";
-import { AlertTriangle, Sparkles, ArrowRight, TrendingDown, FileSearch, PenLine, BarChart3, RefreshCw } from "lucide-react";
+import { AlertTriangle, Sparkles, ArrowRight, TrendingDown, FileSearch, PenLine, BarChart3, RefreshCw, Plus, CalendarDays, Download } from "lucide-react";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
+import { Button } from "@/components/ui/button";
 
 const contentTypeConfig = {
   engagement: { label: "Engagement %", color: "oklch(0.65 0.18 65)" },
@@ -95,6 +98,8 @@ function getQualityBarColor(score: number) {
 }
 
 export function ContentStrategy() {
+  const { executeAction, automations } = useAction();
+
   return (
     <div className="space-y-6">
       {/* Content Summary */}
@@ -113,6 +118,42 @@ export function ContentStrategy() {
           </Card>
         ))}
       </div>
+
+      <ActionBar
+        module="content"
+        primary={{
+          label: "Create Content",
+          icon: Plus,
+          onClick: () => executeAction({
+            action: "Create Content",
+            module: "content",
+            detail: "Opening AI content studio with pillar-aligned topic suggestions",
+            successMsg: "Content studio opened",
+          }),
+        }}
+        actions={[
+          {
+            label: "Schedule Post",
+            icon: CalendarDays,
+            onClick: () => executeAction({
+              action: "Schedule Post",
+              module: "content",
+              detail: "Scheduling content publication for optimal engagement times",
+              successMsg: "Post scheduled",
+            }),
+          },
+          {
+            label: "Export Report",
+            icon: Download,
+            onClick: () => executeAction({
+              action: "Export Report",
+              module: "content",
+              detail: "Exporting content performance report with quality scores",
+              successMsg: "Report exported",
+            }),
+          },
+        ]}
+      />
 
       {/* ========== CLICKFLOW: AI Content Pipeline ========== */}
       <Card className="border-border/50 border-primary/20">
@@ -263,11 +304,26 @@ export function ContentStrategy() {
                     <span className="text-red-500 font-medium">{item.trafficChange}% traffic</span>
                   </div>
                 </div>
-                <div className="p-2 rounded-lg bg-emerald-500/5 border border-emerald-500/20 shrink-0">
-                  <p className="text-[10px] text-emerald-600 font-medium">
-                    <Sparkles className="h-3 w-3 inline mr-1" />
-                    {item.action}
-                  </p>
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className="p-2 rounded-lg bg-emerald-500/5 border border-emerald-500/20">
+                    <p className="text-[10px] text-emerald-600 font-medium">
+                      <Sparkles className="h-3 w-3 inline mr-1" />
+                      {item.action}
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-6 text-[10px] gap-1"
+                    onClick={() => executeAction({
+                      action: `Fix Content: ${item.title}`,
+                      module: "content",
+                      detail: `Creating fix task for "${item.title}"`,
+                      successMsg: `Fix task created for ${item.title}`,
+                    })}
+                  >
+                    Fix Now
+                  </Button>
                 </div>
               </div>
             </div>

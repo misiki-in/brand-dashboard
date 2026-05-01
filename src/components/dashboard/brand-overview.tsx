@@ -3,18 +3,22 @@
 import { brandHealth, kpiSummary, inventoryData, aiEngineData } from "@/lib/mock-data";
 import { KpiCard, Gauge } from "./kpi-components";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   ChartContainer, ChartTooltip, ChartTooltipContent,
 } from "@/components/ui/chart";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from "recharts";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, TrendingUp, Package, DollarSign } from "lucide-react";
+import { AlertTriangle, TrendingUp, Package, DollarSign, FileText, Bell, Download } from "lucide-react";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
 
 const radarConfig = {
   score: { label: "Brand Score", color: "oklch(0.65 0.18 65)" },
 };
 
 export function BrandOverview() {
+  const { executeAction, automations } = useAction();
   const radarData = [
     { metric: "Awareness", score: brandHealth.components.awareness },
     { metric: "Consideration", score: brandHealth.components.consideration },
@@ -49,6 +53,46 @@ export function BrandOverview() {
           </div>
         </CardContent>
       </Card>
+
+      <ActionBar
+        module="overview"
+        primary={{
+          label: "Generate Report",
+          icon: FileText,
+          onClick: () => executeAction({
+            action: "Generate Report",
+            module: "overview",
+            detail: "Generating comprehensive brand health report with all KPIs",
+            successMsg: "Brand health report generated",
+            simulateDelay: 800,
+          }),
+        }}
+        actions={[
+          {
+            label: "Set Alerts",
+            icon: Bell,
+            onClick: () => executeAction({
+              action: "Set Alerts",
+              module: "overview",
+              detail: "Configuring threshold alerts for brand health metrics",
+              successMsg: "Brand health alerts configured",
+              simulateDelay: 800,
+            }),
+          },
+          {
+            label: "Export Data",
+            icon: Download,
+            onClick: () => executeAction({
+              action: "Export Data",
+              module: "overview",
+              detail: "Exporting brand overview data as CSV",
+              successMsg: "Brand data exported as CSV",
+              simulateDelay: 800,
+            }),
+          },
+        ]}
+        relevantAutomations={automations.filter(a => a.module === "overview")}
+      />
 
       {/* KPI Grid — CEO View */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-4">

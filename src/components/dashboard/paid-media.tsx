@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, ScatterChart, Scatter, ZAxis, Cell,
 } from "recharts";
-import { AlertTriangle, Sparkles, MapPin, Zap, Target, ArrowRight, Check, X } from "lucide-react";
+import { AlertTriangle, Sparkles, MapPin, Zap, Target, ArrowRight, Check, X, Download, Play, RefreshCw } from "lucide-react";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
 
 const channelConfig = {
   spend: { label: "Spend", color: "oklch(0.55 0.12 200)" },
@@ -35,6 +37,9 @@ function formatCount(n: number): string {
 }
 
 export function PaidMedia() {
+  const { executeAction, automations } = useAction();
+  const paidMediaAutomations = automations.filter(a => a.module === "ads");
+
   return (
     <div className="space-y-6">
       {/* Key Metrics */}
@@ -53,6 +58,46 @@ export function PaidMedia() {
           </Card>
         ))}
       </div>
+
+      <ActionBar
+        module="ads"
+        primary={{
+          label: "Create Campaign",
+          icon: Play,
+          onClick: () => executeAction({
+            action: "Create Campaign",
+            module: "ads",
+            detail: "Setting up new ad campaign with AI-optimized targeting and budget allocation",
+            successMsg: "Campaign draft created",
+            simulateDelay: 1500,
+          }),
+        }}
+        actions={[
+          {
+            label: "Export Report",
+            icon: Download,
+            onClick: () => executeAction({
+              action: "Export Report",
+              module: "ads",
+              detail: "Generating paid media performance PDF report",
+              successMsg: "Report exported successfully",
+              simulateDelay: 1200,
+            }),
+          },
+          {
+            label: "Optimize Budget",
+            icon: RefreshCw,
+            onClick: () => executeAction({
+              action: "Optimize Budget",
+              module: "ads",
+              detail: "AI is reallocating budget from underperforming to top-performing channels",
+              successMsg: "Budget optimized — shifted $12K to Google Ads",
+              simulateDelay: 2000,
+            }),
+          },
+        ]}
+        relevantAutomations={paidMediaAutomations}
+      />
 
       {/* Channel Performance */}
       <Card className="border-border/50">
@@ -360,11 +405,30 @@ export function PaidMedia() {
                   <p className="text-xs text-emerald-600">{suggestion.impact}</p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <Button variant="outline" size="sm" className="h-8 text-xs gap-1 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs gap-1 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30"
+                    onClick={() => executeAction({
+                      action: `Deny: ${suggestion.action.slice(0, 50)}`,
+                      module: "ads",
+                      detail: suggestion.action,
+                      successMsg: "Suggestion dismissed",
+                    })}
+                  >
                     <X className="h-3 w-3" />
                     Deny
                   </Button>
-                  <Button size="sm" className="h-8 text-xs gap-1">
+                  <Button
+                    size="sm"
+                    className="h-8 text-xs gap-1"
+                    onClick={() => executeAction({
+                      action: `Approve: ${suggestion.action.slice(0, 50)}`,
+                      module: "ads",
+                      detail: suggestion.action,
+                      successMsg: "Optimization applied successfully",
+                    })}
+                  >
                     <Check className="h-3 w-3" />
                     OK
                   </Button>

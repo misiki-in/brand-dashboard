@@ -10,9 +10,14 @@ import {
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell,
 } from "recharts";
-import { MessageCircle, Zap, Bot, TrendingUp, Phone, ArrowRight } from "lucide-react";
+import { MessageCircle, Zap, Bot, TrendingUp, Phone, ArrowRight, Send, Plus, Download } from "lucide-react";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
+import { Button } from "@/components/ui/button";
 
 export function WhatsAppCommerceHub() {
+  const { executeAction, automations } = useAction();
+
   const COLORS = ["oklch(0.55 0.18 145)", "oklch(0.65 0.18 65)", "oklch(0.6 0.15 340)", "oklch(0.55 0.12 200)", "oklch(0.7 0.1 140)", "oklch(0.6 0.2 30)"];
 
   const conversionData = whatsappData.conversationToSale.topCategories.map((c, i) => ({
@@ -68,6 +73,43 @@ export function WhatsAppCommerceHub() {
         <KpiCard label="Active Conversations" value={whatsappData.activeConversations} unit="" change={22} icon="MessageCircle" />
         <KpiCard label="Auto-Reply Rate" value={whatsappData.automatedReplies} unit="%" change={8} icon="Bot" />
       </div>
+
+      <ActionBar
+        module="whatsapp"
+        primary={{
+          label: "Send Broadcast",
+          icon: Send,
+          onClick: () => executeAction({
+            action: "Send Broadcast",
+            module: "whatsapp",
+            detail: "Creating new WhatsApp broadcast to 142K contacts",
+            successMsg: "Broadcast created",
+          }),
+        }}
+        actions={[
+          {
+            label: "Create Flow",
+            icon: Plus,
+            onClick: () => executeAction({
+              action: "Create Flow",
+              module: "whatsapp",
+              detail: "Creating new automated WhatsApp flow",
+              successMsg: "Flow created",
+            }),
+          },
+          {
+            label: "Export Data",
+            icon: Download,
+            onClick: () => executeAction({
+              action: "Export Data",
+              module: "whatsapp",
+              detail: "Exporting WhatsApp commerce analytics",
+              successMsg: "Data exported",
+            }),
+          },
+        ]}
+        relevantAutomations={automations.filter(a => a.module === "whatsapp")}
+      />
 
       {/* Broadcast Campaign Revenue */}
       <Card className="border-border/50">
@@ -191,6 +233,20 @@ export function WhatsAppCommerceHub() {
                     <Badge variant="outline" className="text-[10px]">
                       {item.confidence}% confidence
                     </Badge>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-6 text-[10px] gap-1 mt-1"
+                      onClick={() => executeAction({
+                        action: `Use AI Reply`,
+                        module: "whatsapp",
+                        detail: `Sending AI-suggested reply to customer`,
+                        successMsg: "Reply sent to customer",
+                        simulateDelay: 500,
+                      })}
+                    >
+                      Use Reply
+                    </Button>
                   </div>
                 </div>
               </div>

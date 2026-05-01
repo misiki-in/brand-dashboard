@@ -5,6 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
+import { Plus, Download, Send } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
 } from "recharts";
@@ -15,6 +18,8 @@ const campaignConfig = {
 };
 
 export function EmailSms() {
+  const { executeAction } = useAction();
+
   return (
     <div className="space-y-6">
       {/* Summary */}
@@ -34,6 +39,45 @@ export function EmailSms() {
           </Card>
         ))}
       </div>
+
+      <ActionBar
+        module="email"
+        primary={{
+          label: "Create Campaign",
+          icon: Plus,
+          onClick: () => executeAction({
+            action: "Create Campaign",
+            module: "email",
+            detail: "Opening email campaign builder with AI-powered subject line suggestions",
+            successMsg: "Campaign draft created",
+            simulateDelay: 1000,
+          }),
+        }}
+        actions={[
+          {
+            label: "Send Broadcast",
+            icon: Send,
+            onClick: () => executeAction({
+              action: "Send Broadcast",
+              module: "email",
+              detail: "Sending SMS broadcast to 245K subscribers",
+              successMsg: "Broadcast sent to 245K contacts",
+              simulateDelay: 2000,
+            }),
+          },
+          {
+            label: "Export Report",
+            icon: Download,
+            onClick: () => executeAction({
+              action: "Export Email Report",
+              module: "email",
+              detail: "Generating email & SMS performance report",
+              successMsg: "Report exported",
+              simulateDelay: 1000,
+            }),
+          },
+        ]}
+      />
 
       {/* Recent Campaigns */}
       <Card className="border-border/50">
@@ -97,7 +141,16 @@ export function EmailSms() {
             <div className="space-y-3">
               {emailData.automationFlows.map((f) => (
                 <div key={f.name} className="flex items-center gap-3 p-3 rounded-lg bg-muted/20">
-                  <Switch checked={f.active} disabled />
+                  <Switch
+                    checked={f.active}
+                    onCheckedChange={() => executeAction({
+                      action: `${f.active ? "Disable" : "Enable"} ${f.name}`,
+                      module: "email",
+                      detail: `${f.active ? "Disabling" : "Enabling"} automation flow: ${f.name}`,
+                      successMsg: `${f.name} ${f.active ? "disabled" : "enabled"}`,
+                      simulateDelay: 500,
+                    })}
+                  />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium">{f.name}</p>
                     <div className="flex gap-3 mt-0.5 text-xs text-muted-foreground">

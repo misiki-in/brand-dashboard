@@ -3,9 +3,13 @@
 import { revenueData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Button } from "@/components/ui/button";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell,
 } from "recharts";
+import { Play, Download, BarChart3 } from "lucide-react";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
 
 const revenueConfig = {
   revenue: { label: "Revenue", color: "oklch(0.65 0.18 65)" },
@@ -15,6 +19,7 @@ const revenueConfig = {
 const COLORS = ["oklch(0.65 0.18 65)", "oklch(0.55 0.12 200)", "oklch(0.6 0.15 340)", "oklch(0.7 0.1 140)", "oklch(0.6 0.2 30)", "#888"];
 
 export function RevenueConversions() {
+  const { executeAction, automations } = useAction();
   const channelPieData = revenueData.revenueByChannel.map((c, i) => ({
     name: c.channel,
     value: c.share,
@@ -40,6 +45,46 @@ export function RevenueConversions() {
           </Card>
         ))}
       </div>
+
+      <ActionBar
+        module="revenue"
+        primary={{
+          label: "Create Funnel",
+          icon: Play,
+          onClick: () => executeAction({
+            action: "Create Funnel",
+            module: "revenue",
+            detail: "Creating new conversion funnel analysis",
+            successMsg: "Conversion funnel created",
+            simulateDelay: 800,
+          }),
+        }}
+        actions={[
+          {
+            label: "Export Report",
+            icon: Download,
+            onClick: () => executeAction({
+              action: "Export Report",
+              module: "revenue",
+              detail: "Generating revenue & conversion report",
+              successMsg: "Revenue & conversion report exported",
+              simulateDelay: 800,
+            }),
+          },
+          {
+            label: "Run Analysis",
+            icon: BarChart3,
+            onClick: () => executeAction({
+              action: "Run Analysis",
+              module: "revenue",
+              detail: "Running deep-dive revenue analysis by channel",
+              successMsg: "Revenue analysis complete",
+              simulateDelay: 800,
+            }),
+          },
+        ]}
+        relevantAutomations={automations.filter(a => a.module === "revenue")}
+      />
 
       {/* Revenue Trend */}
       <Card className="border-border/50">

@@ -4,8 +4,14 @@ import { campaignData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { Plus, CalendarDays, Copy } from "lucide-react";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
 
 export function CampaignCalendar() {
+  const { executeAction, automations } = useAction();
+
   const statusColor: Record<string, string> = {
     Active: "bg-emerald-500",
     Upcoming: "bg-amber-500",
@@ -35,6 +41,28 @@ export function CampaignCalendar() {
           </Card>
         ))}
       </div>
+
+      <ActionBar
+        module="campaigns"
+        primary={{
+          label: "Create Campaign",
+          icon: Plus,
+          onClick: () => executeAction({ action: "Create Campaign", module: "campaigns", detail: "Creating new marketing campaign with AI-powered targeting" }),
+        }}
+        actions={[
+          {
+            label: "Export Calendar",
+            icon: CalendarDays,
+            onClick: () => executeAction({ action: "Export Calendar", module: "campaigns", detail: "Exporting campaign calendar as PDF" }),
+          },
+          {
+            label: "Duplicate",
+            icon: Copy,
+            onClick: () => executeAction({ action: "Duplicate", module: "campaigns", detail: "Duplicating top-performing campaign template" }),
+          },
+        ]}
+        relevantAutomations={automations.filter(a => a.module === "campaigns")}
+      />
 
       {/* Campaign Timeline */}
       <Card className="border-border/50">

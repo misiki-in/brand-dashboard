@@ -5,7 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
 import { KpiCard } from "./kpi-components";
-import { Star, AlertTriangle, TrendingDown } from "lucide-react";
+import { Star, AlertTriangle, TrendingDown, BarChart3, Download, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, PieChart, Pie,
 } from "recharts";
@@ -13,6 +16,8 @@ import {
 const COLORS = ["oklch(0.65 0.18 65)", "oklch(0.6 0.15 340)", "oklch(0.55 0.12 200)", "oklch(0.7 0.1 140)", "oklch(0.6 0.2 30)", "oklch(0.5 0.15 260)"];
 
 export function ProductPerformance() {
+  const { executeAction, automations } = useAction();
+
   const categoryPieData = productData.topCategories.map((c) => ({
     name: c.category,
     value: c.revenue,
@@ -34,6 +39,28 @@ export function ProductPerformance() {
         <KpiCard label="Discount Dependency" value={18} unit="%" change={-3} icon="TrendingDown" />
         <KpiCard label="Best Selling Occasion" value={28} unit="% Engagement" change={12} icon="Gem" />
       </div>
+
+      <ActionBar
+        module="product"
+        primary={{
+          label: "Run Analysis",
+          icon: BarChart3,
+          onClick: () => executeAction({ action: "Run Analysis", module: "product", detail: "Running product profitability analysis across all categories" }),
+        }}
+        actions={[
+          {
+            label: "Export Report",
+            icon: Download,
+            onClick: () => executeAction({ action: "Export Report", module: "product", detail: "Exporting sales intelligence report" }),
+          },
+          {
+            label: "Create Product",
+            icon: Plus,
+            onClick: () => executeAction({ action: "Create Product", module: "product", detail: "Opening product listing form with AI description generator" }),
+          },
+        ]}
+        relevantAutomations={automations.filter(a => a.module === "product")}
+      />
 
       {/* Best Sellers — with Profitability */}
       <Card className="border-border/50">

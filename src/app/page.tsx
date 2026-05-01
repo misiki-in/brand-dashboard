@@ -6,10 +6,12 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
+import { ActionProvider } from '@/lib/action-context';
+import { NotificationCenter } from '@/components/dashboard/notification-center';
 import {
   Heart, BarChart3, MessageSquare, Star, Search, FileText,
   Share2, Mail, DollarSign, Users, Crown, Gem, TrendingUp,
-  Swords, Calendar, ChevronLeft, ChevronRight, Sparkles, Menu, Bell, Settings, LayoutDashboard,
+  Swords, Calendar, ChevronLeft, ChevronRight, Sparkles, Menu, Settings, LayoutDashboard,
   Eye, UserCircle, Route, Package, MessageCircle, Palette, Brain,
 } from 'lucide-react';
 
@@ -210,6 +212,7 @@ export default function DashboardPage() {
     .find((i) => i.id === activeTab)?.label || 'Brand Overview';
 
   return (
+    <ActionProvider>
     <div className="flex h-screen overflow-hidden">
       {/* Desktop Sidebar */}
       <aside
@@ -261,10 +264,7 @@ export default function DashboardPage() {
               <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-xs text-muted-foreground">Live Data</span>
             </div>
-            <Button variant="ghost" size="icon" className="h-9 w-9 relative">
-              <Bell className="h-4 w-4" />
-              <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary" />
-            </Button>
+            <NotificationCenter />
           </div>
         </header>
 
@@ -276,5 +276,6 @@ export default function DashboardPage() {
         </ScrollArea>
       </main>
     </div>
+    </ActionProvider>
   );
 }

@@ -8,7 +8,10 @@ import { ProgressMetric } from "./kpi-components";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell,
 } from "recharts";
-import { AlertTriangle, Shield, Ticket } from "lucide-react";
+import { AlertTriangle, Shield, Ticket, Send, Tag, Download, Plus } from "lucide-react";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
+import { Button } from "@/components/ui/button";
 
 // Nano/Micro vs Macro analysis data
 const tierAnalysis = [
@@ -47,6 +50,8 @@ const prStrategy = {
 };
 
 export function InfluencerPartnerships() {
+  const { executeAction, automations } = useAction();
+
   return (
     <div className="space-y-6">
       {/* Summary */}
@@ -66,6 +71,52 @@ export function InfluencerPartnerships() {
           </Card>
         ))}
       </div>
+
+      <ActionBar
+        module="influencer"
+        primary={{
+          label: "Send Outreach",
+          icon: Send,
+          onClick: () => executeAction({
+            action: "Send Outreach",
+            module: "influencer",
+            detail: "Opening influencer outreach with AI-personalized message templates",
+            successMsg: "Outreach campaign initiated",
+          }),
+        }}
+        actions={[
+          {
+            label: "Track Codes",
+            icon: Tag,
+            onClick: () => executeAction({
+              action: "Track Codes",
+              module: "influencer",
+              detail: "Generating influencer coupon code performance report",
+              successMsg: "Coupon report generated",
+            }),
+          },
+          {
+            label: "Export Report",
+            icon: Download,
+            onClick: () => executeAction({
+              action: "Export Report",
+              module: "influencer",
+              detail: "Exporting influencer & PR performance report",
+              successMsg: "Report exported",
+            }),
+          },
+          {
+            label: "Create Partnership",
+            icon: Plus,
+            onClick: () => executeAction({
+              action: "Create Partnership",
+              module: "influencer",
+              detail: "Creating new influencer partnership brief",
+              successMsg: "Partnership brief created",
+            }),
+          },
+        ]}
+      />
 
       {/* Tier Analysis: Nano/Micro vs Macro */}
       <Card className="border-border/50">

@@ -5,6 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { Plus, Download, BarChart3 } from "lucide-react";
+import { useAction } from "@/lib/action-context";
+import { ActionBar } from "./action-bar";
 
 /* -------------------------------------------------------------------------- */
 /*  Data                                                                      */
@@ -542,6 +546,8 @@ function InsightCard({
 /* -------------------------------------------------------------------------- */
 
 export function CustomerJourney() {
+  const { executeAction, automations } = useAction();
+
   return (
     <div className="space-y-6">
       {/* Summary KPIs */}
@@ -561,6 +567,28 @@ export function CustomerJourney() {
           </Card>
         ))}
       </div>
+
+      <ActionBar
+        module="journey"
+        primary={{
+          label: "Create Workflow",
+          icon: Plus,
+          onClick: () => executeAction({ action: "Create Workflow", module: "journey", detail: "Creating new CRM automation workflow" }),
+        }}
+        actions={[
+          {
+            label: "Export Journey Data",
+            icon: Download,
+            onClick: () => executeAction({ action: "Export Journey Data", module: "journey", detail: "Exporting customer journey funnel data" }),
+          },
+          {
+            label: "Run Analysis",
+            icon: BarChart3,
+            onClick: () => executeAction({ action: "Run Analysis", module: "journey", detail: "Running journey drop-off analysis" }),
+          },
+        ]}
+        relevantAutomations={automations.filter(a => a.module === "journey")}
+      />
 
       {/* Full Lifecycle Funnel */}
       <FunnelChart />
