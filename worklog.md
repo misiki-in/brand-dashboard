@@ -475,6 +475,140 @@ Stage Summary:
 - Production build: Clean
 
 ---
+Task ID: 14
+Agent: Main
+Task: Create Paid Ads Command Center — Ryze AI comprehensive paid ads module
+
+Work Log:
+- Read worklog.md (Tasks 1-13) for project context and existing patterns
+- Read paid-media.tsx, action-bar.tsx, action-context.tsx, real-actions.ts to match existing API patterns
+- Identified existing conventions: ActionBar for top actions, approve/deny pattern with Sets, exportToCSV for downloads, toast.success for feedback
+
+Created `/src/lib/paid-ads-data.ts` — Comprehensive mock data layer (~550 lines):
+- 16 TypeScript types/interfaces for all data structures
+- 5 platform accounts (Google, Meta, TikTok, LinkedIn, Microsoft) with status, spend, ROAS, issues
+- 12 audit findings sorted by severity (4 critical, 5 warning, 3 info) across platforms
+- 10 bid recommendations with tROAS, tCPA, manual-cpc types and expected impacts
+- 8 budget pacing items with daily/monthly tracking and projected end-of-month
+- 15 negative keyword items across 4 platforms with wasted spend calculations
+- 8 quality score items with AI-suggested ad copy rewrites and landing page issues
+- 7 audience overlap pairs with merge/adjust-targeting recommendations
+- 168 dayparting cells (7 days × 24 hours) with performance metrics and zero-conversion detection
+- 6 dayparting schedule adjustment recommendations
+- 3 NL campaign builder examples (retargeting, brand awareness, TikTok discovery)
+- 10 auction insights tracking 8 competitors across 5 platforms with trend data
+- 6 wasted spend categories totaling $27,580/month with actionable flags
+- 7 conversion tracking issues (double-firing pixels, misconfigured events, attribution)
+- 14 cross-platform campaigns unified table with normalized metrics
+- 10 helper functions for severity colors, pacing status, platform icons, formatting
+
+Created `/src/components/dashboard/paid-ads-command.tsx` — Full command center component (~1100 lines):
+- KPI summary row: Total Spend, Avg ROAS, Conversions, Issues Found, Wasted Spend
+- ActionBar with "Run Full Audit" primary (3s loading state), "Export Report" (CSV download), "Schedule Audit" (toast)
+- 5 platform status cards showing name, status badge, spend, ROAS, conversions, issues, last audit time
+- 12-tab layout using shadcn/ui Tabs with icons:
+  1. **Performance Audit**: 12 findings sorted by severity, color-coded severity badges, approve/deny actions
+  2. **Bid Management**: 10-row table with current/recommended bids, bid type badges, one-click apply/reject
+  3. **Budget Pacing**: 8 channels with progress bars, pacing %, projected end-of-month with over/under indicators
+  4. **Wasted Spend**: 6 categories as horizontal bars with percentages, actionable badges, AI savings recommendation
+  5. **Negative Keywords**: 15-row table with "Add All to Negatives" bulk action, individual "Add" buttons, match type badges
+  6. **Quality Score**: 8 keywords with QS comparison (current vs historical), AI-suggested ad copy in quotes, landing page issues
+  7. **Audience Overlap**: 7 pairs with overlap progress bars, shared impressions, merge/adjust recommendations
+  8. **Dayparting**: Schedule adjustments list + full 7×24 color-coded grid (green=good CPA, red=zero conversions), legend
+  9. **NL Campaign Builder**: Textarea input, "Generate" button with 1.5s loading, full parsed output (name, objective, budget, targeting, ad copy with copy buttons, estimated performance), 3 example quick-fill buttons, "Launch Campaign" action
+  10. **Auction Insights**: 10-row competitor table with impression share, overlap rate, position above, outranking share, top of page rate, trend arrows
+  11. **Conversion Tracking**: 7 findings with issue type badges, affected events, impact, approve/deny fix actions
+  12. **Cross-Platform**: 14 campaigns in unified table with status, ROAS color-coding, CTR, CPA, conversions
+- ApproveDenyButtons reusable sub-component with persistent state (green "Applied ✓" / gray "Dismissed" badges)
+- TabExportButton sub-component for CSV download on each tab
+- MiniMetric sub-component for KPI display
+- All 12 tabs have export buttons that trigger real CSV file downloads
+- Zero existing files modified — fully self-contained module
+- TypeScript compiles cleanly (zero errors from new files)
+
+---
+Task ID: 14
+Agent: Main
+Task: Create SEO Command Center module with Ryze AI SEO Agent capabilities
+
+Work Log:
+- Read worklog.md (Tasks 1-13) and all key files: action-context.tsx, real-actions.ts, action-bar.tsx, seo.tsx, dashboard-client.tsx
+- Studied existing component patterns: useAction, executeAction, exportToCSV, toast feedback, shadcn/ui usage
+- Created `/src/lib/seo-command-data.ts` — Comprehensive mock data module (~480 lines):
+  - 14 TypeScript interfaces for all data categories
+  - KPI summary data (traffic, keywords, DA, backlinks, vitals, content health)
+  - 20 technical crawl issues across 10 categories (404s, redirects, missing titles/metas, duplicates, slow pages, schema errors, missing H1s, alt text, canonical)
+  - 6 AI title & meta rewrites with before/after comparisons and CTR improvement estimates
+  - 10 schema markup validation entries with Product, Article, LocalBusiness, FAQ types
+  - 8 core web vitals pages with LCP/CLS/INP ratings and trend indicators
+  - 18 rank tracking entries across Google, Bing, ChatGPT, Perplexity, Google AI
+  - 8 content decay items with AI recommendations (refresh/merge/delete/leave)
+  - 12 programmatic SEO pages (city, comparison, FAQ types) with traffic/rankings
+  - 10 blog pipeline posts across 5 statuses (researching → published)
+  - 12 backlink targets with kanban-style outreach stages
+  - 10 AI citation tracking entries across ChatGPT, Perplexity, Google AI Overviews
+  - 10 rollback log entries with 7-day ranking impact tracking
+  - 8 report/alert configurations with email/slack channels
+  - 10 helper functions for severity, vital, trend, and status color coding
+- Created `/src/components/dashboard/seo-command.tsx` — Full SEO Command Center component (~1030 lines):
+  - **KPI Row**: 6 metric cards (Organic Traffic, Keywords on Page 1, Domain Authority, Backlinks, Web Vitals Score, Content Health)
+  - **Action Bar**: "Run Full Crawl" (with 2.5s loading), "Export SEO Report" (CSV), "Schedule Crawl" (toast)
+  - **12 Tabs** using shadcn/ui Tabs:
+    1. Technical Crawl — issues grouped by category, severity border-l indicators, expandable details with fix suggestions, auto-fix buttons per category
+    2. Title & Meta — side-by-side current vs AI-suggested comparison, Apply/Reject buttons with persistent status, CTR improvement display
+    3. Schema Markup — table with schema types as badges, validation status, errors, fixes applied
+    4. Core Web Vitals — LCP/CLS/INP cards with green/yellow/red color coding, trend arrows, recommendation lists, "Fix Plan" button
+    5. Rank Tracking — filterable by engine (all/Google/Bing/ChatGPT/Perplexity/Google AI), position circles color-coded, sticky header table
+    6. Content Decay — sorted by decline %, traffic comparison with arrow, AI recommendation badges, "Refresh" action with persistent state
+    7. Programmatic SEO — summary cards (total traffic, rankings gained, pages ranking, in pipeline), type badges (📍/⚖️/❓), "Generate New" button
+    8. Blog Pipeline — 5-stage pipeline (researching → writing → editing → scheduled → published), advance buttons, SEO score badges
+    9. Backlink Builder — 5-column kanban layout (identified → reached → followed up → accepted → published), DA badges, "Next" buttons
+    10. AI Search Optimization — citation tracking with engine-specific colored badges, "Cited"/"Not Cited" indicators, "Optimize" action buttons
+    11. Rollback Log — before/after comparison cards, 7-day ranking impact badges, "Rollback" destructive buttons with persistent disabled state
+    12. Reporting — report cards with Switch toggles, channel indicators (📧/💬), recipient lists, last-sent timestamps
+  - All interactive actions use useAction/executeAction with toast feedback
+  - CSV export buttons on all 12 tabs using exportToCSV
+  - Sub-components: SeverityBadge, VitalBadge, MiniCard, ExpandableRow, Heart
+- Fixed TypeScript errors: MiniCard value type (number→string), RollbackEntry.impact→rankingImpact, null→'' for string fields
+- TypeScript compiles cleanly (zero errors from new files)
+- Dev server compiles without errors (✓ Compiled in ~300ms)
+- No existing files were modified
+
+Stage Summary:
+- 2 new files: seo-command-data.ts (data layer), seo-command.tsx (component)
+- 12 comprehensive data categories with ~200 mock data entries
+- 12-tab interface covering full Ryze AI SEO Agent feature set
+- Interactive actions with toast feedback on every recommendation
+- CSV export capability on all 12 tabs
+- Persistent UI state (meta apply/reject, decay refresh, rollback disabled, report toggles)
+- Visual indicators: severity colors, vital ratings (green/yellow/red), trend arrows, status badges
+- Kanban-style backlink pipeline and 5-stage blog content pipeline
+- Engine filtering on rank tracking (Google/Bing/AI engines)
+- Self-contained component — zero modifications to existing files
+- TypeScript clean, dev server compiles successfully
+
+Stage Summary:
+- 2 new files: seo-command-data.ts (data layer), seo-command.tsx (component)
+- 12 comprehensive data categories with ~200 mock data entries
+- 12-tab interface covering full Ryze AI SEO Agent feature set
+- Interactive actions with toast feedback on every recommendation
+- CSV export capability on all 12 tabs
+- Persistent UI state (meta apply/reject, decay refresh, rollback disabled, report toggles)
+- Visual indicators: severity colors, vital ratings (green/yellow/red), trend arrows, status badges
+- Kanban-style backlink pipeline and 5-stage blog content pipeline
+- Engine filtering on rank tracking (Google/Bing/AI engines)
+- Self-contained component — zero modifications to existing files
+- TypeScript clean, dev server compiles successfully
+- 12 comprehensive tabs covering every Ryze AI Paid Ads Agent capability
+- All interactive: approve/deny state tracking, CSV exports, NL campaign builder with loading
+- Platform status cards with live audit timestamps
+- 7×24 dayparting grid with color-coded CPA efficiency
+- Negative keyword bulk action ("Add All") + individual actions
+- Follows all existing patterns: ActionBar, useAction, exportToCSV, toast notifications
+- Zero modifications to existing files
+- TypeScript clean, dev server compiles cleanly
+
+---
 Task ID: 13
 Agent: Main
 Task: Add ClickFlow Content Engine — AI-powered content generation for ecommerce
@@ -523,3 +657,98 @@ Stage Summary:
 - 4 competitor analysis with content gap identification
 - Content roadmap with pipeline status tracking
 - Production build: Clean
+
+---
+Task ID: 15
+Agent: Main
+Task: Create AI Landing Page Builder module — mock data layer + comprehensive UI component
+
+Work Log:
+- Read worklog.md (Tasks 1-14) for project context and existing patterns
+- Read action-context.tsx, real-actions.ts, content-engine.tsx for component conventions
+- Identified patterns: gold gradient buttons, useAction for toasts, exportToCSV for downloads, Tabs for sub-views, multi-step wizards, Dialog modals
+
+Created `/src/lib/landing-page-data.ts` — Complete data layer (~420 lines):
+- 11 TypeScript types/interfaces: LandingPage, ABTest, ABTestVariant, PageTemplate, CoherenceCheck, ConversionTracking, FunnelStep, PageElement + union types
+- 8 landing pages (published/draft/paused) with full metrics: traffic, conversions, conversion rate, avg time on page, scroll depth, bounce rate
+- 5 A/B tests (3 completed, 2 running) with variants, metrics (headline/cta/hero_image/social_proof), confidence, winners, improvement %
+- 8 page templates across 6 categories (product_launch/seasonal/collection/brand_story/sale/lead_gen) with conversion benchmarks
+- 6 ad-to-page coherence checks with scores (62-95), issues (messaging mismatch, visual inconsistency, offer mismatch, loading speed), recommendations
+- 6 conversion tracking entries with full funnel breakdowns (5-6 steps each) and revenue data
+- 12 page elements (hero_banner, product_grid, testimonial_section, cta_block, trust_badges, faq_section, video_embed, countdown_timer, comparison_table, social_proof_bar, instagram_feed, newsletter_signup) with conversion lift and usage counts
+- 10 helper functions: getStatusColor, getStatusLabel, getTestStatusColor, getTestStatusLabel, getMetricLabel, getCategoryLabel, getCategoryColor, getCoherenceColor, getCoherenceBg, getElementIcon
+
+Created `/src/components/dashboard/landing-page-builder.tsx` — Full UI component (~920 lines):
+- **Header**: "AI Landing Page Builder" with gold gradient "Create New Page" button
+- **KPI Row**: 4 cards — Total Pages, Active Tests, Avg Conversion Rate, Auto-Promoted
+- **5 Tabs**:
+  1. **Pages Tab**: Grid of 8 landing page cards with status badges, linked campaign, traffic, conversion rate, last modified. Click to expand showing full metrics. Actions: Duplicate, Pause, Analytics, Delete. Export CSV.
+  2. **A/B Tests Tab**: 5 expandable test cards with confidence progress bars, winner trophy. Auto-promote winner button when confidence >= 95%. Create New Test dialog.
+  3. **Page Builder Tab**: 4-step wizard (Template → Configure → AI Generate → Review & Publish)
+  4. **Ad-to-Page Coherence Tab**: 6 page-campaign pairs sorted by score with color-coded badges and expandable recommendations
+  5. **Analytics Tab**: Page selector, 7 metric pills, funnel visualization, all-pages overview, element library. Export CSV.
+- Sub-components: KpiCard, MetricPill, CreatePageWizard Dialog, CreateABTestDialog
+- All interactive actions use useAction() + exportToCSV()
+- No existing files modified
+
+Verification:
+- Lint: only pre-existing error in auth-context.tsx
+- TypeScript: zero errors from new files
+- Dev server: compiles cleanly
+
+Stage Summary:
+- 2 new files: landing-page-data.ts (data layer), landing-page-builder.tsx (UI component)
+- 8 landing pages, 5 A/B tests, 8 templates, 6 coherence checks, 6 conversion tracking entries, 12 page elements
+- 5-tab layout with full interactivity: page management, A/B testing, AI page builder wizard, coherence analysis, analytics
+- CSV exports for pages and analytics
+- Zero modifications to existing files
+- TypeScript clean, dev server compiles cleanly
+
+---
+Task ID: 15
+Agent: Main
+Task: Create Slack/Teams Bot and Free Audit modules
+
+Work Log:
+- Read worklog.md (Tasks 1-14) for project context and existing patterns
+- Studied action-context.tsx, real-actions.ts, paid-ads-command.tsx for conventions
+- Read available shadcn/ui components to confirm API signatures
+
+Created `/src/lib/integration-data.ts` — Mock data for both modules (~500 lines):
+- 20 TypeScript interfaces for Slack/Teams Bot and Free Audit data structures
+- 8 connected channels (5 Slack, 3 Teams) with platform, type, member counts, activity stats
+- 8 conversation history entries with bot responses, intent classification, confidence scores
+- 8 automated messages (daily/weekly/monthly) with engagement metrics
+- 12 quick commands across 8 categories
+- 8 action approvals (pending/approved/rejected/expired)
+- 12 audit requests across 4 statuses with audit types
+- 3 completed audit results with overall scores, category breakdowns, top findings
+- 6-stage conversion funnel with counts and conversion rates
+- 12 AI-scored leads with 4 signal dimensions
+- 12 helper functions for status colors, severity badges, platform badges, score coloring
+
+Created `/src/components/dashboard/slack-bot.tsx` — Full Slack/Teams Bot interface (~450 lines):
+- KPI Row: 4 metric cards (Connected Channels, Messages This Week, Actions via Chat, Automation Messages)
+- 5 Tabs: Chat Interface (simulated chat with typing indicator, 9 mock responses), Channels (8 channel cards with toggle), Automation (8 scheduled messages with enable/pause/send now), Approvals (8 actions with approve/reject), Commands (12-command reference table)
+- CSV export on 4 tabs
+- Persistent UI state: approval badges, channel toggles, automation status
+
+Created `/src/components/dashboard/free-audit.tsx` — Full Free Audit module (~420 lines):
+- Hero Banner with email/website inputs and "Get Free Audit" button
+- KPI Row: 5 metric cards with trend indicators
+- 4 Tabs: Audit Requests (12 requests with Process/Follow-up/View actions), Audit Results (expandable cards with SVG score gauges, findings), Lead Pipeline (6-stage funnel visualization), Lead Scoring (12 AI-scored leads with signals and follow-up actions)
+- ScoreGauge sub-component (circular SVG gauge with color coding)
+- CSV export on 3 tabs
+- Persistent UI state: follow-up sent badges, expanded results
+
+- Zero existing files modified
+- ESLint clean, TypeScript clean, dev server compiles successfully
+
+Stage Summary:
+- 3 new files: integration-data.ts, slack-bot.tsx, free-audit.tsx
+- Slack/Teams Bot: 5-tab interface with simulated chat, channel management, automation, approvals, commands
+- Free Audit: hero banner + 4-tab interface with request management, SVG gauges, funnel visualization, AI lead scoring
+- ~80 mock data entries across both modules
+- All actions interactive with toast feedback
+- CSV export on 7 tabs
+- Self-contained — zero modifications to existing files

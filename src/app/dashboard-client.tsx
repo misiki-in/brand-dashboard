@@ -17,6 +17,7 @@ import {
   Share2, Mail, DollarSign, Users, Crown, Gem, TrendingUp,
   Swords, Calendar, ChevronLeft, ChevronRight, Sparkles, Menu, Settings, LayoutDashboard,
   Eye, UserCircle, Route, Package, MessageCircle, Palette, Brain, LogOut,
+  Target, Layout, Bot, ClipboardCheck, Building2, Megaphone, Zap, Shield,
 } from 'lucide-react';
 
 import { BrandOverview } from '@/components/dashboard/brand-overview';
@@ -41,6 +42,13 @@ import { WhatsAppCommerceHub } from '@/components/dashboard/whatsapp';
 import { CreativeBrandLayer } from '@/components/dashboard/creative';
 import { AIGrowthEngine } from '@/components/dashboard/ai-engine';
 import { ContentEngine } from '@/components/dashboard/content-engine';
+import { PaidAdsCommand } from '@/components/dashboard/paid-ads-command';
+import { SeoCommand } from '@/components/dashboard/seo-command';
+import { LandingPageBuilder } from '@/components/dashboard/landing-page-builder';
+import { CreativeStudio } from '@/components/dashboard/creative-studio';
+import { AgencyCommand } from '@/components/dashboard/agency-command';
+import { SlackBot } from '@/components/dashboard/slack-bot';
+import { FreeAudit } from '@/components/dashboard/free-audit';
 
 const navSections = [
   {
@@ -59,6 +67,19 @@ const navSections = [
       { id: 'inventory', label: 'Inventory Intelligence', icon: Package },
       { id: 'revenue', label: 'Revenue & Funnel', icon: TrendingUp },
       { id: 'loyalty', label: 'Loyalty & Retention', icon: Crown },
+    ],
+  },
+  {
+    label: 'Paid Ads',
+    items: [
+      { id: 'ads-command', label: 'Ads Command Center', icon: Megaphone },
+    ],
+  },
+  {
+    label: 'SEO & Content',
+    items: [
+      { id: 'seo-command', label: 'SEO Command Center', icon: Search },
+      { id: 'content-engine', label: 'ClickFlow Engine', icon: Sparkles },
     ],
   },
   {
@@ -84,6 +105,7 @@ const navSections = [
       { id: 'social', label: 'Social Media', icon: Share2 },
       { id: 'content', label: 'Content Strategy', icon: FileText },
       { id: 'seo', label: 'SEO & Digital', icon: Search },
+      { id: 'landing-page', label: 'Landing Page Builder', icon: Layout },
     ],
   },
   {
@@ -95,9 +117,18 @@ const navSections = [
     ],
   },
   {
-    label: 'Content Factory',
+    label: 'Ryze AI Studio',
     items: [
-      { id: 'content-engine', label: 'ClickFlow Engine', icon: Sparkles },
+      { id: 'creative-studio', label: 'AI Creative Studio', icon: Palette },
+      { id: 'ai-engine', label: 'AI Growth Engine', icon: Brain },
+    ],
+  },
+  {
+    label: 'Agency & Tools',
+    items: [
+      { id: 'agency', label: 'Agency Command', icon: Building2 },
+      { id: 'slack-bot', label: 'Slack & Teams Bot', icon: Bot },
+      { id: 'free-audit', label: 'Free Audit & Leads', icon: ClipboardCheck },
     ],
   },
 ];
@@ -125,6 +156,13 @@ const tabComponents: Record<string, React.ComponentType> = {
   creative: CreativeBrandLayer,
   'ai-engine': AIGrowthEngine,
   'content-engine': ContentEngine,
+  'ads-command': PaidAdsCommand,
+  'seo-command': SeoCommand,
+  'landing-page': LandingPageBuilder,
+  'creative-studio': CreativeStudio,
+  'agency': AgencyCommand,
+  'slack-bot': SlackBot,
+  'free-audit': FreeAudit,
 };
 
 function SidebarNav({
