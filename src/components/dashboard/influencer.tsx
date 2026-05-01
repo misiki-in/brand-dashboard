@@ -8,6 +8,7 @@ import { ProgressMetric } from "./kpi-components";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell,
 } from "recharts";
+import { AlertTriangle, Shield, Ticket } from "lucide-react";
 
 // Nano/Micro vs Macro analysis data
 const tierAnalysis = [
@@ -278,6 +279,101 @@ export function InfluencerPartnerships() {
                 className="text-[10px]"
               >
                 {c.status}
+              </Badge>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      {/* Coupon Tracking */}
+      <Card className="border-border/50">
+        <CardHeader className="pb-2">
+          <div className="flex items-center gap-2">
+            <Ticket className="h-4 w-4 text-primary" />
+            <CardTitle className="text-base font-semibold">Coupon & Code Tracking</CardTitle>
+          </div>
+          <p className="text-xs text-muted-foreground">Revenue attributed to influencer-specific promo codes</p>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border/50">
+                  <th className="text-left py-2 px-2 text-xs font-medium text-muted-foreground">Influencer</th>
+                  <th className="text-left py-2 px-2 text-xs font-medium text-muted-foreground">Code</th>
+                  <th className="text-right py-2 px-2 text-xs font-medium text-muted-foreground">Uses</th>
+                  <th className="text-right py-2 px-2 text-xs font-medium text-muted-foreground">Revenue</th>
+                  <th className="text-right py-2 px-2 text-xs font-medium text-muted-foreground">Avg Discount</th>
+                  <th className="text-right py-2 px-2 text-xs font-medium text-muted-foreground">ROAS</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { name: "Sophia Chen", code: "SOPHIA15", uses: 342, revenue: 48600, discount: "15%", roas: 7.2 },
+                  { name: "JewelryByMaya", code: "MAYA20", uses: 520, revenue: 52400, discount: "20%", roas: 8.8 },
+                  { name: "The Ring Edit", code: "RING10", uses: 186, revenue: 31200, discount: "10%", roas: 6.4 },
+                  { name: "BridalDreams", code: "BRIDE25", uses: 128, revenue: 28400, discount: "25%", roas: 5.2 },
+                  { name: "StyleWithRia", code: "RIA10", uses: 412, revenue: 38600, discount: "10%", roas: 3.8 },
+                ].map((c) => (
+                  <tr key={c.code} className="border-b border-border/30 hover:bg-muted/20 transition-colors">
+                    <td className="py-2.5 px-2 font-medium text-xs">{c.name}</td>
+                    <td className="py-2.5 px-2">
+                      <Badge variant="outline" className="text-[10px] font-mono">{c.code}</Badge>
+                    </td>
+                    <td className="py-2.5 px-2 text-right tabular-nums">{c.uses}</td>
+                    <td className="py-2.5 px-2 text-right tabular-nums font-medium">${(c.revenue / 1000).toFixed(1)}K</td>
+                    <td className="py-2.5 px-2 text-right tabular-nums">{c.discount}</td>
+                    <td className="py-2.5 px-2 text-right">
+                      <Badge variant={c.roas >= 7 ? "default" : "secondary"} className="text-[10px]">{c.roas}x</Badge>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Fake Engagement Detection */}
+      <Card className="border-border/50 border-red-500/20">
+        <CardHeader className="pb-2">
+          <div className="flex items-center gap-2">
+            <Shield className="h-4 w-4 text-red-500" />
+            <CardTitle className="text-base font-semibold">Engagement Authenticity Check</CardTitle>
+            </div>
+          <p className="text-xs text-muted-foreground">AI-powered detection of suspicious engagement patterns across partners</p>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {[
+            { name: "Sophia Chen", platform: "Instagram", score: 92, flag: "Clean", details: "Organic engagement patterns. High save-to-like ratio confirms genuine interest." },
+            { name: "JewelryByMaya", platform: "TikTok", score: 88, flag: "Clean", details: "Strong comment quality. Audience demographics match target segment." },
+            { name: "Elegant Living Blog", platform: "Blog", score: 95, flag: "Verified", details: "Direct traffic patterns confirm real readership. Low bounce rate on referral links." },
+            { name: "StyleWithRia", platform: "Instagram", score: 62, flag: "Watch", details: "Spike in likes from bot-prone regions (28% from SE Asia). Comment sentiment analysis mixed." },
+            { name: "BridalDreams", platform: "Pinterest", score: 78, flag: "Minor", details: "Higher-than-average repin velocity but engagement quality is acceptable." },
+          ].map((check) => (
+            <div key={check.name} className={`flex items-start gap-3 p-3 rounded-lg ${
+              check.flag === "Watch" ? "bg-red-500/5 border border-red-500/10" : "bg-muted/20"
+            }`}>
+              <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+                check.score >= 85 ? "bg-emerald-500/10 text-emerald-600" :
+                check.score >= 70 ? "bg-amber-500/10 text-amber-600" :
+                "bg-red-500/10 text-red-600"
+              }`}>
+                {check.score}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium">{check.name}</p>
+                  <Badge variant="outline" className="text-[10px]">{check.platform}</Badge>
+                  {check.flag === "Watch" && <AlertTriangle className="h-3 w-3 text-red-500" />}
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-0.5 leading-relaxed">{check.details}</p>
+              </div>
+              <Badge
+                variant={check.flag === "Clean" || check.flag === "Verified" ? "default" : check.flag === "Watch" ? "destructive" : "secondary"}
+                className="text-[10px] shrink-0"
+              >
+                {check.flag}
               </Badge>
             </div>
           ))}

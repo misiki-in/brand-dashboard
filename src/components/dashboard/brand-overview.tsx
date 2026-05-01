@@ -1,12 +1,14 @@
 "use client";
 
-import { brandHealth, kpiSummary } from "@/lib/mock-data";
+import { brandHealth, kpiSummary, inventoryData, aiEngineData } from "@/lib/mock-data";
 import { KpiCard, Gauge } from "./kpi-components";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartContainer, ChartTooltip, ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from "recharts";
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from "recharts";
+import { Badge } from "@/components/ui/badge";
+import { AlertTriangle, TrendingUp, Package, DollarSign } from "lucide-react";
 
 const radarConfig = {
   score: { label: "Brand Score", color: "oklch(0.65 0.18 65)" },
@@ -48,14 +50,41 @@ export function BrandOverview() {
         </CardContent>
       </Card>
 
-      {/* KPI Grid */}
+      {/* KPI Grid — CEO View */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-4">
         {kpiSummary.map((kpi) => (
           <KpiCard key={kpi.label} {...kpi} />
         ))}
-        {/* CLV:CAC Ratio — critical efficiency metric */}
         <KpiCard label="CLV:CAC Ratio" value={81} unit=":1" change={12} icon="TrendingUp" />
-        <KpiCard label="Traffic Source Mix" value={42} unit="% Organic" change={3} icon="BarChart3" />
+        <KpiCard label="Contribution Margin" value={62} unit="%" change={2} icon="DollarSign" />
+        <KpiCard label="Inventory Value" value={4200000} unit="$" change={5} icon="Package" />
+        <KpiCard label="Dead Stock Value" value={420000} unit="$" change={-18} icon="AlertTriangle" />
+        <KpiCard label="Brand Momentum" value={aiEngineData.momentumScore} unit="/100" change={aiEngineData.momentumTrend} icon="TrendingUp" />
+      </div>
+
+      {/* CEO Alerts Strip */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="flex items-center gap-3 p-3 rounded-lg bg-red-500/5 border border-red-500/20">
+          <AlertTriangle className="h-4 w-4 text-red-500 shrink-0" />
+          <div className="min-w-0">
+            <p className="text-xs font-medium text-red-600">Dead Stock Alert</p>
+            <p className="text-[10px] text-muted-foreground">$420K capital trapped in {inventoryData.deadStockSKUs} slow-moving SKUs</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
+          <Package className="h-4 w-4 text-amber-500 shrink-0" />
+          <div className="min-w-0">
+            <p className="text-xs font-medium text-amber-600">Reorder Urgent</p>
+            <p className="text-[10px] text-muted-foreground">4 bestsellers below reorder point — est. $96K revenue at risk</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 p-3 rounded-lg bg-emerald-500/5 border border-emerald-500/20">
+          <TrendingUp className="h-4 w-4 text-emerald-500 shrink-0" />
+          <div className="min-w-0">
+            <p className="text-xs font-medium text-emerald-600">Momentum Strong</p>
+            <p className="text-[10px] text-muted-foreground">AI momentum score {aiEngineData.momentumScore}/100 — +{aiEngineData.momentumTrend} pts this week</p>
+          </div>
+        </div>
       </div>
 
       {/* Brand Equity Radar */}

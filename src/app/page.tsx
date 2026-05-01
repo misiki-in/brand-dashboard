@@ -10,7 +10,7 @@ import {
   Heart, BarChart3, MessageSquare, Star, Search, FileText,
   Share2, Mail, DollarSign, Users, Crown, Gem, TrendingUp,
   Swords, Calendar, ChevronLeft, ChevronRight, Sparkles, Menu, Bell, Settings, LayoutDashboard,
-  Eye, UserCircle, Route,
+  Eye, UserCircle, Route, Package, MessageCircle, Palette, Brain,
 } from 'lucide-react';
 
 import { BrandOverview } from '@/components/dashboard/brand-overview';
@@ -30,6 +30,10 @@ import { CompetitiveIntel } from '@/components/dashboard/competitive';
 import { CampaignCalendar } from '@/components/dashboard/campaigns';
 import { Audience } from '@/components/dashboard/audience';
 import { CustomerJourney } from '@/components/dashboard/journey';
+import { InventoryIntelligence } from '@/components/dashboard/inventory';
+import { WhatsAppCommerceHub } from '@/components/dashboard/whatsapp';
+import { CreativeBrandLayer } from '@/components/dashboard/creative';
+import { AIGrowthEngine } from '@/components/dashboard/ai-engine';
 
 const navSections = [
   {
@@ -42,6 +46,25 @@ const navSections = [
     ],
   },
   {
+    label: 'Commerce & Inventory',
+    items: [
+      { id: 'product', label: 'Sales Intelligence', icon: Gem },
+      { id: 'inventory', label: 'Inventory Intelligence', icon: Package },
+      { id: 'revenue', label: 'Revenue & Funnel', icon: TrendingUp },
+      { id: 'loyalty', label: 'Loyalty & Retention', icon: Crown },
+    ],
+  },
+  {
+    label: 'Marketing Operations',
+    items: [
+      { id: 'ads', label: 'Marketing Command', icon: DollarSign },
+      { id: 'whatsapp', label: 'WhatsApp Hub', icon: MessageCircle },
+      { id: 'creative', label: 'Creative & Brand', icon: Palette },
+      { id: 'email', label: 'Email & SMS', icon: Mail },
+      { id: 'influencer', label: 'Influencer & PR', icon: Users },
+    ],
+  },
+  {
     label: 'Audience & Journey',
     items: [
       { id: 'audience', label: 'Audience & Personas', icon: UserCircle },
@@ -51,32 +74,17 @@ const navSections = [
   {
     label: 'Digital Presence',
     items: [
-      { id: 'seo', label: 'SEO & Digital', icon: Search },
+      { id: 'social', label: 'Social Media', icon: Share2 },
       { id: 'content', label: 'Content Strategy', icon: FileText },
-      { id: 'social', label: 'Social & WhatsApp', icon: Share2 },
+      { id: 'seo', label: 'SEO & Digital', icon: Search },
     ],
   },
   {
-    label: 'Marketing Channels',
-    items: [
-      { id: 'email', label: 'Email & SMS', icon: Mail },
-      { id: 'ads', label: 'Paid Media', icon: DollarSign },
-      { id: 'influencer', label: 'Influencer & PR', icon: Users },
-    ],
-  },
-  {
-    label: 'Commerce & Loyalty',
-    items: [
-      { id: 'loyalty', label: 'Loyalty & Retention', icon: Crown },
-      { id: 'product', label: 'Product Performance', icon: Gem },
-      { id: 'revenue', label: 'Revenue & Funnel', icon: TrendingUp },
-    ],
-  },
-  {
-    label: 'Intelligence & Planning',
+    label: 'Intelligence',
     items: [
       { id: 'competitive', label: 'Competitive Intel', icon: Swords },
       { id: 'campaigns', label: 'Campaign Calendar', icon: Calendar },
+      { id: 'ai-engine', label: 'AI Growth Engine', icon: Brain },
     ],
   },
 ];
@@ -99,6 +107,10 @@ const tabComponents: Record<string, React.ComponentType> = {
   revenue: RevenueConversions,
   competitive: CompetitiveIntel,
   campaigns: CampaignCalendar,
+  inventory: InventoryIntelligence,
+  whatsapp: WhatsAppCommerceHub,
+  creative: CreativeBrandLayer,
+  'ai-engine': AIGrowthEngine,
 };
 
 function SidebarNav({

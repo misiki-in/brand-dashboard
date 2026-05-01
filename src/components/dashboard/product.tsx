@@ -1,10 +1,11 @@
 "use client";
 
-import { productData } from "@/lib/mock-data";
+import { productData, inventoryData } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
-import { Star } from "lucide-react";
+import { KpiCard } from "./kpi-components";
+import { Star, AlertTriangle, TrendingDown } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, PieChart, Pie,
 } from "recharts";
@@ -26,11 +27,19 @@ export function ProductPerformance() {
 
   return (
     <div className="space-y-6">
-      {/* Best Sellers */}
+      {/* Sales Intelligence KPIs */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <KpiCard label="Total Revenue" value={2840000} unit="$" change={12.3} icon="DollarSign" />
+        <KpiCard label="Contribution Margin" value={62} unit="%" change={2} icon="TrendingUp" />
+        <KpiCard label="Discount Dependency" value={18} unit="%" change={-3} icon="TrendingDown" />
+        <KpiCard label="Best Selling Occasion" value={28} unit="% Engagement" change={12} icon="Gem" />
+      </div>
+
+      {/* Best Sellers — with Profitability */}
       <Card className="border-border/50">
         <CardHeader className="pb-2">
-          <CardTitle className="text-base font-semibold">Best Selling Products</CardTitle>
-          <p className="text-xs text-muted-foreground">Top performing SKUs this quarter</p>
+          <CardTitle className="text-base font-semibold">Product Profitability</CardTitle>
+          <p className="text-xs text-muted-foreground">Top SKUs ranked by contribution margin — not just revenue</p>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto custom-scrollbar">
@@ -41,7 +50,8 @@ export function ProductPerformance() {
                   <th className="text-left py-2 px-2 text-xs font-medium text-muted-foreground">Category</th>
                   <th className="text-left py-2 px-2 text-xs font-medium text-muted-foreground">Material</th>
                   <th className="text-right py-2 px-2 text-xs font-medium text-muted-foreground">Price</th>
-                  <th className="text-right py-2 px-2 text-xs font-medium text-muted-foreground">Sold</th>
+                  <th className="text-right py-2 px-2 text-xs font-medium text-muted-foreground">Margin</th>
+                  <th className="text-right py-2 px-2 text-xs font-medium text-muted-foreground">Profit</th>
                   <th className="text-center py-2 px-2 text-xs font-medium text-muted-foreground">Rating</th>
                   <th className="text-right py-2 px-2 text-xs font-medium text-muted-foreground">Revenue</th>
                 </tr>
@@ -58,7 +68,14 @@ export function ProductPerformance() {
                     </td>
                     <td className="py-2.5 px-2 text-xs text-muted-foreground max-w-[120px] truncate">{p.material}</td>
                     <td className="py-2.5 px-2 text-right tabular-nums">${p.price.toLocaleString()}</td>
-                    <td className="py-2.5 px-2 text-right tabular-nums">{p.sold}</td>
+                    <td className="py-2.5 px-2 text-right">
+                      <Badge variant={p.price > 1000 ? "default" : "secondary"} className="text-[10px]">
+                        {p.price > 2000 ? "65%" : p.price > 500 ? "62%" : "70%"}
+                      </Badge>
+                    </td>
+                    <td className="py-2.5 px-2 text-right tabular-nums text-emerald-600 font-medium">
+                      ${(p.revenue * (p.price > 2000 ? 0.65 : p.price > 500 ? 0.62 : 0.70) / 1000).toFixed(1)}K
+                    </td>
                     <td className="py-2.5 px-2 text-center">
                       <div className="flex items-center justify-center gap-0.5">
                         <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
@@ -115,6 +132,40 @@ export function ProductPerformance() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Discount Dependency Analysis */}
+      <Card className="border-border/50">
+        <CardHeader className="pb-2">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 text-amber-500" />
+            <CardTitle className="text-base font-semibold">Discount Dependency Analysis</CardTitle>
+          </div>
+          <p className="text-xs text-muted-foreground">Track how much of your revenue depends on discounts — serious brands minimize this</p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            <div className="p-3 rounded-lg bg-muted/20 text-center">
+              <p className="text-2xl font-bold">82%</p>
+              <p className="text-[10px] text-muted-foreground">Full-Price Revenue</p>
+            </div>
+            <div className="p-3 rounded-lg bg-amber-500/5 text-center">
+              <p className="text-2xl font-bold text-amber-600">14%</p>
+              <p className="text-[10px] text-muted-foreground">Discounted Revenue</p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted/20 text-center">
+              <p className="text-2xl font-bold">4%</p>
+              <p className="text-[10px] text-muted-foreground">Flash Sale Revenue</p>
+            </div>
+            <div className="p-3 rounded-lg bg-emerald-500/5 text-center">
+              <p className="text-2xl font-bold text-emerald-600">62%</p>
+              <p className="text-[10px] text-muted-foreground">Contribution Margin</p>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            <span className="text-emerald-500 font-medium">Healthy:</span> Only 18% of revenue comes from discounted sales. Industry average for jewelry is 28%. Your brand maintains strong pricing power with a 62% contribution margin on full-price items.
+          </p>
+        </CardContent>
+      </Card>
 
       {/* Occasion Insights */}
       <Card className="border-border/50">
