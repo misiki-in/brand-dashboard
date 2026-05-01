@@ -368,3 +368,74 @@ Stage Summary:
 - 2 confirmation dialogs prevent destructive bulk actions
 - Visual state tracking: approved/dismissed concepts, fixed decay items, tracked topics, completed suggestions
 - Production build passes cleanly
+
+---
+Task ID: 10
+Agent: Main
+Task: Add Multi-Project and Team Capability to Dashboard
+
+Work Log:
+- Created `/src/lib/workspace-data.ts` — types (TeamMember, Project, TeamActivity, RolePermissions), 5 role permission levels, 8 team members, 4 projects, 15 activity entries, helper functions
+- Created `/src/lib/workspace-context.tsx` — WorkspaceProvider with project switching, team management, activity tracking, permissions
+- Created `/src/components/dashboard/project-switcher.tsx` — dropdown in top bar showing current project with colored avatar, project list grouped by status, create new project option
+- Created `/src/components/dashboard/team-panel.tsx` — slide-out Sheet with team members grouped by status (online/away/offline), invite member form, recent activity feed, role management
+- Updated main layout (`dashboard-client.tsx`): sidebar brand now shows current project name/color/shortName, bottom shows current user with role badge, top bar has ProjectSwitcher + TeamAvatars + Live indicator + NotificationCenter
+- Refactored page.tsx to server/client split (dynamic rendering to fix SSR context error)
+- Verified: zero TypeScript errors, production build passes cleanly
+
+Stage Summary:
+- 4 new files: workspace-data.ts, workspace-context.tsx, project-switcher.tsx, team-panel.tsx
+- Multi-project: switch between Varni Jewels, Varni Diamonds, Varni Watches, Varni Home (each with unique brand color)
+- Team management: 8 members with 5 roles (owner, admin, editor, analyst, viewer), online status indicators
+- Activity feed: shows who did what across projects with relative timestamps
+- Permissions system: role-based access control for create/edit/delete/export/manage operations
+- Invite members: email + role form in team panel
+- Production build: ✅ Clean
+
+---
+Task ID: 11
+Agent: Main
+Task: Create ProjectSwitcher and TeamPanel UI components for multi-project and team management
+
+Work Log:
+- Read worklog.md (Tasks 1-10) and workspace-context.tsx/workspace-data.ts for API understanding
+- Read all required shadcn/ui component APIs (DropdownMenu, Sheet, Select, Avatar, Badge, Input, Button, ScrollArea, Separator)
+- Created `/src/components/dashboard/project-switcher.tsx` — ProjectSwitcher component:
+  - DropdownMenu trigger with colored circle showing project shortName + project name text
+  - ChevronDown icon with rotation animation on open
+  - Responsive: on mobile shows only colored circle, on md+ shows circle + name + chevron
+  - Dropdown groups projects by status (Active Projects, Paused, Archived) with DropdownMenuLabels
+  - Each ProjectMenuItem shows: brand-color circle with shortName, name, industry, member count with Users icon
+  - Currently selected project highlighted with bg-accent/50 and Check icon
+  - Paused projects shown at 60% opacity, archived at 40% with grayscale
+  - "Create New Project" item at bottom with Plus icon — calls createProject with default data
+  - Hover effects on trigger button and menu items
+- Created `/src/components/dashboard/team-panel.tsx` — TeamPanel + TeamAvatars components:
+  - `TeamAvatars` exported component: overlapping avatar circles (max 3) with online status dots, "+N" badge for overflow, clicking opens Sheet
+  - Sheet slides from right, w-80 on all viewports, p-0 flex flex-col layout
+  - TeamPanelContent with:
+    - Header: Users icon + "Team" title + member count Badge
+    - Search input with Search icon for filtering members by name/email
+    - Members grouped by status (ONLINE, AWAY, OFFLINE) with counts
+    - MemberCard: Avatar with status dot, name + role Badge, email
+    - Role badges: Owner=amber/gold with Crown icon, Admin=purple with Shield icon, Editor/Analyst/Viewer=outline with Pencil/BarChart3/Eye icons
+    - MoreHorizontal dropdown menu (visible on hover) with Change Role options + destructive Remove (permission-gated, hidden for owner)
+    - Invite section (only if canManageTeam): email Input + role Select (Editor/Analyst/Viewer) + Invite Button
+    - Invite auto-generates name and initials from email, auto-adds to current project
+    - Activity feed: filtered to current project, sorted by timestamp, max 15 items, shows avatar + name + action + relative time
+  - Helper utilities: getRoleIcon, capitalize, getAvatarColor (deterministic hash-based colors)
+- Fixed API compatibility issues with workspace-context.tsx:
+  - createProject requires full Omit<Project, "id"|"createdAt"|"members"|"modules"> object (not 0 args)
+  - addTeamMember requires Omit<TeamMember, "id"> including avatar and projects fields
+  - Fixed typo: removeMemberMember → removeTeamMember
+- Ran `bunx tsc --noEmit --skipLibCheck` — zero errors from new files
+- Dev server compiles cleanly (209-238ms)
+
+Stage Summary:
+- 2 new files: project-switcher.tsx (dropdown project switcher), team-panel.tsx (sheet team panel + TeamAvatars trigger)
+- ProjectSwitcher: grouped dropdown by status, brand colors, member counts, responsive trigger
+- TeamAvatars: overlapping online avatars in top bar, opens full team panel Sheet
+- TeamPanel: search, status groups, role badges with icons, member management (change role/remove), invite form, activity feed
+- Role-based permission gating on team management actions
+- All components use "use client", shadcn/ui primitives, and match gold/dark dashboard theme
+- TypeScript clean, dev server compiles without errors
