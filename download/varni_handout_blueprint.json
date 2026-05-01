@@ -1,0 +1,310 @@
+{
+  "document_meta": {
+    "title": "Varni Jewels Brand Command Center - Project Handout",
+    "total_pages": 8
+  },
+  "art_direction": {
+    "palette_mode": "dark",
+    "color_harmony": "triadic",
+    "background_svg": "continuous_flow",
+    "design_rationale": "Dark mode conveys the premium, tech-forward nature of the Varni Jewels AI command center. Triadic harmony with amber base hue mirrors the brand's gold identity while the green accent adds a modern data-driven feel. Continuous flow creates visual continuity across all pages."
+  },
+  "pages": [
+    {
+      "page_index": 1,
+      "narrative_role": "Burst",
+      "archetype": "cover_hero",
+      "components": [
+        {
+          "type": "Floating_Meta",
+          "position": "top-left",
+          "items": ["PROJECT HANDOUT", "2026"]
+        },
+        {
+          "type": "Page_Ghost_Number",
+          "number": "01"
+        },
+        {
+          "type": "Hero_Typography",
+          "weight": "black",
+          "variant": "standard",
+          "content": "VARNI JEWELS<br>BRAND COMMAND<br>CENTER"
+        },
+        {
+          "type": "Floating_Meta",
+          "position": "bottom-right",
+          "items": ["AI-POWERED ECOMMERCE", "25+ MODULES | 72 ACTIONS"]
+        }
+      ]
+    },
+    {
+      "page_index": 2,
+      "narrative_role": "Burst",
+      "archetype": "data_dashboard",
+      "components": [
+        {
+          "type": "Page_Ghost_Number",
+          "number": "02"
+        },
+        {
+          "type": "Hero_Typography",
+          "weight": "black",
+          "variant": "standard",
+          "scale": 3,
+          "content": "AT A GLANCE"
+        },
+        {
+          "type": "Stat_Block",
+          "number": "25+",
+          "unit": "",
+          "label": "DASHBOARD MODULES"
+        },
+        {
+          "type": "Stat_Block",
+          "number": "72",
+          "unit": "",
+          "label": "REAL BUTTON ACTIONS"
+        },
+        {
+          "type": "Stat_Block",
+          "number": "4",
+          "unit": "",
+          "label": "BRAND PROJECTS"
+        },
+        {
+          "type": "Stat_Block",
+          "number": "8",
+          "unit": "",
+          "label": "TEAM MEMBERS"
+        },
+        {
+          "type": "Stat_Block",
+          "number": "10",
+          "unit": "",
+          "label": "AI AUTOMATIONS"
+        },
+        {
+          "type": "Stat_Block",
+          "number": "6",
+          "unit": "",
+          "label": "ACTION MODALS"
+        },
+        {
+          "type": "Delta_Widget",
+          "metric": "MODULES",
+          "value": "25+",
+          "delta": "All Functional",
+          "trend": "up",
+          "label": "Covering Every Aspect of Brand Operations"
+        },
+        {
+          "type": "Delta_Widget",
+          "metric": "ROI TRACKING",
+          "value": "4.0x",
+          "delta": "ROAS",
+          "trend": "up",
+          "label": "Real-time Campaign Performance"
+        },
+        {
+          "type": "Delta_Widget",
+          "metric": "ORGANIC TRAFFIC",
+          "value": "185K",
+          "delta": "Monthly",
+          "trend": "up",
+          "label": "SEO Command Center Tracked"
+        },
+        {
+          "type": "Delta_Widget",
+          "metric": "REVENUE",
+          "value": "$2.84M",
+          "delta": "YTD",
+          "trend": "up",
+          "label": "Unified Commerce Intelligence"
+        }
+      ]
+    },
+    {
+      "page_index": 3,
+      "narrative_role": "Expand",
+      "archetype": "split_vertical",
+      "components": [
+        {
+          "type": "Page_Ghost_Number",
+          "number": "03"
+        },
+        {
+          "type": "Hero_Typography",
+          "weight": "black",
+          "variant": "standard",
+          "scale": 3,
+          "content": "TECH STACK &<br>ARCHITECTURE"
+        },
+        {
+          "type": "Glass_Canvas",
+          "markdown_content": "### Core Framework\n**Next.js 16** with App Router powers the entire platform. **React 19** drives the UI layer with **TypeScript** for type safety. **Tailwind CSS 4** handles all styling with OKLCH color space for precision.\n\n### UI & Data Layer\n**shadcn/ui** provides 40+ Radix-based components. **Recharts** renders all data visualizations. **React Context** manages Auth, Workspace, and Action state. **React Hook Form + Zod** power form validation."
+        },
+        {
+          "type": "Glass_Canvas",
+          "markdown_content": "### Advanced Libraries\n**Framer Motion** for animations. **TanStack Table** for data grids. **TanStack Query** for async state. **dnd-kit** for drag-and-drop. **MDX Editor** for rich content.\n\n### Data Architecture\n**38 mock data exports** power all modules with realistic jewelry-industry metrics. **Prisma + SQLite** ready for production API integration. localStorage enables session persistence with SSR hydration guards."
+        }
+      ]
+    },
+    {
+      "page_index": 4,
+      "narrative_role": "Expand",
+      "archetype": "editorial_flow",
+      "components": [
+        {
+          "type": "Page_Ghost_Number",
+          "number": "04"
+        },
+        {
+          "type": "Hero_Typography",
+          "weight": "black",
+          "variant": "standard",
+          "scale": 3,
+          "content": "MODULE MAP"
+        },
+        {
+          "type": "Glass_Canvas",
+          "markdown_content": "### Brand Health\n**Brand Overview** - Score 78/100, 8 KPI cards, health trend tracking\n**Brand Awareness** - ToM 28%, aided recall 67%, share of voice 18.4%\n**Sentiment & Listening** - 10K mentions, 72 net sentiment, buzz analysis\n**Customer Experience** - NPS 62, CSAT 87, 8 touchpoint scores\n\n### Commerce & Inventory\n**Sales Intelligence** - 6 categories, 7 materials, bestseller tracking\n**Inventory Intelligence** - 2,840 SKUs, $4.2M value, dead stock alerts\n**Revenue & Funnel** - $2.84M revenue, 3.2% conversion, 5-stage funnel\n**Loyalty & Retention** - 68K members, 4 tiers, 42% repeat rate"
+        },
+        {
+          "type": "Glass_Canvas",
+          "markdown_content": "### Marketing Operations\n**Marketing Command** - $185K spend, $740K revenue, 4.0 ROAS\n**WhatsApp Hub** - 142K contacts, $486K revenue, AI replies\n**Creative & Brand** - 248 creatives, 7 visual styles, fatigue tracking\n**Email & SMS** - 245K list, 34.2% open rate, 6 automations\n**Influencer & PR** - 18 partnerships, 5.2 ROI, partner analytics"
+        }
+      ]
+    },
+    {
+      "page_index": 5,
+      "narrative_role": "Expand",
+      "archetype": "editorial_flow",
+      "components": [
+        {
+          "type": "Page_Ghost_Number",
+          "number": "05"
+        },
+        {
+          "type": "Hero_Typography",
+          "weight": "black",
+          "variant": "standard",
+          "scale": 3,
+          "content": "MODULE MAP<br>CONTINUED"
+        },
+        {
+          "type": "Glass_Canvas",
+          "markdown_content": "### Audience & Digital Presence\n**Audience & Personas** - Demographic segmentation, buying behavior\n**Customer Journey** - Full funnel mapping, drop-off analysis\n**Social Media** - 892K followers across 5 platforms\n**Content Strategy** - 156 pieces, 4.8% engagement, calendar view\n**SEO & Digital** - 185K organic traffic, 342 keywords, DA 62\n**Landing Page Builder** - AI-generated pages, A/B testing, conversion tracking"
+        },
+        {
+          "type": "Glass_Canvas",
+          "markdown_content": "### Intelligence & Command Centers\n**Competitive Intel** - 8.4% market share, 5 competitor tracking\n**Campaign Calendar** - 8 seasonal campaigns, pipeline management\n**Paid Ads Command** - 24/7 audit, bid management, waste analysis ($8.7K)\n**SEO Command** - Technical crawl, content decay, keyword gaps\n**ClickFlow Engine** - 30 articles/month automated content pipeline"
+        }
+      ]
+    },
+    {
+      "page_index": 6,
+      "narrative_role": "Expand",
+      "archetype": "editorial_flow",
+      "components": [
+        {
+          "type": "Page_Ghost_Number",
+          "number": "06"
+        },
+        {
+          "type": "Hero_Typography",
+          "weight": "black",
+          "variant": "standard",
+          "scale": 3,
+          "content": "RYZE AI<br>STUDIO"
+        },
+        {
+          "type": "Glass_Canvas",
+          "markdown_content": "### AI Growth Engine\nMomentum score 82 with 6 daily AI suggestions. 7-day growth playbook with 6 actionable steps. 5 predicted insights for proactive decision-making. Intelligent trend analysis across all modules.\n\n### AI Creative Studio\nAI-powered ad creative generation. Learning from winning patterns. Platform-specific format suggestions. Approval workflow with creative analysis. Continuous A/B testing automation."
+        },
+        {
+          "type": "Glass_Canvas",
+          "markdown_content": "### Agency Command\nMulti-client management across 4 brand verticals. Batch audit capabilities. White-label report generation. Health score tracking per project. Client portal access for stakeholders.\n\n### Slack & Teams Bot\nNatural language queries inside chat. Conversational campaign modifications. Inline approval workflows. Automated daily summaries. One-click report generation."
+        },
+        {
+          "type": "Glass_Canvas",
+          "markdown_content": "### Free Audit & Leads\nEmail-to-audit pipeline delivers results within 1 hour. Automated lead capture and qualification. Competitive benchmarking included. Actionable optimization recommendations."
+        }
+      ]
+    },
+    {
+      "page_index": 7,
+      "narrative_role": "Expand",
+      "archetype": "editorial_flow",
+      "components": [
+        {
+          "type": "Page_Ghost_Number",
+          "number": "07"
+        },
+        {
+          "type": "Hero_Typography",
+          "weight": "black",
+          "variant": "standard",
+          "scale": 3,
+          "content": "ACTION SYSTEM"
+        },
+        {
+          "type": "Stat_Block",
+          "number": "72",
+          "unit": "",
+          "label": "REAL BUTTON ACTIONS"
+        },
+        {
+          "type": "Stat_Block",
+          "number": "6",
+          "unit": "",
+          "label": "FORM MODALS"
+        },
+        {
+          "type": "Stat_Block",
+          "number": "10",
+          "unit": "",
+          "label": "AI AUTOMATIONS"
+        },
+        {
+          "type": "Glass_Canvas",
+          "markdown_content": "### Action Modals\n**Create Campaign** - Name, type, channels, budget, dates, audience, objectives\n**Send Broadcast** - WhatsApp/Email/SMS blast to 142K contacts with scheduling\n**Create Segment** - Dynamic rules engine with AND logic, 6 filter fields\n**Create Workflow** - Automation triggers (cart abandon, purchase, win-back, birthday)\n**Export Data** - CSV/JSON with column picker and preview\n**Schedule Post** - Multi-platform social media scheduling"
+        },
+        {
+          "type": "Glass_Canvas",
+          "markdown_content": "### Smart Automations\n1. Auto-Reorder Alerts for low-stock items\n2. Smart Liquidation for dead inventory\n3. Cart Abandonment Recovery sequences\n4. Content Decay Auto-Fix for SEO\n5. Budget Auto-Adjust across ad platforms\n6. Post-Purchase NPS surveys\n7. Win-Back Auto-Trigger for churned users\n8. Creative Fatigue Auto-Rotate\n9. Restock WhatsApp Alerts\n10. Sentiment Spike Alerts"
+        }
+      ]
+    },
+    {
+      "page_index": 8,
+      "narrative_role": "Echo",
+      "archetype": "editorial_flow",
+      "components": [
+        {
+          "type": "Page_Ghost_Number",
+          "number": "08"
+        },
+        {
+          "type": "Hero_Typography",
+          "weight": "black",
+          "variant": "standard",
+          "scale": 3,
+          "content": "MULTI-PROJECT &<br>TEAM"
+        },
+        {
+          "type": "Glass_Canvas",
+          "markdown_content": "### 4 Brand Verticals\n**Varni Jewels** (Gold #D4A843) - Fine Jewelry, $185K/mo budget\n**Varni Diamonds** (Purple #8B5CF6) - Diamond Retail, $120K/mo\n**Varni Watches** (Blue #0EA5E9) - Luxury Watches, $65K/mo\n**Varni Home** (Emerald #10B981) - Home Decor, $25K/mo (Paused)\n\nEach project has independent modules, budgets, team assignments, and brand-colored dashboards."
+        },
+        {
+          "type": "Glass_Canvas",
+          "markdown_content": "### Role-Based Access Control\n**Owner** - Full permissions, team management\n**Admin** - Create/Edit/Delete/Export/Manage\n**Editor** - Create/Edit/Export content\n**Analyst** - View all modules, export data\n**Viewer** - Read-only access\n\n### Authentication\nSecure login with localStorage session persistence. Demo credentials pre-filled (info@varnijewels.com). SSR hydration guard prevents flash. Google and Microsoft SSO ready."
+        },
+        {
+          "type": "Floating_Meta",
+          "position": "bottom-right",
+          "items": ["BUILT WITH NEXT.JS 16", "RYZE AI + CLICKFLOW"]
+        }
+      ]
+    }
+  ]
+}
