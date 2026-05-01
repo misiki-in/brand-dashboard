@@ -10,6 +10,7 @@ import {
   Heart, BarChart3, MessageSquare, Star, Search, FileText,
   Share2, Mail, DollarSign, Users, Crown, Gem, TrendingUp,
   Swords, Calendar, ChevronLeft, ChevronRight, Sparkles, Menu, Bell, Settings, LayoutDashboard,
+  Eye, UserCircle, Route,
 } from 'lucide-react';
 
 import { BrandOverview } from '@/components/dashboard/brand-overview';
@@ -27,6 +28,8 @@ import { ProductPerformance } from '@/components/dashboard/product';
 import { RevenueConversions } from '@/components/dashboard/revenue';
 import { CompetitiveIntel } from '@/components/dashboard/competitive';
 import { CampaignCalendar } from '@/components/dashboard/campaigns';
+import { Audience } from '@/components/dashboard/audience';
+import { CustomerJourney } from '@/components/dashboard/journey';
 
 const navSections = [
   {
@@ -39,11 +42,18 @@ const navSections = [
     ],
   },
   {
+    label: 'Audience & Journey',
+    items: [
+      { id: 'audience', label: 'Audience & Personas', icon: UserCircle },
+      { id: 'journey', label: 'Customer Journey', icon: Route },
+    ],
+  },
+  {
     label: 'Digital Presence',
     items: [
       { id: 'seo', label: 'SEO & Digital', icon: Search },
       { id: 'content', label: 'Content Strategy', icon: FileText },
-      { id: 'social', label: 'Social Media', icon: Share2 },
+      { id: 'social', label: 'Social & WhatsApp', icon: Share2 },
     ],
   },
   {
@@ -51,7 +61,7 @@ const navSections = [
     items: [
       { id: 'email', label: 'Email & SMS', icon: Mail },
       { id: 'ads', label: 'Paid Media', icon: DollarSign },
-      { id: 'influencer', label: 'Influencer & Partners', icon: Users },
+      { id: 'influencer', label: 'Influencer & PR', icon: Users },
     ],
   },
   {
@@ -71,14 +81,13 @@ const navSections = [
   },
 ];
 
-// Fix: Eye icon was referenced but not imported from lucide
-import { Eye } from 'lucide-react';
-
 const tabComponents: Record<string, React.ComponentType> = {
   overview: BrandOverview,
   awareness: BrandAwareness,
   sentiment: SentimentListening,
   cx: CustomerExperience,
+  audience: Audience,
+  journey: CustomerJourney,
   seo: SeoDigital,
   content: ContentStrategy,
   social: SocialMedia,

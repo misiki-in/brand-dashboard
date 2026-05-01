@@ -5,8 +5,76 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, ScatterChart, Scatter, ZAxis, ResponsiveContainer,
 } from "recharts";
+
+// Positioning map data: price tier (x) vs digital brand strength (y)
+const positioningData = [
+  { name: "Lumière Jewels", priceTier: 72, digitalStrength: 82, size: 400, isYou: true },
+  { name: "Tanishq", priceTier: 55, digitalStrength: 68, size: 600, isYou: false },
+  { name: "BlueStone", priceTier: 65, digitalStrength: 78, size: 380, isYou: false },
+  { name: "CaratLane", priceTier: 45, digitalStrength: 74, size: 450, isYou: false },
+  { name: "Kalyan", priceTier: 40, digitalStrength: 42, size: 520, isYou: false },
+  { name: "Malabar", priceTier: 38, digitalStrength: 38, size: 480, isYou: false },
+  { name: "Senco", priceTier: 35, digitalStrength: 35, size: 300, isYou: false },
+  { name: "PC Jeweller", priceTier: 32, digitalStrength: 45, size: 400, isYou: false },
+];
+
+// Documented moats
+const moats = [
+  {
+    title: "89ms Page Load Speed",
+    category: "Performance",
+    description: "Our site loads in 89ms — 4x faster than the industry average of 360ms. This directly impacts conversion: every 100ms improvement drives a 7% increase in jewelry e-commerce conversions.",
+    metric: "89ms",
+    benchmark: "Industry: 360ms",
+    impact: "+7% conversion per 100ms improvement",
+    color: "emerald",
+  },
+  {
+    title: "AI-Powered Search & Recommendations",
+    category: "Technology",
+    description: "Our proprietary AI search understands natural language queries like 'gold necklace under 500 for anniversary' and returns relevant results with visual similarity matching. Search-to-purchase conversion is 2.4x higher than category average.",
+    metric: "2.4x",
+    benchmark: "Industry avg: 1.0x",
+    impact: "28% of revenue comes through AI search",
+    color: "primary",
+  },
+  {
+    title: "NPS Score of 62",
+    category: "Customer Loyalty",
+    description: "Our Net Promoter Score of 62 is among the highest in jewelry e-commerce (industry avg: 38). This translates to organic word-of-mouth, 14% referral rate, and significantly lower CAC for repeat customers.",
+    metric: "62",
+    benchmark: "Industry avg: 38",
+    impact: "14% referral rate, 42% repeat purchase rate",
+    color: "amber",
+  },
+  {
+    title: "Ethical Sourcing Full Transparency",
+    category: "Brand Trust",
+    description: "Blockchain-verified supply chain with full provenance tracking from mine to customer. 94% of customers cite ethical sourcing as a top-3 purchase driver. This is our strongest differentiation vs traditional jewelers.",
+    metric: "94%",
+    benchmark: "Competitors: ~60% sourcing transparency",
+    impact: "Strongest brand differentiator in surveys",
+    color: "primary",
+  },
+  {
+    title: "First-Party Data Asset (245K profiles)",
+    category: "Data & Personalization",
+    description: "Rich first-party data including purchase history, occasion dates, preference profiles, and engagement signals. Powers 1:1 personalization across email, WhatsApp, site, and ads — reducing CAC by 32% vs cold audiences.",
+    metric: "245K",
+    benchmark: "Typical competitor: 80-120K",
+    impact: "32% lower CAC vs cold audiences",
+    color: "emerald",
+  },
+];
+
+const quadrantLabels = [
+  { x: 20, y: 85, text: "Digital Challenger" },
+  { x: 75, y: 85, text: "Digital Leader" },
+  { x: 20, y: 15, text: "Traditional Value" },
+  { x: 75, y: 15, text: "Premium Heritage" },
+];
 
 export function CompetitiveIntel() {
   const sovData = competitiveData.competitors.map((c, i) => ({
@@ -15,29 +83,80 @@ export function CompetitiveIntel() {
     fill: i === 0 ? "oklch(0.65 0.18 65)" : "oklch(0.7 0.05 80)",
   }));
 
-  const sentimentRadar = competitiveData.competitors.map((c) => ({
-    name: c.name.replace(" ", "\n"),
-    sov: c.sov,
-    sentiment: c.sentiment,
-  }));
-
   return (
     <div className="space-y-6">
       {/* Market Position */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: "Market Share", value: `${competitiveData.marketShare}%` },
           { label: "Share of Voice", value: `${competitiveData.shareOfVoice}%` },
-          { label: "Competitive Set", value: competitiveData.competitors.length.toString() },
+          { label: "Competitive Set", value: "8 brands tracked" },
+          { label: "Price Position", value: "Accessible Luxury" },
         ].map((m) => (
           <Card key={m.label} className="border-border/50">
             <CardContent className="p-4 text-center">
-              <p className="text-3xl font-bold tabular-nums">{m.value}</p>
+              <p className="text-2xl lg:text-3xl font-bold tabular-nums">{m.value}</p>
               <p className="text-xs text-muted-foreground mt-1">{m.label}</p>
             </CardContent>
           </Card>
         ))}
       </div>
+
+      {/* Positioning Map: Price Tier vs Digital Brand Strength */}
+      <Card className="border-border/50">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base font-semibold">Competitive Positioning Map</CardTitle>
+          <p className="text-xs text-muted-foreground">Price Tier (x-axis) vs Digital Brand Strength (y-axis). Bubble size = estimated market presence.</p>
+        </CardHeader>
+        <CardContent>
+          <ChartContainer config={{}} className="h-[380px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" className="opacity-20" />
+                <XAxis type="number" dataKey="priceTier" name="Price Tier" domain={[20, 90]} tick={{ fontSize: 10 }} label={{ value: "Price Tier (Higher = More Premium)", position: "bottom", fontSize: 10, offset: 0 }} />
+                <YAxis type="number" dataKey="digitalStrength" name="Digital Strength" domain={[20, 95]} tick={{ fontSize: 10 }} label={{ value: "Digital Brand Strength", angle: -90, position: "insideLeft", fontSize: 10, offset: 10 }} />
+                <ZAxis type="number" dataKey="size" range={[80, 500]} />
+                <ChartTooltip
+                  content={({ active, payload }) => {
+                    if (!active || !payload?.length) return null;
+                    const d = payload[0].payload;
+                    return (
+                      <div className="border-border/50 bg-background rounded-lg border px-3 py-2 text-xs shadow-xl">
+                        <p className="font-semibold">{d.name} {d.isYou && <Badge className="ml-1 text-[10px]">You</Badge>}</p>
+                        <p className="text-muted-foreground">Price Tier: {d.priceTier} · Digital: {d.digitalStrength}</p>
+                      </div>
+                    );
+                  }}
+                />
+                {positioningData.map((d, i) => (
+                  <Scatter
+                    key={d.name}
+                    name={d.name}
+                    data={[d]}
+                    fill={d.isYou ? "oklch(0.65 0.18 65)" : i < 4 ? "oklch(0.55 0.1 200)" : "oklch(0.7 0.05 80)"}
+                    stroke={d.isYou ? "oklch(0.65 0.18 65)" : "none"}
+                    strokeWidth={d.isYou ? 2 : 0}
+                    style={{ filter: d.isYou ? "drop-shadow(0 0 6px oklch(0.65 0.18 65))" : "none" }}
+                  />
+                ))}
+                {/* Quadrant labels */}
+                <text x="25%" y="8%" textAnchor="middle" fontSize="10" fill="oklch(0.6 0.05 200)" fontWeight="600">Digital Challenger</text>
+                <text x="78%" y="8%" textAnchor="middle" fontSize="10" fill="oklch(0.6 0.05 200)" fontWeight="600">Digital Leader</text>
+                <text x="25%" y="96%" textAnchor="middle" fontSize="10" fill="oklch(0.6 0.05 200)" fontWeight="600">Traditional Value</text>
+                <text x="78%" y="96%" textAnchor="middle" fontSize="10" fill="oklch(0.6 0.05 200)" fontWeight="600">Premium Heritage</text>
+              </ScatterChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+          <div className="flex flex-wrap gap-3 mt-2 justify-center">
+            {positioningData.map((d) => (
+              <div key={d.name} className="flex items-center gap-1.5">
+                <div className={`w-2.5 h-2.5 rounded-full ${d.isYou ? "bg-primary ring-2 ring-primary/30" : d.name === "Kalyan" || d.name === "Malabar" || d.name === "Senco" || d.name === "PC Jeweller" ? "bg-muted-foreground/40" : "bg-primary/40"}`} />
+                <span className={`text-[10px] ${d.isYou ? "font-semibold" : "text-muted-foreground"}`}>{d.name}</span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Share of Voice Chart */}
       <Card className="border-border/50">
@@ -45,7 +164,7 @@ export function CompetitiveIntel() {
           <CardTitle className="text-base font-semibold">Share of Voice Comparison</CardTitle>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={{ sov: { label: "SOV %", color: "oklch(0.65 0.18 65)" } }} className="h-[300px] w-full">
+          <ChartContainer config={{ sov: { label: "SOV %", color: "oklch(0.65 0.18 65)" } }} className="h-[280px] w-full">
             <BarChart data={sovData}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis dataKey="name" tick={{ fontSize: 10 }} />
@@ -61,7 +180,7 @@ export function CompetitiveIntel() {
         </CardContent>
       </Card>
 
-      {/* Competitor Cards */}
+      {/* Competitor Landscape Table */}
       <Card className="border-border/50">
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-semibold">Competitor Landscape</CardTitle>
@@ -100,6 +219,42 @@ export function CompetitiveIntel() {
               </tbody>
             </table>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Documented Moats */}
+      <Card className="border-border/50">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base font-semibold">Documented Competitive Moats</CardTitle>
+          <p className="text-xs text-muted-foreground">Structural advantages that are difficult for competitors to replicate</p>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {moats.map((m) => (
+            <div key={m.title} className="p-4 rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                <div className="flex items-center gap-2">
+                  <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                    m.color === "emerald" ? "bg-emerald-500/10 text-emerald-600" :
+                    m.color === "amber" ? "bg-amber-500/10 text-amber-600" :
+                    "bg-primary/10 text-primary"
+                  }`}>
+                    {m.category}
+                  </span>
+                  <h3 className="text-sm font-semibold">{m.title}</h3>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className="text-right">
+                    <span className="text-lg font-bold tabular-nums">{m.metric}</span>
+                    <span className="text-[10px] text-muted-foreground block">{m.benchmark}</span>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">{m.description}</p>
+              <div className="mt-2 p-2 rounded bg-background/50 border border-border/30">
+                <p className="text-[10px] text-primary font-medium">{m.impact}</p>
+              </div>
+            </div>
+          ))}
         </CardContent>
       </Card>
 

@@ -53,6 +53,9 @@ export function BrandOverview() {
         {kpiSummary.map((kpi) => (
           <KpiCard key={kpi.label} {...kpi} />
         ))}
+        {/* CLV:CAC Ratio — critical efficiency metric */}
+        <KpiCard label="CLV:CAC Ratio" value={81} unit=":1" change={12} icon="TrendingUp" />
+        <KpiCard label="Traffic Source Mix" value={42} unit="% Organic" change={3} icon="BarChart3" />
       </div>
 
       {/* Brand Equity Radar */}

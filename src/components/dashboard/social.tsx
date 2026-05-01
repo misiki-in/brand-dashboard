@@ -86,7 +86,54 @@ export function SocialMedia() {
             </CardContent>
           </Card>
         ))}
+
+        {/* WhatsApp — First-Party Channel */}
+        <Card className="border-border/50 hover:shadow-md transition-shadow ring-1 ring-emerald-500/20">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-sm">WhatsApp Business</h3>
+                <Badge className="text-[10px] bg-emerald-500/10 text-emerald-600">1st Party</Badge>
+              </div>
+              <Badge variant="default" className="text-[10px]">+34%</Badge>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <p className="text-xl font-bold tabular-nums">48K</p>
+                <p className="text-[10px] text-muted-foreground">Subscribers</p>
+              </div>
+              <div>
+                <p className="text-xl font-bold tabular-nums">78%</p>
+                <p className="text-[10px] text-muted-foreground">Open Rate</p>
+              </div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-border/50 space-y-1 text-xs text-muted-foreground">
+              <div className="flex justify-between">
+                <span>Messages sent/mo</span>
+                <span className="font-medium tabular-nums text-foreground">124K</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Reply rate</span>
+                <span className="font-medium tabular-nums text-foreground">42%</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Conv. from WhatsApp</span>
+                <span className="font-medium tabular-nums text-foreground">$86K/mo</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* First-Party Channel Insight */}
+      <Card className="border-border/50 bg-emerald-500/5">
+        <CardContent className="p-4">
+          <p className="text-sm font-semibold mb-1 text-emerald-700 dark:text-emerald-400">WhatsApp: Your Highest-Performing Owned Channel</p>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            With a 78% open rate (vs 34% email), WhatsApp is your strongest first-party data channel. Jewelry buyers prefer conversational commerce for high-consideration purchases — 42% of WhatsApp interactions lead to a human conversation before purchase. This channel is immune to iOS privacy changes and cookie deprecation. Scale WhatsApp to 100K subscribers by Q3 for projected $180K/mo revenue.
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 }

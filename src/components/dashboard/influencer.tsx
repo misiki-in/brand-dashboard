@@ -1,25 +1,128 @@
 "use client";
 
 import { influencerData } from "@/lib/mock-data";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Badge } from "@/components/ui/badge";
 import { ProgressMetric } from "./kpi-components";
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell,
+} from "recharts";
+
+// Nano/Micro vs Macro analysis data
+const tierAnalysis = [
+  { tier: "Nano (1K-10K)", partners: 42, avgEngagement: 9.2, avgCost: 800, roas: 8.4, cpe: 0.12, share: 35 },
+  { tier: "Micro (10K-100K)", partners: 24, avgEngagement: 7.8, avgCost: 3200, roas: 6.8, cpe: 0.18, share: 28 },
+  { tier: "Mid (100K-500K)", partners: 12, avgEngagement: 5.4, avgCost: 18000, roas: 4.2, cpe: 0.42, share: 22 },
+  { tier: "Macro (500K-1M)", partners: 6, avgEngagement: 3.8, avgCost: 42000, roas: 2.8, cpe: 0.86, share: 10 },
+  { tier: "Mega (1M+)", partners: 2, avgEngagement: 2.4, avgCost: 85000, roas: 1.8, cpe: 1.42, share: 5 },
+];
+
+const tierConfig = {
+  roas: { label: "ROAS", color: "oklch(0.65 0.18 65)" },
+  avgEngagement: { label: "Engagement %", color: "oklch(0.55 0.12 200)" },
+};
+
+// PR Strategy data
+const prStrategy = {
+  editorial: [
+    { publication: "Vogue India", type: "Feature", status: "Published", date: "Dec 2025", impact: "2.4M impressions", tier: "Tier 1" },
+    { publication: "Elle India", type: "Collection Review", status: "Published", date: "Jan 2026", impact: "1.2M impressions", tier: "Tier 1" },
+    { publication: "Harper's Bazaar", type: "Brand Profile", status: "Confirmed", date: "Mar 2026", impact: "1.8M est.", tier: "Tier 1" },
+    { publication: "GQ India", type: "Men's Gift Guide", status: "Pitched", date: "Feb 2026", impact: "800K est.", tier: "Tier 2" },
+    { publication: "The Voice of Fashion", type: "Sustainability Feature", status: "In Progress", date: "Apr 2026", impact: "400K est.", tier: "Tier 2" },
+  ],
+  celebritySeeding: [
+    { celebrity: "Priyanka Sharma (Actor)", event: "Film Premiere", pieces: "Eternal Hope Ring", reach: "18M", status: "Confirmed" },
+    { celebrity: "Ananya Mehta (Fashion Icon)", event: "Met Gala After-Party", pieces: "Celestial Necklace", reach: "12M", status: "Gifting Sent" },
+    { celebrity: "Rohan Kapoor (Cricketer)", event: "Award Ceremony", pieces: "Whisper Bracelet", reach: "8M", status: "Outreach" },
+    { celebrity: "Dia Mirza (Activist)", event: "Sustainability Summit", pieces: "Ethical Diamond Studs", reach: "6M", status: "Confirmed" },
+  ],
+  awardEntries: [
+    { award: "India Jewellery Design Awards", category: "Sustainable Luxury Brand", status: "Shortlisted", date: "Feb 2026" },
+    { award: "E-Commerce Awards India", category: "Best Customer Experience", status: "Nominated", date: "Mar 2026" },
+    { award: "Luxe Digital Awards", category: "Digital Innovation in Jewelry", status: "Submitted", date: "Apr 2026" },
+  ],
+};
 
 export function InfluencerPartnerships() {
   return (
     <div className="space-y-6">
       {/* Summary */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
           { label: "Active Partnerships", value: influencerData.activePartnerships },
           { label: "Total Reach", value: (influencerData.totalReach / 1000000).toFixed(1) + "M" },
           { label: "Avg Engagement", value: `${influencerData.avgEngagement}%` },
           { label: "Influencer ROI", value: `${influencerData.roi}x` },
+          { label: "PR Placements (YTD)", value: "12" },
         ].map((m) => (
           <Card key={m.label} className="border-border/50">
             <CardContent className="p-4 text-center">
               <p className="text-2xl lg:text-3xl font-bold tabular-nums">{m.value}</p>
               <p className="text-xs text-muted-foreground mt-1">{m.label}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Tier Analysis: Nano/Micro vs Macro */}
+      <Card className="border-border/50">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base font-semibold">Influencer Tier Analysis — Nano/Micro Outperform Macro</CardTitle>
+          <CardDescription className="text-xs">In jewelry commerce, trust and authenticity drive conversions more than raw reach. Nano and micro creators generate 8.4x and 6.8x ROAS respectively, compared to 1.8x for mega influencers.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ChartContainer config={tierConfig} className="h-[280px] w-full">
+            <BarChart data={tierAnalysis}>
+              <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+              <XAxis dataKey="tier" tick={{ fontSize: 10 }} />
+              <YAxis tick={{ fontSize: 10 }} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Bar dataKey="roas" fill="oklch(0.65 0.18 65)" radius={[4, 4, 0, 0]} barSize={28} />
+              <Bar dataKey="avgEngagement" fill="oklch(0.55 0.12 200)" radius={[4, 4, 0, 0]} barSize={28} />
+            </BarChart>
+          </ChartContainer>
+        </CardContent>
+      </Card>
+
+      {/* Tier Detail Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+        {tierAnalysis.map((t, i) => (
+          <Card key={t.tier} className={`border-border/50 ${i < 2 ? "ring-1 ring-emerald-500/30" : ""}`}>
+            <CardContent className="p-3">
+              <p className="text-xs font-semibold mb-2">{t.tier}</p>
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Partners</span>
+                  <span className="font-medium tabular-nums">{t.partners}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Engagement</span>
+                  <span className="font-medium tabular-nums">{t.avgEngagement}%</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Avg Cost</span>
+                  <span className="font-medium tabular-nums">${t.avgCost.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">ROAS</span>
+                  <span className={`font-bold tabular-nums ${t.roas >= 5 ? "text-emerald-500" : t.roas >= 3 ? "text-amber-500" : "text-muted-foreground"}`}>
+                    {t.roas}x
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">CPE</span>
+                  <span className="font-medium tabular-nums">${t.cpe}</span>
+                </div>
+                <div className="h-1.5 rounded-full bg-muted overflow-hidden mt-1">
+                  <div
+                    className="h-full rounded-full bg-primary transition-all"
+                    style={{ width: `${t.share}%` }}
+                  />
+                </div>
+                <p className="text-[10px] text-muted-foreground text-center">{t.share}% of program</p>
+              </div>
             </CardContent>
           </Card>
         ))}
@@ -72,6 +175,89 @@ export function InfluencerPartnerships() {
         </CardContent>
       </Card>
 
+      {/* PR Strategy Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+        {/* Editorial Placements */}
+        <Card className="border-border/50">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold">PR — Editorial Placements</CardTitle>
+            <CardDescription className="text-xs">Earned media coverage in tier-1 and tier-2 publications</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {prStrategy.editorial.map((e) => (
+              <div key={e.publication} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium">{e.publication}</p>
+                    <Badge variant="outline" className="text-[10px]">{e.tier}</Badge>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground">{e.type} · {e.date}</p>
+                </div>
+                <div className="text-right shrink-0">
+                  <Badge
+                    variant={e.status === "Published" ? "default" : e.status === "Confirmed" ? "secondary" : "outline"}
+                    className="text-[10px]"
+                  >
+                    {e.status}
+                  </Badge>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{e.impact}</p>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Celebrity Seeding & Awards */}
+        <div className="space-y-4">
+          <Card className="border-border/50">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-semibold">PR — Celebrity Seeding</CardTitle>
+              <CardDescription className="text-xs">Strategic gifting for red carpet and high-visibility events</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {prStrategy.celebritySeeding.map((c) => (
+                <div key={c.celebrity} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors">
+                  <div>
+                    <p className="text-sm font-medium">{c.celebrity}</p>
+                    <p className="text-[10px] text-muted-foreground">{c.event} · {c.pieces}</p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <Badge
+                      variant={c.status === "Confirmed" ? "default" : c.status === "Gifting Sent" ? "secondary" : "outline"}
+                      className="text-[10px]"
+                    >
+                      {c.status}
+                    </Badge>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{c.reach} reach</p>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="border-border/50">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-semibold">PR — Award Entries</CardTitle>
+              <CardDescription className="text-xs">Industry recognition and credibility building</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {prStrategy.awardEntries.map((a) => (
+                <div key={a.award} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/20">
+                  <div>
+                    <p className="text-sm font-medium">{a.award}</p>
+                    <p className="text-[10px] text-muted-foreground">{a.category}</p>
+                  </div>
+                  <div className="text-right">
+                    <Badge variant={a.status === "Shortlisted" ? "default" : "outline"} className="text-[10px]">{a.status}</Badge>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{a.date}</p>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
       {/* Upcoming Collaborations */}
       <Card className="border-border/50">
         <CardHeader className="pb-2">
@@ -98,7 +284,7 @@ export function InfluencerPartnerships() {
         </CardContent>
       </Card>
 
-      {/* Influencer Strategy Insights */}
+      {/* Strategy Insights */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="border-border/50 bg-muted/20">
           <CardContent className="p-4">
@@ -110,9 +296,9 @@ export function InfluencerPartnerships() {
         </Card>
         <Card className="border-border/50 bg-muted/20">
           <CardContent className="p-4">
-            <p className="text-sm font-semibold mb-1">Micro-Influencers Drive Highest ROI</p>
+            <p className="text-sm font-semibold mb-1">Shift Budget to Nano/Micro Tiers</p>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Micro-influencer tier (100K-500K) delivers the best engagement-to-cost ratio at 8.4% engagement with $18K-$22K per partnership. Expand the micro-influencer program with a structured application pipeline.
+              Our data shows 63% of influencer program revenue comes from nano and micro creators who represent just 35% + 28% of the partner count. The recommended budget allocation should shift from the current 40/30/20/8/2 to 30/30/20/12/8 to invest more in mid-tier while maintaining the nano/micro base.
             </p>
           </CardContent>
         </Card>
