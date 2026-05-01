@@ -237,7 +237,7 @@ export default function DashboardPage() {
       </Sheet>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden min-w-0">
+      <main className="flex-1 flex flex-col overflow-hidden min-w-0 min-h-0">
         {/* Top Bar */}
         <header className="h-14 border-b border-border/50 bg-card/80 backdrop-blur-sm flex items-center justify-between px-4 shrink-0">
           <div className="flex items-center gap-3">
