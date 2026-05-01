@@ -32,7 +32,7 @@ export function BrandOverview() {
             <Gauge value={brandHealth.score} size={180} label="Brand Health Score" />
             <div className="flex-1 space-y-4 w-full">
               <div>
-                <h2 className="text-xl font-bold">Lumière Jewels — Brand Pulse</h2>
+                <h2 className="text-xl font-bold">Varni Jewels — Brand Pulse</h2>
                 <p className="text-sm text-muted-foreground mt-1">
                   Overall brand health has improved by <span className="text-emerald-500 font-semibold">+{brandHealth.trend} points</span> compared to the previous quarter, driven by strong awareness gains and loyalty improvements.
                 </p>

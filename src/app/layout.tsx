@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lumière Jewels — Brand Dashboard",
+  title: "Varni Jewels — Brand Dashboard",
   description: "Full-fledge brand dashboard for jewelry commerce marketing automation. Track brand health, awareness, sentiment, revenue, and all marketing KPIs.",
   icons: {
     icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",

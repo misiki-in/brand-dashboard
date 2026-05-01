@@ -1,5 +1,5 @@
 // ============================================================
-// LUMIÈRE JEWELS — Brand Dashboard Mock Data
+// VARNI JEWELS — Brand Dashboard Mock Data
 // ============================================================
 
 // ---------- BRAND HEALTH OVERVIEW ----------
@@ -406,7 +406,7 @@ export const competitiveData = {
   marketShare: 8.4,
   shareOfVoice: 18.4,
   competitors: [
-    { name: "Lumière Jewels", sov: 18.4, sentiment: 72, pricing: "Premium", strength: "Brand Story", weakness: "Price Perception" },
+    { name: "Varni Jewels", sov: 18.4, sentiment: 72, pricing: "Premium", strength: "Brand Story", weakness: "Price Perception" },
     { name: "Aurelia Diamonds", sov: 22.1, sentiment: 68, pricing: "Ultra-Premium", strength: "Heritage", weakness: "Digital Presence" },
     { name: "Solstice Studio", sov: 14.8, sentiment: 74, pricing: "Mid-Premium", strength: "Social Media", weakness: "Product Range" },
     { name: "PureGems Co.", sov: 12.2, sentiment: 81, pricing: "Accessible", strength: "Ethical Sourcing", weakness: "Brand Recognition" },

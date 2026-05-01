@@ -131,7 +131,7 @@ function SidebarNav({
         </div>
         {!collapsed && (
           <div className="min-w-0">
-            <h1 className="text-sm font-bold gold-shimmer truncate">Lumière Jewels</h1>
+            <h1 className="text-sm font-bold gold-shimmer truncate">Varni Jewels</h1>
             <p className="text-[10px] text-sidebar-foreground/60">Brand Command Center</p>
           </div>
         )}
@@ -185,7 +185,7 @@ function SidebarNav({
         <div className="p-3 space-y-2">
           <div className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-sidebar-accent/30">
             <div className="h-7 w-7 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
-              LJ
+              VJ
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs font-medium text-sidebar-foreground truncate">Marketing Team</p>

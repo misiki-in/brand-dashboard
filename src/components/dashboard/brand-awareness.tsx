@@ -65,7 +65,7 @@ export function BrandAwareness() {
         <Card className="border-border/50">
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-semibold">Brand Associations</CardTitle>
-            <p className="text-xs text-muted-foreground">What consumers associate with Lumière Jewels</p>
+            <p className="text-xs text-muted-foreground">What consumers associate with Varni Jewels</p>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -126,7 +126,7 @@ export function BrandAwareness() {
                   </div>
                   <div className="flex justify-between text-[10px] text-muted-foreground">
                     <span>Industry</span>
-                    <span>Lumière</span>
+                    <span>Varni</span>
                   </div>
                 </div>
               ))}

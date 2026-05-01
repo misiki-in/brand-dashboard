@@ -10,7 +10,7 @@ import {
 
 // Positioning map data: price tier (x) vs digital brand strength (y)
 const positioningData = [
-  { name: "Lumière Jewels", priceTier: 72, digitalStrength: 82, size: 400, isYou: true },
+  { name: "Varni Jewels", priceTier: 72, digitalStrength: 82, size: 400, isYou: true },
   { name: "Tanishq", priceTier: 55, digitalStrength: 68, size: 600, isYou: false },
   { name: "BlueStone", priceTier: 65, digitalStrength: 78, size: 380, isYou: false },
   { name: "CaratLane", priceTier: 45, digitalStrength: 74, size: 450, isYou: false },
@@ -200,10 +200,10 @@ export function CompetitiveIntel() {
               </thead>
               <tbody>
                 {competitiveData.competitors.map((c) => (
-                  <tr key={c.name} className={`border-b border-border/30 hover:bg-muted/20 transition-colors ${c.name === "Lumière Jewels" ? "bg-primary/5" : ""}`}>
+                  <tr key={c.name} className={`border-b border-border/30 hover:bg-muted/20 transition-colors ${c.name === "Varni Jewels" ? "bg-primary/5" : ""}`}>
                     <td className="py-2.5 px-2 font-medium">
                       {c.name}
-                      {c.name === "Lumière Jewels" && <Badge className="ml-1 text-[10px]">You</Badge>}
+                      {c.name === "Varni Jewels" && <Badge className="ml-1 text-[10px]">You</Badge>}
                     </td>
                     <td className="py-2.5 px-2 text-center tabular-nums font-medium">{c.sov}%</td>
                     <td className="py-2.5 px-2 text-center">

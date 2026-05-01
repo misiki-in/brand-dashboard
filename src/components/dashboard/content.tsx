@@ -168,7 +168,7 @@ export function ContentStrategy() {
         <Card className="border-border/50">
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-semibold">Brand Voice Guidelines</CardTitle>
-            <p className="text-xs text-muted-foreground">How Lumière Jewels speaks across every touchpoint</p>
+            <p className="text-xs text-muted-foreground">How Varni Jewels speaks across every touchpoint</p>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
