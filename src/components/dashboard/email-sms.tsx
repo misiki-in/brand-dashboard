@@ -41,7 +41,7 @@ export function EmailSms() {
           <CardTitle className="text-base font-semibold">Recent Campaign Performance</CardTitle>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={campaignConfig} className="h-[260px] w-full">
+          <ChartContainer config={campaignConfig} className="h-[180px] sm:h-[220px] lg:h-[260px] w-full">
             <BarChart data={emailData.campaigns}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis dataKey="name" tick={{ fontSize: 9 }} angle={-20} textAnchor="end" height={60} />

@@ -60,7 +60,7 @@ export function PaidMedia() {
           <CardTitle className="text-base font-semibold">Spend vs Revenue by Channel</CardTitle>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={channelConfig} className="h-[300px] w-full">
+          <ChartContainer config={channelConfig} className="h-[200px] sm:h-[260px] lg:h-[300px] w-full">
             <BarChart data={adsData.channels}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis dataKey="channel" tick={{ fontSize: 10 }} />

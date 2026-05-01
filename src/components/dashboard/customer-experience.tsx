@@ -45,7 +45,7 @@ export function CustomerExperience() {
           <CardTitle className="text-base font-semibold">Experience Metrics Trend</CardTitle>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={cxConfig} className="h-[280px] w-full">
+          <ChartContainer config={cxConfig} className="h-[200px] sm:h-[240px] lg:h-[280px] w-full">
             <LineChart data={cxData.customerEffortTrend}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis dataKey="month" tick={{ fontSize: 11 }} />

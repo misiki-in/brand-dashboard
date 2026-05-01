@@ -94,7 +94,7 @@ export function InventoryIntelligence() {
               sold: { label: "Units Sold", color: "oklch(0.55 0.15 150)" },
               ordered: { label: "Units Ordered", color: "oklch(0.55 0.12 200)" },
             }}
-            className="h-[280px] w-full"
+            className="h-[200px] sm:h-[240px] lg:h-[280px] w-full"
           >
             <AreaChart data={inventoryTrendData}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
@@ -117,7 +117,7 @@ export function InventoryIntelligence() {
             <p className="text-xs text-muted-foreground">Stock turnover and days-to-sell by category</p>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={{ turnover: { label: "Turnover Rate", color: "oklch(0.65 0.18 65)" } }} className="h-[240px] w-full">
+            <ChartContainer config={{ turnover: { label: "Turnover Rate", color: "oklch(0.65 0.18 65)" } }} className="h-[180px] sm:h-[200px] lg:h-[240px] w-full">
               <BarChart data={inventoryData.categoryHealth}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                 <XAxis dataKey="category" tick={{ fontSize: 10 }} />

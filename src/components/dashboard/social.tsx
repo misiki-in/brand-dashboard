@@ -42,7 +42,7 @@ export function SocialMedia() {
           <CardTitle className="text-base font-semibold">Follower Growth Trend (in thousands)</CardTitle>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={followerConfig} className="h-[300px] w-full">
+          <ChartContainer config={followerConfig} className="h-[200px] sm:h-[260px] lg:h-[300px] w-full">
             <AreaChart data={socialData.followerGrowthTrend}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis dataKey="month" tick={{ fontSize: 11 }} />

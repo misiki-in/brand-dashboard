@@ -54,7 +54,7 @@ export function SentimentListening() {
             <CardTitle className="text-base font-semibold">Sentiment Trend</CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={sentimentConfig} className="h-[300px] w-full">
+            <ChartContainer config={sentimentConfig} className="h-[200px] sm:h-[260px] lg:h-[300px] w-full">
               <AreaChart data={sentimentData.sentimentTrend}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                 <XAxis dataKey="month" tick={{ fontSize: 11 }} />
@@ -74,7 +74,7 @@ export function SentimentListening() {
             <CardTitle className="text-base font-semibold">Sentiment Breakdown</CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={sentimentConfig} className="mx-auto aspect-square max-h-[220px]">
+            <ChartContainer config={sentimentConfig} className="mx-auto aspect-square max-h-[160px] sm:max-h-[200px] lg:max-h-[220px]">
               <PieChart>
                 <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={4} dataKey="value">
                   {pieData.map((_entry, index) => (
@@ -102,7 +102,7 @@ export function SentimentListening() {
             <CardTitle className="text-base font-semibold">Buzz by Platform</CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={sourceConfig} className="h-[250px] w-full">
+            <ChartContainer config={sourceConfig} className="h-[180px] sm:h-[220px] lg:h-[250px] w-full">
               <BarChart data={sentimentData.buzzSources} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" horizontal={false} />
                 <XAxis type="number" tick={{ fontSize: 10 }} />

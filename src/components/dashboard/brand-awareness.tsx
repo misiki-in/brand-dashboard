@@ -45,7 +45,7 @@ export function BrandAwareness() {
           <CardTitle className="text-base font-semibold">Awareness Trend (Quarterly)</CardTitle>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={trendConfig} className="h-[300px] w-full">
+          <ChartContainer config={trendConfig} className="h-[200px] sm:h-[260px] lg:h-[300px] w-full">
             <LineChart data={awarenessData.monthlyTrend}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis dataKey="month" tick={{ fontSize: 11 }} />

@@ -28,7 +28,7 @@ export function BrandOverview() {
       {/* Hero Brand Health Score */}
       <Card className="border-border/50 bg-gradient-to-br from-card via-card to-primary/5">
         <CardContent className="p-4 lg:p-8">
-          <div className="flex flex-col lg:flex-row items-center gap-8">
+          <div className="flex flex-col lg:flex-row items-center gap-4 lg:gap-8">
             <Gauge value={brandHealth.score} size={140} label="Brand Health Score" />
             <div className="flex-1 space-y-4 w-full">
               <div>
@@ -94,7 +94,7 @@ export function BrandOverview() {
             <CardTitle className="text-base font-semibold">Brand Equity Radar</CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={radarConfig} className="mx-auto aspect-square max-h-[320px]">
+            <ChartContainer config={radarConfig} className="mx-auto aspect-square max-h-[240px] sm:max-h-[280px] lg:max-h-[320px]">
               <RadarChart data={radarData} outerRadius="75%">
                 <PolarGrid strokeDasharray="3 3" className="opacity-30" />
                 <PolarAngleAxis dataKey="metric" tick={{ fontSize: 11 }} className="fill-muted-foreground" />

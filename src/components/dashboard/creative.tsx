@@ -107,7 +107,7 @@ export function CreativeBrandLayer() {
                         </td>
                         <td className="py-2.5 px-2 hidden lg:table-cell">
                           {scores && (
-                            <div className="space-y-1.5 min-w-[160px]">
+                            <div className="space-y-1.5 min-w-[120px] sm:min-w-[160px]">
                               <ScoreBar label="CTA" score={scores.ctaScore} note={scores.ctaNote} />
                               <ScoreBar label="Visual" score={scores.visualScore} note={scores.visualNote} />
                               <ScoreBar label="Copy" score={scores.copyScore} note={scores.copyNote} />
@@ -213,7 +213,7 @@ export function CreativeBrandLayer() {
               fatigue: { label: "Fatigue Score", color: "oklch(0.7 0.15 75)" },
               ctrTrend: { label: "CTR Trend %", color: "oklch(0.55 0.15 150)" },
             }}
-            className="h-[240px] w-full"
+            className="h-[180px] sm:h-[200px] lg:h-[240px] w-full"
           >
             <BarChart data={fatigueData}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />

@@ -308,7 +308,7 @@ function WorkflowCard({ wf }: { wf: Workflow }) {
         </div>
 
         {/* Metrics */}
-        <div className="grid grid-cols-3 gap-3 pt-2 border-t border-border/40">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-2 border-t border-border/40">
           <div>
             <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
               Conversion

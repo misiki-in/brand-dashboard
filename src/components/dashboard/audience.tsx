@@ -280,7 +280,7 @@ export function Audience() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={genderConfig} className="mx-auto aspect-square max-h-[240px]">
+            <ChartContainer config={genderConfig} className="mx-auto aspect-square max-h-[180px] sm:max-h-[220px] lg:max-h-[240px]">
               <PieChart>
                 <ChartTooltip content={<ChartTooltipContent nameKey="name" />} />
                 <Pie
@@ -326,7 +326,7 @@ export function Audience() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={ageConfig} className="mx-auto aspect-square max-h-[240px]">
+            <ChartContainer config={ageConfig} className="mx-auto aspect-square max-h-[180px] sm:max-h-[220px] lg:max-h-[240px]">
               <PieChart>
                 <ChartTooltip content={<ChartTooltipContent nameKey="name" />} />
                 <Pie
@@ -372,7 +372,7 @@ export function Audience() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={incomeConfig} className="mx-auto aspect-square max-h-[240px]">
+            <ChartContainer config={incomeConfig} className="mx-auto aspect-square max-h-[180px] sm:max-h-[220px] lg:max-h-[240px]">
               <PieChart>
                 <ChartTooltip content={<ChartTooltipContent nameKey="name" />} />
                 <Pie
@@ -423,7 +423,7 @@ export function Audience() {
           </p>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={cityConfig} className="h-[360px] w-full">
+          <ChartContainer config={cityConfig} className="h-[220px] sm:h-[300px] lg:h-[360px] w-full">
             <BarChart
               data={cityData}
               layout="vertical"

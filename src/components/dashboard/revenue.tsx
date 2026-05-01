@@ -47,7 +47,7 @@ export function RevenueConversions() {
           <CardTitle className="text-base font-semibold">Monthly Revenue Trend</CardTitle>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={revenueConfig} className="h-[300px] w-full">
+          <ChartContainer config={revenueConfig} className="h-[200px] sm:h-[260px] lg:h-[300px] w-full">
             <AreaChart data={revenueData.monthlyRevenue}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis dataKey="month" tick={{ fontSize: 11 }} />
@@ -66,7 +66,7 @@ export function RevenueConversions() {
             <CardTitle className="text-base font-semibold">Revenue by Channel</CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={{}} className="mx-auto aspect-square max-h-[240px]">
+            <ChartContainer config={{}} className="mx-auto aspect-square max-h-[180px] sm:max-h-[220px] lg:max-h-[240px]">
               <PieChart>
                 <Pie data={channelPieData} cx="50%" cy="50%" innerRadius={55} outerRadius={90} paddingAngle={3} dataKey="value">
                   {channelPieData.map((entry, index) => (

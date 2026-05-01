@@ -98,7 +98,7 @@ export function ProductPerformance() {
             <CardTitle className="text-base font-semibold">Revenue by Category</CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={{ revenue: { label: "Revenue", color: "oklch(0.65 0.18 65)" } }} className="h-[260px] w-full">
+            <ChartContainer config={{ revenue: { label: "Revenue", color: "oklch(0.65 0.18 65)" } }} className="h-[180px] sm:h-[220px] lg:h-[260px] w-full">
               <BarChart data={productData.topCategories}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                 <XAxis dataKey="category" tick={{ fontSize: 10 }} />
@@ -120,7 +120,7 @@ export function ProductPerformance() {
             <CardTitle className="text-base font-semibold">Revenue by Material</CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={{ revenue: { label: "Revenue", color: "oklch(0.65 0.18 65)" } }} className="h-[260px] w-full">
+            <ChartContainer config={{ revenue: { label: "Revenue", color: "oklch(0.65 0.18 65)" } }} className="h-[180px] sm:h-[220px] lg:h-[260px] w-full">
               <BarChart data={productData.materialPerformance} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" horizontal={false} />
                 <XAxis type="number" tick={{ fontSize: 10 }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}K`} />

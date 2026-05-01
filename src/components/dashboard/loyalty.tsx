@@ -49,7 +49,7 @@ export function LoyaltyRetention() {
           <CardTitle className="text-base font-semibold">Member Lifecycle Trend</CardTitle>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={retentionConfig} className="h-[300px] w-full">
+          <ChartContainer config={retentionConfig} className="h-[200px] sm:h-[260px] lg:h-[300px] w-full">
             <AreaChart data={loyaltyData.retentionTrend}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis dataKey="month" tick={{ fontSize: 11 }} />

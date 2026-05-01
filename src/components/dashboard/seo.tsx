@@ -54,7 +54,7 @@ export function SeoDigital() {
             <CardTitle className="text-base font-semibold">Traffic Distribution</CardTitle>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={trafficConfig} className="mx-auto aspect-square max-h-[260px]">
+            <ChartContainer config={trafficConfig} className="mx-auto aspect-square max-h-[200px] sm:max-h-[240px] lg:max-h-[260px]">
               <PieChart>
                 <Pie data={seoData.trafficSources} cx="50%" cy="50%" innerRadius={55} outerRadius={90} paddingAngle={3} dataKey="value">
                   {seoData.trafficSources.map((entry, index) => (

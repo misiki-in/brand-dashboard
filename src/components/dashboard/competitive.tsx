@@ -165,7 +165,7 @@ export function CompetitiveIntel() {
           <CardTitle className="text-base font-semibold">Share of Voice Comparison</CardTitle>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={{ sov: { label: "SOV %", color: "oklch(0.65 0.18 65)" } }} className="h-[280px] w-full">
+          <ChartContainer config={{ sov: { label: "SOV %", color: "oklch(0.65 0.18 65)" } }} className="h-[200px] sm:h-[240px] lg:h-[280px] w-full">
             <BarChart data={sovData}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis dataKey="name" tick={{ fontSize: 10 }} />
@@ -269,7 +269,7 @@ export function CompetitiveIntel() {
                         {item.avgPosition.toFixed(1)}
                       </Badge>
                     </td>
-                    <td className="py-2.5 px-3 min-w-[120px]">
+                    <td className="py-2.5 px-3 min-w-[80px] sm:min-w-[120px]">
                       <div className="h-3 rounded-full bg-muted overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all duration-700 ${item.isYou ? "bg-primary" : "bg-primary/40"}`}

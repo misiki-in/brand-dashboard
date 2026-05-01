@@ -74,7 +74,7 @@ export function InfluencerPartnerships() {
           <CardDescription className="text-xs">In jewelry commerce, trust and authenticity drive conversions more than raw reach. Nano and micro creators generate 8.4x and 6.8x ROAS respectively, compared to 1.8x for mega influencers.</CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={tierConfig} className="h-[280px] w-full">
+          <ChartContainer config={tierConfig} className="h-[200px] sm:h-[240px] lg:h-[280px] w-full">
             <BarChart data={tierAnalysis}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis dataKey="tier" tick={{ fontSize: 10 }} />

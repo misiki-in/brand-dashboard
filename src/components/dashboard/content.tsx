@@ -228,7 +228,7 @@ export function ContentStrategy() {
           </div>
 
           {/* Pipeline flow arrows */}
-          <div className="flex items-center justify-center gap-2 mt-4 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs text-muted-foreground">
             <span className="px-2 py-1 rounded bg-emerald-500/10 text-emerald-600 font-medium">STRATEGY</span>
             <ArrowRight className="h-3 w-3" />
             <span className="px-2 py-1 rounded bg-primary/10 text-primary font-medium">WRITING</span>
@@ -326,7 +326,7 @@ export function ContentStrategy() {
             <p className="text-xs text-muted-foreground">Community & Social Proof leads engagement; Education drives conversions</p>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={contentTypeConfig} className="mx-auto aspect-square max-h-[300px]">
+            <ChartContainer config={contentTypeConfig} className="mx-auto aspect-square max-h-[220px] sm:max-h-[260px] lg:max-h-[300px]">
               <RadarChart data={pillarRadarData} outerRadius="75%">
                 <PolarGrid strokeDasharray="3 3" className="opacity-30" />
                 <PolarAngleAxis dataKey="pillar" tick={{ fontSize: 10 }} className="fill-muted-foreground" />
