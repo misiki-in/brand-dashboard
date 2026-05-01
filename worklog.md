@@ -473,3 +473,53 @@ Stage Summary:
 - Logout button in dashboard sidebar
 - Auth state gates entire dashboard behind login
 - Production build: Clean
+
+---
+Task ID: 13
+Agent: Main
+Task: Add ClickFlow Content Engine — AI-powered content generation for ecommerce
+
+Work Log:
+- Analyzed 8 ClickFlow screenshots using VLM to understand the full UI flow
+- ClickFlow workflow: Brand Voice → Keyword Research → Competitor Analysis → Configure Article → Writing Style → Generate
+- Created `/src/lib/content-engine-data.ts` — Complete data layer:
+  - Types: BrandVoice, KeywordSuggestion, Competitor, ContentCalendarItem, ArticleConfig, GeneratedArticle, ArticleSection, ContentPipeline
+  - 15 jewelry-specific keyword suggestions with difficulty (0-100), volume, and intent
+  - 4 competitors (CaratLane, Tanishq, BlueStone, Malabar Gold) with content gaps
+  - 30-day content calendar with 8 content types (Article, Listicle, How-to Guide, Case Study, etc.)
+  - Content type distribution data for roadmap visualization
+  - Helper functions: getDifficultyBg/Label, getIntentColor, getStatusColor, getStatusBadge
+- Created `/src/app/api/generate-article/route.ts` — AI article generation API:
+  - Uses z-ai-web-dev-sdk for GPT-powered article generation
+  - Accepts: keyword, title, contentType, writingStyle, tone, instructions
+  - Returns: full article with title, meta, outline, sections, internal links, word count
+  - JSON response parsing with fallback for malformed responses
+- Created `/src/components/dashboard/content-engine.tsx` — Full ClickFlow-style component (~700 lines):
+  - **Dashboard View**: KPI cards (Published/Drafting/Review/Planned/Total Words), 5 tabs
+  - **Content Calendar Tab**: 30-day grid with status badges, clickable planned items
+  - **Content Roadmap Tab**: Content type distribution bars + pipeline status tracker
+  - **Keyword Research Tab**: Search/custom keyword input + 15-row table with difficulty/volume/intent
+  - **Competitors Tab**: 4 competitor cards with content gaps as badges
+  - **Generated Articles Tab**: Lists all generated articles with metadata
+  - **Article Wizard**: 5-step flow with progress breadcrumbs
+    - Step 1: Brand Voice (4 writing styles + 4 image styles + tone + instructions)
+    - Step 2: Keyword Selection (table + custom search + USE THIS button)
+    - Step 3: Configure Article (title, type, internal links, instructions + research panel)
+    - Step 4: Writing Style (radio buttons + voice preview panel)
+    - Step 5: Generate (summary card + AI generation with loading state)
+  - **Article Review**: Meta title/description, outline, expandable sections, internal links, approve/export buttons
+- Updated `/src/app/dashboard-client.tsx`:
+  - Added ContentEngine import
+  - Added "Content Factory" nav section with "ClickFlow Engine" tab (Sparkles icon)
+  - Added 'content-engine' to tabComponents map
+- Ran `npx next build` — compiled successfully with zero errors
+
+Stage Summary:
+- 3 new files: content-engine-data.ts, content-engine.tsx, api/generate-article/route.ts
+- ClickFlow-style 5-step article wizard: Brand Voice → Keywords → Configure → Style → Generate
+- Real AI article generation via z-ai-web-dev-sdk (GPT-powered)
+- 30-day content calendar with 8 content types for jewelry ecommerce
+- 15 keyword suggestions with difficulty/volume/intent data
+- 4 competitor analysis with content gap identification
+- Content roadmap with pipeline status tracking
+- Production build: Clean

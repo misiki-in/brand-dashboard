@@ -40,6 +40,7 @@ import { InventoryIntelligence } from '@/components/dashboard/inventory';
 import { WhatsAppCommerceHub } from '@/components/dashboard/whatsapp';
 import { CreativeBrandLayer } from '@/components/dashboard/creative';
 import { AIGrowthEngine } from '@/components/dashboard/ai-engine';
+import { ContentEngine } from '@/components/dashboard/content-engine';
 
 const navSections = [
   {
@@ -93,6 +94,12 @@ const navSections = [
       { id: 'ai-engine', label: 'AI Growth Engine', icon: Brain },
     ],
   },
+  {
+    label: 'Content Factory',
+    items: [
+      { id: 'content-engine', label: 'ClickFlow Engine', icon: Sparkles },
+    ],
+  },
 ];
 
 const tabComponents: Record<string, React.ComponentType> = {
@@ -117,6 +124,7 @@ const tabComponents: Record<string, React.ComponentType> = {
   whatsapp: WhatsAppCommerceHub,
   creative: CreativeBrandLayer,
   'ai-engine': AIGrowthEngine,
+  'content-engine': ContentEngine,
 };
 
 function SidebarNav({
